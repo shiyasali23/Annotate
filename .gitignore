@@ -1,0 +1,29 @@
+# Node.js / Next.js (Frontend)
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.production.local
+frontend/.env.test.local
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/.vscode/
+
+# Python / FastAPI (Backend)
+backend/env/
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+backend/.env.*.local
+backend/.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE-specific files
+.idea/
+.vscode/

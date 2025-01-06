@@ -8,15 +8,16 @@ const DataContext = createContext();
 // Provider component
 export const DataProvider = ({ children }) => {
   // Services array: stored in the context, accessible globally
-  const [servicesArray, setServicesArray] = useState([
+  const servicesArray = [
     ["Food Recommendation", "FoodRecomendandion"],
     ["Disease Detection", "Detection"],
     ["Analytics Platform", "Analytics"],
     ["Diagnostics Center", "Diagnostics"],
-  ]);
+  ]
 
+  const companyName = "Biolabs";
   return (
-    <DataContext.Provider value={{ servicesArray, setServicesArray }}>
+    <DataContext.Provider value={{ servicesArray,companyName }}>
       {children}
     </DataContext.Provider>
   );

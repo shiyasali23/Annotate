@@ -11,6 +11,10 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        sans: ['Inter', 'Montserrat', 'sans-serif'],  // Default sans-serif font
+        serif: ['Lora', 'serif'],  // Default serif font
+      },
     },
   },
   plugins: [],

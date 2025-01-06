@@ -1,9 +1,14 @@
 "use client";
+
 import { useState } from "react";
 import CameraModule from "../components/CameraModule";
 import ResultComponent from "../components/ResultComponent";
+import Header from "../components/Header";
+import Button from "../components/Button";
+import { useData } from "@/contexts/dataContexts";
 
 const Result = () => {
+  const { servicesArray } = useData();
   const [cameraAllow, setCameraAllow] = useState(false);
   const ResultsArray = [
     ["Dryness", 26],
@@ -13,52 +18,47 @@ const Result = () => {
     ["Redness", 60],
     ["Freckles", 86],
   ];
-  const servicesArray = [
-    ["Food recemenation based on your biochemcials", "Food Recomendands"],
-    ["Have a look in our desease detection tools", "Detect Desease"],
-    ["Get a analytics report for your biochemcials", "Analytics Platform"],
-    ["Feeling any symptoms try our diagnostics", "Diagnostics Center"],
-  ];
 
   const handleStartCamera = () => {
     setCameraAllow(!cameraAllow);
   };
 
   return (
-    <div className="h-screen">
-      <div className="flex items-center w-full h-[50%] justify-center">
-        <div className="w-full h-full justify-center  flex flex-col items-center gap-5 p-8">
+    <div className="h-full flex flex-col overflow-hidden">
+      <Header />
+
+      {/* Main Content Wrapper */}
+      <div className="flex-grow flex  items-center justify-center overflow-hidden">
+        <div className="w-full h-full flex flex-col items-center gap-2 p-8 overflow-hidden">
           <CameraModule
             loading={false}
             cameraAllow={cameraAllow}
             setCameraAllow={setCameraAllow}
             isFromResult={true}
           />
-          <button
-            className="px-4 py-2  bg-black text-white rounded-md hover:bg-gray-800 transition-colors  lg:text-l md:text-md sm:text-sm font-medium"
+          <Button
+            text={cameraAllow ? "Stop Camera" : "Start Camera"}
             onClick={handleStartCamera}
-          >
-            {cameraAllow ? "Stop Camera" : "Start Camera"}
-          </button>
+            className="px-3 py-2 sm:px-6 sm:py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-base sm:text-lg font-medium"
+          />
         </div>
-        <div className="w-full h-full flex items-center justify-center p-3">
+        <div className="w-full h-[90%] flex items-center justify-center p-3 overflow-hidden">
           <ResultComponent ResultsArray={ResultsArray} />
         </div>
       </div>
-      <div className="w-full h-[50%] border-t borer-1 border-dashed border-gray-100   flex flex-col items-center ">
-        <h2 className=" w-full  my-5 flex items-center justify-center text-3xl font-bold">
-          Try Our
-        </h2>
-        <div className="w-full  p-5 gap-6  flex  justify-around ">
-          {servicesArray.map((service, index) => (
-            <div key={index} className="w-full h-100 border borer-1 border-dashed border-gray-100    flex flex-col p-3 ">
-              <h2 className="w-full h-full flex text-l font-bold text-right">
-  {service[0]}
-</h2>
 
-              <button className="relative left-[50%] w-[50%] h-[20%] px-2 py-6 flex items-center justify-center bg-black text-white   lg:text-md md:text-sm sm:text-xs font-medium">
-                {service[1]}
-              </button>
+      <div className="w-full   flex  items-center justify-center ">
+        <h1 className="text-align-right text-5xl  font-bold">
+          Try Our <br /> Other Services
+        </h1>
+
+        <div className="flex flex-col overflow-auto p-3">
+          {servicesArray.map((service, index) => (
+            <div key={index} className="flex flex-col items-end mb-3 w-[15vw]">
+              <Button
+                className="w-full rounded-sm text-xs  font-medium py-2 px-5"
+                text={service[0]} 
+              />
             </div>
           ))}
         </div>

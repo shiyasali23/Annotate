@@ -9,7 +9,8 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   // Services array: stored in the context, accessible globally
   const servicesArray = [
-    ["Food Recommendation", "FoodRecomendandion"],
+    ["Bio scanner", "Vision"],
+    ["Food Recommendation", "Vision"],
     ["Disease Detection", "Detection"],
     ["Analytics Platform", "Analytics"],
     ["Diagnostics Center", "Diagnostics"],

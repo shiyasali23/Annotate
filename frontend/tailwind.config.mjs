@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 export default {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,13 +7,14 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      keyframes: {
+        charReveal: {
+          "0%": { color: "white" },
+          "100%": { color: "black" },
+        },
       },
-      fontFamily: {
-        sans: ['Inter', 'Montserrat', 'sans-serif'],  // Default sans-serif font
-        serif: ['Lora', 'serif'],  // Default serif font
+      animation: {
+        "char-reveal": "charReveal 0.2s forwards",
       },
     },
   },

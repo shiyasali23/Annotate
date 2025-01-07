@@ -1,130 +1,166 @@
 "use client";
 
-import { Loader } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import {
+  Camera,
+  Loader,
+  FlipHorizontal,
+  Camera as CameraIcon,
+} from "lucide-react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
+import Webcam from "react-webcam";
+import Button from "./Button";
+import LoadingText from "./LoadingText";
+import { useRouter } from "next/navigation";
 
-const CameraModule = ({ cameraAllow, setCameraAllow, isFromResult }) => {
-  const videoRef = useRef(null);
-  const [cameraLoading, setCameraLoading] = useState(false);
-  const [videoStream, setVideoStream] = useState(null);
-  const [isFailed, setIsFailed] = useState(false);
+
+const CameraModule = () => {
+  const router = useRouter();
+  const [cameraAllow, setCameraAllow] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [videoError, setVideoError] = useState(false);
+  const [isFrontCamera, setIsFrontCamera] = useState(true);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [dimensions, setDimensions] = useState({ width: 1280, height: 720, aspectRatio: 16/9 });
+  const webcamRef = useRef(null);
 
   useEffect(() => {
-    let stream;
-
-    const startCamera = async () => {
-      setCameraLoading(true); // Set cameraLoading to true when starting the camera
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        setVideoStream(stream);
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-        setCameraLoading(false); // Set cameraLoading to false once the camera is loaded
-      } catch (error) {
-        console.error("Error accessing the camera:", error);
-        if (error.name === "NotAllowedError") {
-          setMessage("Allow permission to open camera");
-        } else {
-          setMessage("Error accessing the camera");
-        }
-        setIsFailed(true);
-        setCameraLoading(false); // Set cameraLoading to false if there is an error
-      }
+    // Update dimensions based on window size
+    const updateDimensions = () => {
+      const isMobile = window.innerWidth < 768;
+      setDimensions({
+        width: isMobile ? 720 : 1280,
+        height: isMobile ? 1280 : 720,
+        aspectRatio: isMobile ? 3/4 : 16/9
+      });
     };
 
-    if (cameraAllow) {
-      startCamera();
-    } else {
-      // Stop the camera when cameraAllow is false
-      if (videoStream) {
-        videoStream.getTracks().forEach((track) => track.stop());
-        setVideoStream(null);
-      }
-    }
+    // Set initial dimensions
+    updateDimensions();
 
-    // Cleanup function: stop the camera when the component unmounts or when cameraAllow changes
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [cameraAllow]); // Dependency on cameraAllow to start/stop the camera based on state
+    // Add event listener for window resize
+    window.addEventListener('resize', updateDimensions);
 
-  const handleVideoError = () => {
-    setVideoError(true);
-    setMessage("Error displaying video");
+    // Cleanup
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  const videoConstraints = {
+    width: { ideal: dimensions.width },
+    height: { ideal: dimensions.height },
+    facingMode: isFrontCamera ? "user" : "environment",
+    aspectRatio: dimensions.aspectRatio,
   };
 
-  return (
-    <div className="overflow-hidden mb-4 rounded-lg flex items-center justify-center w-[90vw] max-w-full aspect-[9/16] mx-auto sm:w-80 sm:aspect-[16/9] md:w-full md:max-w-2xl md:aspect-video border border-gray-300 border-dashed">
+  const handleCamera = () => {
+    setLoading(true);
+    setMessage("");
+    setCameraAllow(!cameraAllow);
+    setCapturedImage(null);
+    setLoading(false);
+  };
 
-      <div className="w-full h-full relative">
-        {cameraLoading ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <Loader className="animate-spin" size="2rem" />
-          </div>
-        ) : isFailed || videoError ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <h2>{message}</h2>
-          </div>
+  const switchCamera = () => {
+    setLoading(true);
+    setIsFrontCamera(!isFrontCamera);
+    setLoading(false);
+  };
+
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current?.getScreenshot();
+    if (imageSrc) {
+      setCapturedImage(imageSrc);
+    }
+    setCameraAllow(!cameraAllow);
+    router.push("/Vision");
+  }, [webcamRef, cameraAllow]);
+
+  return (
+    <div className="w-full flex flex-col justify-evenly items-center">
+      <div className="w-full md:w-1/2">
+        {loading || message ? (
+          <LoadingText
+            text={message ? message : "Processing your data"}
+            className="w-full h-[60vh]"
+          />
         ) : cameraAllow ? (
-          <>
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              autoPlay
-              playsInline
-              onError={handleVideoError} // Handling video errors
-            />
-            {!isFromResult ? (
-              <Link href="/Result">
-                <button
-                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-transparent border-black border-4 border-opacity-50 font-bold text-white text-opacity-60 px-4 py-2 rounded-full shadow-lg hover:bg-opacity-50 transition-opacity duration-300"
-                  onClick={() => setCameraAllow(false)} // Stop the camera when navigating to the result page
-                >
-                  Capture
-                </button>
-              </Link>
-            ) : (
-              <button
-                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-transparent border-black border-4 border-opacity-50 font-bold text-white text-opacity-60 px-4 py-2 rounded-full shadow-lg hover:bg-opacity-50 transition-opacity duration-300"
-                onClick={() => setCameraAllow(false)} // Stop the camera when clicking the capture button
+          <div className="mb-2 flex flex-col items-center justify-center w-full">
+            <div className="w-full relative">
+              <div
+                className="relative w-full"
+                style={{
+                  paddingTop: dimensions.aspectRatio === 3/4 ? "133.33%" : "56.25%",
+                }}
               >
-                Capture
-              </button>
-            )}
-          </>
-        ) : (
-          <div className="border w-full h-full bg-gray-200 flex flex-col items-center justify-center  p-8">
-            <svg
-              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 16"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-              />
-            </svg>
-            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400 ">
-              <span className="font-semibold ">Click to upload</span> or drag and
-              drop
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Image (MAX. 100MB)
-            </p>
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  videoConstraints={videoConstraints}
+                  className="absolute top-0 left-0 w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Camera Controls */}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
+                <Button
+                  className="bg-black opacity-50 border-none hover:bg-white text-black p-3 rounded-full"
+                  onClick={switchCamera}
+                  text={<FlipHorizontal className="w-6 h-6" />}
+                />
+                <Button
+                  className="bg-black opacity-50 border-none hover:bg-white text-black p-3 rounded-full"
+                  onClick={capture}
+                  text={<CameraIcon className="w-6 h-6" />}
+                />
+              </div>
+            </div>
           </div>
+        ) : (
+          <label
+            htmlFor="dropzone-file"
+            className="mb-2 flex flex-col items-center justify-center w-1/2 xl:w-full  mx-auto h-[40vh] xl:h-[70vh]  rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          >
+            <div className="flex flex-col items-center justify-center xl:pt-5 xl:pb-4">
+              <svg
+                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 16"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                />
+              </svg>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                JPG, JPEG, PNG
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                (MAX. 2MB)
+              </p>
+            </div>
+            <input id="dropzone-file" type="file" className="hidden" />
+          </label>
         )}
       </div>
+
+      <Button
+        className="mx-auto xl:w-1/6 w-1/4 font-semibold h-10 mt-4 whitespace-nowrap w-full"
+        onClick={handleCamera}
+        text={
+          loading ? (
+            <Loader className="animate-spin" />
+          ) : cameraAllow ? (
+            "Stop Camera"
+          ) : (
+            "Start Camera"
+          )
+        }
+      />
     </div>
   );
 };

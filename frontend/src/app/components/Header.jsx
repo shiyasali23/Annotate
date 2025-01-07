@@ -49,17 +49,19 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="border-b border-gray-300 rounded w-full h-[10vh] flex justify-between items-center  relative">
+    <header className="  w-full   h-[8vh] xl:h-[12vh] xl:mb-2    flex justify-center items-center  relative">
       {/* Logo section */}
       <div className="text-xl font-semibold flex xl:justify-center xl:items-center w-full sm:text-left ">
         <Link href="/" className="flex items-center">
           <Image src="/logo.svg" alt="Logo" width={70} height={70} />
-          <h1 className="xl:text-3xl sm:text-md font-bold">Biolabs</h1>
+          <h1 className="xl:text-6xl text-2xl font-semibold xl:font-bold text-right">
+            Biolabs
+          </h1>
         </Link>
       </div>
 
       {/* Right section */}
-      <div className="absolute   ml-9 right-4 flex items-center gap-10">
+      <div className="absolute    right-4 flex items-center gap-5 xl:gap-20">
         <div
           className="relative   group"
           onMouseEnter={handleMouseEnter}
@@ -69,13 +71,18 @@ const Header = () => {
             id="dropdownButton"
             onClick={toggleDropdown}
             ref={buttonRef}
-            className={`relative flex items-center justify-center rounded-md text-xs sm:text-sm md:text-base px-3 py-2 sm:px-3 sm:py-2 bg-black text-white font-semibold text-center overflow-hidden border-2 border-black transition-all duration-300 hover:bg-white hover:text-black`}
+            className={`group relative flex items-center justify-center rounded-md text-xs sm:text-xs md:text-base px-2 py-2 xl:px-4 xl:py-2  bg-black text-white font-semibold text-center overflow-hidden border-2 border-black transition-all duration-300 hover:bg-white`}
             aria-haspopup="true"
             aria-expanded={dropdownOpen}
           >
-            Services
-            <FaCaretDown size={15} />
-            <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-300 ease-out"></span>
+            <span className="relative z-10 group-hover:text-black transition-colors duration-500 ease-out">
+              Services
+            </span>
+            <FaCaretDown
+              size={15}
+              className="relative z-10 ml-1 group-hover:text-black transition-colors duration-500 ease-out"
+            />
+            <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500 ease-out"></span>
           </button>
 
           {/* Dropdown Menu */}

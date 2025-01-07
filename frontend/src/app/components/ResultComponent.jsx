@@ -2,9 +2,9 @@ import React from 'react';
 
 const ResultComponent = ({ ResultsArray }) => {
   return (
-    <div className='w-full h-full flex justify-center flex-col gap-3 sm:p-4 md:p-6 py-5'>
+    <div className='w-full h-full flex justify-center align-center gap-1 xl:gap-5 flex-col    py-2 px-16 xl:px-15'>
       {ResultsArray.map((result, index) => (
-        <div key={index} className='flex p-2 sm:p-3 rounded-lg items-center justify-between w-full mx-auto h-full gap-4'>
+        <div key={index} className='flex   border border-dashed py-2 px-5 rounded-full items-center justify-between w-full mx-auto h-full gap-4'>
             <h5 className='text-sm sm:text-base font-semibold'>{result[0]}</h5>
             <div
               className='w-[40%] sm:w-[50%] h-[8px] sm:h-[10px] bg-gray-300 rounded-full'

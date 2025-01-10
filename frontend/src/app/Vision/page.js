@@ -5,14 +5,13 @@ import Header from "../components/Header";
 import ToggleSwitch from "../components/ToggleSwitch";
 import CameraModule from "../components/CameraModule";
 import ResultComponent from "../components/ResultComponent";
-import Food from "../Food/page";
-import LoadingText from "../components/LoadingText";
+import FoodRecommendation from "../components/FoodRecommendation";
+
 
 export default function Vision() {
-  const togglesList = ["Body", "Food"];
+  const viewList = ["Bio", "Food"];
 
-  const [selectedToggle, setSelectedToggle] = useState(togglesList[0]);
-  const [togglePage, setTogglePage] = useState(false);
+  const [selectedView, setSelectedView] = useState(viewList[1]);
 
   const skinResultsArray = [
     ["Dryness", 26],
@@ -30,29 +29,28 @@ export default function Vision() {
   return (
     <div id="vision-section" className=" flex flex-col w-ful h-screen">
       <Header />
-      <ToggleSwitch
-        togglesList={togglesList}
-        selectedToggle={selectedToggle}
-        setSelectedToggle={setSelectedToggle}
-      />
       <div className="flex  w-full justify-center items-center">
-        {togglePage ? (
-          <CameraModule />
-        ) : (
+        {selectedView === viewList[0] ? (
           <div className=" w-full        flex flex-col xl:flex-row justify-center  items-center  ">
-            <div className="flex w-full h-1/2   flex-col justify-center align-center p-1">
+            <div className="flex w-full h-1/2   flex-col justify-center align-center p-20">
               <CameraModule />
             </div>
             <div className="flex w-full  xl:w-full flex-col justify-center items-center ">
               <ResultComponent
                 ResultsArray={
-                  selectedToggle === togglesList[0]
-                    ? skinResultsArray
-                    : foodResultsArray
+                  skinResultsArray
                 }
               />
               
             </div>
+          </div>
+        ):selectedView === viewList[1] ?(
+          <div>
+            <FoodRecommendation setSelectedView={setSelectedView}/>
+          </div>
+        ):(
+          <div className="flex  w-full justify-center items-center">
+            <CameraModule />
           </div>
         )}
       </div>

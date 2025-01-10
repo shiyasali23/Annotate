@@ -24,9 +24,7 @@ const Header = () => {
     setDropdownOpen(true);
   };
 
-  const handleMouseLeave = () => {
-    setDropdownOpen(false);
-  };
+
 
   // Close dropdown when clicking outside
   const handleClickOutside = (event) => {
@@ -65,7 +63,6 @@ const Header = () => {
         <div
           className="relative   group"
           onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <button
             id="dropdownButton"
@@ -91,19 +88,17 @@ const Header = () => {
               id="dropdownMenu"
               ref={dropdownRef}
               className="absolute right-0 mt-2 bg-white bg-opacity-90 text-black rounded-lg shadow-lg w-56 z-10 border border-gray-200"
-              onMouseEnter={handleMouseEnter} // Keep open when hovering over dropdown
-              onMouseLeave={handleMouseLeave} // Close when mouse leaves dropdown
+              onMouseEnter={handleMouseEnter} 
             >
               <ul className="py-2">
                 {servicesArray.map((service, index) => (
-                  <li key={index}>
-                    <Link
-                      href={`/${service[1]}`}
-                      className="block px-4 py-2 hover:bg-gray-200 rounded transition duration-200"
-                    >
-                      {service[0]}
-                    </Link>
-                  </li>
+                  <Link
+                  key={index}
+                  href={`/${service[1]}`}
+                  className="block px-4 py-2 hover:bg-gray-200 rounded transition duration-200"
+                >
+                  {service[0]}
+                </Link>
                 ))}
               </ul>
             </div>

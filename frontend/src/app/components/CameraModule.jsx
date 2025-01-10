@@ -11,6 +11,7 @@ import Webcam from "react-webcam";
 import Button from "./Button";
 import LoadingText from "./LoadingText";
 import { useRouter } from "next/navigation";
+import Modal from "./Modal";
 
 
 const CameraModule = () => {
@@ -22,7 +23,7 @@ const CameraModule = () => {
   const [capturedImage, setCapturedImage] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 1280, height: 720, aspectRatio: 16/9 });
   const webcamRef = useRef(null);
-
+const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     // Update dimensions based on window size
     const updateDimensions = () => {
@@ -66,6 +67,7 @@ const CameraModule = () => {
   };
 
   const capture = useCallback(() => {
+    setLoading(true);
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
       setCapturedImage(imageSrc);
@@ -149,7 +151,7 @@ const CameraModule = () => {
       </div>
 
       <Button
-        className="mx-auto xl:w-1/6 w-1/4 font-semibold h-10 mt-4 whitespace-nowrap w-full"
+        className="mx-auto w-1/4 font-semibold h-10 mt-4 whitespace-nowrap"
         onClick={handleCamera}
         text={
           loading ? (
@@ -160,6 +162,10 @@ const CameraModule = () => {
             "Start Camera"
           )
         }
+      />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );

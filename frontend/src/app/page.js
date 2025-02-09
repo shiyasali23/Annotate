@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import CameraModule from "./components/CameraModule";
-import ServicesCarousel from "./components/ServicesCarousel";
+import ServicesComponet from "./components/ServicesComponet";
+import Header from "./components/Header";
 
 export default function Home() {
   const handleScanClick = (event) => {
@@ -15,17 +14,9 @@ export default function Home() {
 
   return (
     <main className="w-full" style={{ scrollBehavior: "smooth" }}>
-      <div className="fixed top-0  left-0 right-0 z-10 flex justify-center items-center w-full bg-white py-4">
-        <Link href="/" className="flex items-center">
-          <Image src="/logo.svg" alt="Logo" width={70} height={70} />
-          <h1 className="xl:text-6xl sm:text-xl font-bold text-right">
-            Biolabs
-          </h1>
-        </Link>
-      </div>
+      <Header  />
 
-      {/* First full-screen section */}
-      <section className="min-h-screen flex flex-col items-center justify-center xl:px-32 border-gray-300 bg-white relative overflow-hidden">
+      <section className="h-[92vh] xl:h-[88vh] flex flex-col items-center justify-center xl:px-32 border-gray-300 bg-white relative overflow-hidden">
         <div className="w-full max-w-6xl mx-auto flex flex-col justify-center items-center text-right gap-5 lg:gap-10">
           <h1 className="text-5xl lg:text-9xl w-full text-center font-bold">
             {Array.from("Who we are?").map((char, i) => (
@@ -74,20 +65,19 @@ export default function Home() {
             ))}
             <span
               onClick={handleScanClick}
-              className="relative align-end px-3 py-1.5 sm:px-4 sm:py-2 bg-black text-white text-sm sm:text-base font-semibold cursor-pointer overflow-hidden group border border-2 border-black"
+              className="relative align-end px-3 py-1.5 sm:px-4 sm:py-2 bg-black text-white text-sm sm:text-base font-semibold cursor-pointer overflow-hidden group border border-2 border-black ml-2"
             >
               <span className="absolute inset-0 bg-white transform translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
               <span className="relative group-hover:text-black transition-colors duration-500 ease-out">
-                Try vision
+                Try Now
               </span>
             </span>
           </h3>
         </div>
-       
       </section>
 
-      <section className="h-screen flex items-center" id="vision-section">
-        <CameraModule />
+      <section  id="vision-section">
+        <ServicesComponet />
       </section>
     </main>
   );

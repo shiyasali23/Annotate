@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { FaUser, FaCaretDown } from "react-icons/fa";
+import { FaUser, FaCaretDown, FaBook } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 import Link from "next/link";
 import { useData } from "@/contexts/dataContexts";
@@ -23,8 +23,6 @@ const Header = () => {
   const handleMouseEnter = () => {
     setDropdownOpen(true);
   };
-
-
 
   // Close dropdown when clicking outside
   const handleClickOutside = (event) => {
@@ -60,10 +58,7 @@ const Header = () => {
 
       {/* Right section */}
       <div className="absolute    right-4 flex items-center gap-5 xl:gap-20">
-        <div
-          className="relative   group"
-          onMouseEnter={handleMouseEnter}
-        >
+        <div className="relative   group" onMouseEnter={handleMouseEnter}>
           <button
             id="dropdownButton"
             onClick={toggleDropdown}
@@ -87,26 +82,26 @@ const Header = () => {
             <div
               id="dropdownMenu"
               ref={dropdownRef}
-              className="absolute right-0 mt-2 bg-white bg-opacity-90 text-black rounded-lg shadow-lg w-56 z-10 border border-gray-200"
-              onMouseEnter={handleMouseEnter} 
+              className="absolute right-0  bg-white bg-opacity-90 text-black rounded-lg shadow-lg w-56 z-10 border border-gray-200"
+              onMouseEnter={handleMouseEnter}
             >
               <ul className="py-2">
                 {servicesArray.map((service, index) => (
                   <Link
-                  key={index}
-                  href={`/${service[1]}`}
-                  className="block px-4 py-2 hover:bg-gray-200 rounded transition duration-200"
-                >
-                  {service[0]}
-                </Link>
+                    key={index}
+                    href={`/${service[1]}`}
+                    className="block px-4 py-2 hover:bg-gray-200 rounded transition duration-200"
+                  >
+                    {service[1]}
+                  </Link>
                 ))}
               </ul>
             </div>
           )}
         </div>
         <div className="flex items-center gap-5 sm:gap-0 md:gap-7">
-          <FaUser size={25} />
-          <MdLogout size={25} />
+          <FaUser className="cursor-pointer" size={25} />
+          <MdLogout className="cursor-pointer" size={25} />
         </div>
       </div>
     </header>

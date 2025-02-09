@@ -7,18 +7,22 @@ const DataContext = createContext();
 
 // Provider component
 export const DataProvider = ({ children }) => {
-  // Services array: stored in the context, accessible globally
+  const companyName = "Biolabs";
   const servicesArray = [
-    ["Bio scanner", "Vision"],
-    ["Food Recommendation", "Vision"],
-    ["Disease Detection", "Detection"],
-    ["Analytics Platform", "Analytics"],
-    ["Diagnostics Center", "Diagnostics"],
+    ["Know which foods are good for you ", "Food Recommendation"],
+    ["Detect diseases with your biochemicals detection", "Diseases Detections"],
+    ["Monitoring  your health and biochemicals", "Analytics Platform"],
+    ["Feeling any symptoms? Check out", "Diagnostics Center"],
+    ["Store you records and get insights", "Bio Records"],
+    ["Artificail inteligence is here to answer you", "Bio Gpt"],
+
   ]
 
-  const companyName = "Biolabs";
+  const [diseaseDetectionModals, setDiseaseDetectionModals] = useState([]);
+
+  
   return (
-    <DataContext.Provider value={{ servicesArray,companyName }}>
+    <DataContext.Provider value={{ servicesArray,companyName, diseaseDetectionModals, setDiseaseDetectionModals }}>
       {children}
     </DataContext.Provider>
   );

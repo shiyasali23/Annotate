@@ -19,9 +19,9 @@ const About = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col ">
+    <div className="h-[92vh] xl:h-[88vh] flex flex-col ">
       <Header />
-      <div className="w-screen h-full xl:h-screen    flex  items-center justify-center xl:px-32">
+      <div className="w-screen h-full    flex  items-center justify-center xl:px-32">
         {/* Text Section */}
         <div className="w-full      flex items-center p-4 lg:p-9">
           <h1 className="tracking-tight   leading-snug text-left text-xs sm:text-sm md:text-base lg:text-xl font-medium">

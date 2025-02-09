@@ -10,12 +10,20 @@ frontend/yarn.lock
 frontend/.vscode/
 
 # Python / FastAPI (Backend)
+diagnosis/env/
+diagnosis/__pycache__/
+diagnosis/*.pyc
+diagnosis/.env
+diagnosis/.env.*.local
+diagnosis/.vscode/
+
 backend/env/
 backend/__pycache__/
 backend/*.pyc
 backend/.env
 backend/.env.*.local
 backend/.vscode/
+
 
 # System files
 .DS_Store

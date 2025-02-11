@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Dict, List
+from typing import Dict, List, Union
 import numpy as np
 import os
 import joblib
@@ -57,7 +57,7 @@ class ModelManager:
             logger.error(f"Error loading model {filename}: {e}")
             raise RuntimeError(f"Error loading model {filename}")
 
-    def _validate_input(self, data: Dict[str, str], model_id: str) -> np.array:
+    def _validate_input(self, data: Dict[str, Union[str, int, float]], model_id: str) -> np.array:
         try:
             if not data:
                 raise ValueError("Input data is required")
@@ -116,6 +116,7 @@ class ModelManager:
                 raise HTTPException(status_code=404, detail="Model not found")
 
             prediction = model.predict([validated_input])[0]
+            
             if hasattr(model, "decision_function"):
                 decision_scores = model.decision_function([validated_input])
                 exp_scores = np.exp(decision_scores - np.max(decision_scores))
@@ -189,7 +190,8 @@ class ModelManager:
 manager = ModelManager(models_directory)
 
 class PredictionInput(BaseModel):
-    data: Dict[str, str]
+    data: Dict[str, Union[str, int, float]]
+
 
 @app.post("/predict/{model_id}")
 async def predict(model_id: str, input_data: PredictionInput):

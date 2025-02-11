@@ -2,10 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import LoadingComponent from "./LoadingComponent";
 import ErrorComponent from "./ErrorComponent";
-import {
-  getModels,
-  getPredictions,
-} from "@/utils/diagnosisUtils";
+import { getModels, getDiseasePredictions } from "@/utils/diagnosisUtils";
 import { useData } from "@/contexts/dataContexts";
 import {
   Accordion,
@@ -33,7 +30,11 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
   const [inputValuesArray, setInputValuesArray] = useState([]);
   const [errorsDict, setErrorsDict] = useState({});
   const [predictionsDict, setPredictionsDict] = useState({});
-  const UpCommingModelsArray = ["Alzheimers Detection", "Kidney Function", "Cancer Prediction"];
+  const UpCommingModelsArray = [
+    "Alzheimers Detection",
+    "Kidney Function",
+    "Cancer Prediction",
+  ];
 
   const dictValidator = (obj) =>
     Object.values(obj).every((value) => value !== "");
@@ -121,7 +122,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
       ...prev,
       [modelId]: "",
     }));
-    const predictions = await getPredictions(modelId, featuresDict);
+    const predictions = await getDiseasePredictions(modelId, featuresDict);
     if (predictions) {
       setPredictionsDict((prev) => ({
         ...prev,

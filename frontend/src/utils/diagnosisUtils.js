@@ -1,13 +1,13 @@
-// utils/diseaseDetectionUtils.js
+// utils/DiagnosisDetectionUtils.js
 const DIAGNOSIS_API_URL = process.env.DIAGNOSIS_API_URL || 'http://0.0.0.0:8001';
 
 
-export const getDiseaseDetectionModals = async () => {
+export const getModels = async (type) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   try {
-    const response = await fetch(`${DIAGNOSIS_API_URL}/get_features/disease_detections`, {
+    const response = await fetch(`${DIAGNOSIS_API_URL}/get_features/${type}`, {
       method: 'GET',
       signal: controller.signal,
       headers: {
@@ -27,14 +27,14 @@ export const getDiseaseDetectionModals = async () => {
 
     return data.response;
   } catch (error) {
-    console.error('Failed to fetch disease detection models:', error);
+    console.error('Failed to fetch Diagnosis models:');
     return [];
   } finally {
     clearTimeout(timeoutId);
   }
 };
 
-export const getDiseasePredictions = async (modelId, featuresDict) => {
+export const getPredictions = async (modelId, featuresDict) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -53,7 +53,6 @@ export const getDiseasePredictions = async (modelId, featuresDict) => {
     }
 
     const data = await response.json();
-    console.log("Raw API response:", data);
 
     if (!data?.response || typeof data.response !== 'object') {
       throw new Error('Invalid API response structure');
@@ -61,7 +60,7 @@ export const getDiseasePredictions = async (modelId, featuresDict) => {
 
     return data.response; 
   } catch (error) {
-    console.error('Failed to fetch disease predictions:', error);
+    console.error('Failed to fetch Diagnosis predictions:');
     return null; 
   } finally {
     clearTimeout(timeoutId);

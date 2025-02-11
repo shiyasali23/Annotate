@@ -2,16 +2,20 @@ import { useData } from "@/contexts/dataContexts";
 import React, { useState } from "react";
 import ServicesModal from "./ServicesModal";
 import DiseaseDetectionModal from "./DiseaseDetectionModal";
+import DiagnosisModal from "./DiagnosisModal";
 
 const ServicesComponent = () => {
   const { servicesArray } = useData();
-  const [ServicesModalOpen, setServicesModalOpen] = useState(false);
-  const [DiseaseDetectionModalOpen, setDiseaseDetectionModalOpen] = useState(false);
+  const [servicesModalOpen, setServicesModalOpen] = useState(false);
+  const [diseaseDetectionModalOpen, setDiseaseDetectionModalOpen] =
+    useState(false);
+  const [diagnosisModalOpen, setDiagnosisModalOpen] = useState(false);
 
   const handleServiceClick = (index) => {
     index === 2 && setServicesModalOpen(true);
     index === 1 && setDiseaseDetectionModalOpen(true);
-  }
+    index === 3 && setDiagnosisModalOpen(true);
+  };
 
   return (
     <div className="w-full min-h-[92vh] xl:h-[88vh] flex items-center justify-center p-4">
@@ -34,8 +38,24 @@ const ServicesComponent = () => {
           </div>
         ))}
       </div>
-      {ServicesModalOpen && <ServicesModal isOpen={ServicesModalOpen} onClose={() => setServicesModalOpen(false)} />}
-        {DiseaseDetectionModalOpen && <DiseaseDetectionModal isOpen={DiseaseDetectionModalOpen} onClose={() => setDiseaseDetectionModalOpen(false)} />}
+      {servicesModalOpen && (
+        <ServicesModal
+          isOpen={servicesModalOpen}
+          onClose={() => setServicesModalOpen(false)}
+        />
+      )}
+      {diseaseDetectionModalOpen && (
+        <DiseaseDetectionModal
+          isOpen={diseaseDetectionModalOpen}
+          onClose={() => setDiseaseDetectionModalOpen(false)}
+        />
+      )}
+      {diagnosisModalOpen && (
+        <DiagnosisModal
+          isOpen={diagnosisModalOpen}
+          onClose={() => setDiagnosisModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

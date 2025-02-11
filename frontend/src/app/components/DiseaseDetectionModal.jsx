@@ -3,9 +3,9 @@ import { AiOutlineCloseSquare } from "react-icons/ai";
 import LoadingComponent from "./LoadingComponent";
 import ErrorComponent from "./ErrorComponent";
 import {
-  getDiseaseDetectionModals,
-  getDiseasePredictions,
-} from "@/utils/diseaseDetectionUtils";
+  getModels,
+  getPredictions,
+} from "@/utils/diagnosisUtils";
 import { useData } from "@/contexts/dataContexts";
 import {
   Accordion,
@@ -74,7 +74,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
 
   const loadModels = useCallback(async () => {
     setLoading(true);
-    const models = await getDiseaseDetectionModals();
+    const models = await getModels("disease_detections");
     setDiseaseDetectionModals(models);
     updateInputValuesArray(models);
     initializeErrorsDict(models);
@@ -121,7 +121,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
       ...prev,
       [modelId]: "",
     }));
-    const predictions = await getDiseasePredictions(modelId, featuresDict);
+    const predictions = await getPredictions(modelId, featuresDict);
     if (predictions) {
       setPredictionsDict((prev) => ({
         ...prev,

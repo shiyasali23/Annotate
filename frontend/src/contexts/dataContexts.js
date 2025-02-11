@@ -19,10 +19,11 @@ export const DataProvider = ({ children }) => {
   ]
 
   const [diseaseDetectionModals, setDiseaseDetectionModals] = useState([]);
+  const [diagnosisModel, setDiagnosisModel ] = useState(null);
 
   
   return (
-    <DataContext.Provider value={{ servicesArray,companyName, diseaseDetectionModals, setDiseaseDetectionModals }}>
+    <DataContext.Provider value={{ servicesArray,companyName, diseaseDetectionModals, setDiseaseDetectionModals, diagnosisModel, setDiagnosisModel  }}>
       {children}
     </DataContext.Provider>
   );

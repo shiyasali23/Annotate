@@ -165,10 +165,11 @@ class ModelManager:
             target_id = "tdsevgg53h5f53e6"
             return [
                 {
-                    **{k: meta.get(k) for k in [ 'id', 'name', 'accuracy', 'feature_names', 'output_maps', 'feature_maps',]},
+                    **{k: meta.get(k) for k in ['id', 'name',  'accuracy', 'feature_category', 'feature_names', 'output_maps', 'feature_maps']},
                     'max_feature_impact': max(
                         json.loads(meta.get('feature_impacts', '{}')).items(),
                         key=lambda item: item[1], default=("", [])[0])[0]
+                    if 'feature_impacts' in meta else None
                 }
                 for meta in self.model_metadata.values()
                 if (is_diagnosis and meta.get('id') == target_id) or (not is_diagnosis and meta.get('id') != target_id)
@@ -176,6 +177,7 @@ class ModelManager:
         except Exception as e:
             logger.error(f"Feature retrieval error: {e}")
             raise HTTPException(status_code=500, detail="Feature processing error")
+
 
     def get_all_metadata(self) -> list:
         try:

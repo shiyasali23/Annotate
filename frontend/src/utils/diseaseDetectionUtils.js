@@ -33,3 +33,37 @@ export const getDiseaseDetectionModals = async () => {
     clearTimeout(timeoutId);
   }
 };
+
+export const getDiseasePredictions = async (modelId, featuresDict) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(`${DIAGNOSIS_API_URL}/predict/${modelId}`, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: featuresDict }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Raw API response:", data);
+
+    if (!data?.response || typeof data.response !== 'object') {
+      throw new Error('Invalid API response structure');
+    }
+
+    return data.response; 
+  } catch (error) {
+    console.error('Failed to fetch disease predictions:', error);
+    return null; 
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};

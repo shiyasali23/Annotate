@@ -193,7 +193,7 @@ class PredictionInput(BaseModel):
     data: Dict[str, Union[str, int, float]]
 
 
-@app.post("/predict/{model_id}")
+@app.post("/diagnosis/predict/{model_id}")
 async def predict(model_id: str, input_data: PredictionInput):
     try:
         prediction_data = await run_in_threadpool(manager.get_prediction, model_id, input_data.data)
@@ -215,12 +215,12 @@ async def predict(model_id: str, input_data: PredictionInput):
             status_code=500
         )
 
-@app.get("/get_features/{pk}")
+@app.get("/diagnosis/get_features/{pk}")
 async def get_features(pk: str):
     try:
-        if pk not in ["diagnosis", "disease_detections"]:
+        if pk not in ["diagnosis_model", "disease_detections"]:
             raise ValueError("Invalid parameter value")
-        is_diagnosis = pk == "diagnosis"
+        is_diagnosis = pk == "diagnosis_model"
         features = await run_in_threadpool(manager.get_features, is_diagnosis)
         response = manager.success_response.copy()
         response.update({
@@ -240,7 +240,7 @@ async def get_features(pk: str):
             status_code=500
         )
 
-@app.get("/metadata")
+@app.get("/diagnosis/metadata")
 async def metadata():
     try:
         metadata_list = await run_in_threadpool(manager.get_all_metadata)

@@ -3,11 +3,16 @@ import uuid
 
 
 class BaseModel(models.Model):
-    id = models.UUIDField(primary_key=True,default=uuid.uuid4,unique=True,editable=False,)
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    id = models.BigAutoField(primary_key=True, unique=True, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    updated = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta:
         abstract = True
+        indexes = [
+            models.Index(fields=['created']),
+        ]
 
 class Category(BaseModel):
     name = models.CharField(max_length=255, unique=True)
@@ -26,7 +31,7 @@ class SubCategory(BaseModel):
         return f"{self.name} ({self.category.name})"
 
     class Meta:
-        indexes = [models.Index(fields=['name']), models.Index(fields=['category'])]
+        indexes = [models.Index(fields=['name']), models.Index(fields=['category']), models.Index(fields=['category', 'name'])]
 
 class Condition(BaseModel):
     name = models.CharField(max_length=255, unique=True)
@@ -78,20 +83,8 @@ class Food(BaseModel):
     class Meta:
         indexes = [models.Index(fields=['name']), models.Index(fields=['subcategory'])]
 
-class FoodImage(BaseModel):
-    food = models.OneToOneField(Food, on_delete=models.CASCADE, related_name='image')
-    image = models.ImageField(upload_to='food_images/')
 
-    def __str__(self):
-        return self.food.name
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['food']),
-        ]
         
-
-
 class Nutrient(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='nutrients')
@@ -116,8 +109,6 @@ class FoodNutrient(BaseModel):
         unique_together = ('food', 'nutrient')
         indexes = [models.Index(fields=['food', 'nutrient'])]
    
-
-    
     
 
 class FoodWeight(BaseModel):

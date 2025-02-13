@@ -1,0 +1,76 @@
+name,category,unit
+Carbohydrates,Macronutrients,g
+Proteins,Macronutrients,g
+Fats,Macronutrients,g
+Vitamin A,Vitamins,µg
+Vitamin B1,Vitamins,mg
+Vitamin B2,Vitamins,mg
+Vitamin B3,Vitamins,mg
+Vitamin B5,Vitamins,mg
+Vitamin B6,Vitamins,mg
+Vitamin B7,Vitamins,µg
+Vitamin B9,Vitamins,µg
+Vitamin B12,Vitamins,µg
+Vitamin C,Vitamins,mg
+Vitamin D,Vitamins,µg
+Vitamin E,Vitamins,mg
+Vitamin K,Vitamins,µg
+Calcium,Minerals,mg
+Iron,Minerals,mg
+Magnesium,Minerals,mg
+Phosphorus,Minerals,mg
+Potassium,Minerals,mg
+Sodium,Minerals,mg
+Zinc,Minerals,mg
+Copper,Minerals,µg
+Manganese,Minerals,mg
+Selenium,Minerals,µg
+Iodine,Minerals,µg
+Alanine,Amino Acids,mg
+Arginine,Amino Acids,mg
+Asparagine,Amino Acids,mg
+Aspartic Acid,Amino Acids,mg
+Cysteine,Amino Acids,mg
+Glutamic Acid,Amino Acids,mg
+Glutamine,Amino Acids,mg
+Glycine,Amino Acids,mg
+Histidine,Amino Acids,mg
+Isoleucine,Amino Acids,mg
+Leucine,Amino Acids,mg
+Lysine,Amino Acids,mg
+Methionine,Amino Acids,mg
+Phenylalanine,Amino Acids,mg
+Proline,Amino Acids,mg
+Serine,Amino Acids,mg
+Threonine,Amino Acids,mg
+Tryptophan,Amino Acids,mg
+Tyrosine,Amino Acids,mg
+Valine,Amino Acids,mg
+Saturated Fatty Acids,Fatty Acids,g
+Monounsaturated Fatty Acids,Fatty Acids,g
+Polyunsaturated Fatty Acids,Fatty Acids,g
+Omega-3 Fatty Acids,Fatty Acids,g
+Omega-6 Fatty Acids,Fatty Acids,g
+Trans Fatty Acids,Fatty Acids,g
+Flavonoids,Phytochemicals,mg
+Carotenoids,Phytochemicals,µg
+Polyphenols,Phytochemicals,mg
+Glucosinolates,Phytochemicals,mg
+Phytosterols,Phytochemicals,mg
+Glucose,Sugars,g
+Fructose,Sugars,g
+Sucrose,Sugars,g
+Citric Acid,Organic Acids,mg
+Lactic Acid,Organic Acids,mg
+Fiber,Other,g
+Cholesterol,Other,mg
+Antioxidants,Other,mg
+Prebiotics,Other,g
+Water,Other,ml
+Alcohol,Other,g
+Caffeine,Other,mg
+Theobromine,Other,mg
+Tannins,Other,mg
+Lectins,Other,mg
+Phytic Acid,Other,mg
+Oxalates,Other,mg

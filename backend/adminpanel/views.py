@@ -1,45 +1,36 @@
-from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .models import Biochemical
+from .serializers import BiochemicalSerializer
 
-from .models import (
-    Category, SubCategory, Biochemical, Condition, Food, Nutrient, 
-    FoodNutrient, FoodWeight, NutrientWeight, BiochemicalCondition
-)
+from utils.objects_handler import ObjectsHandler
+from utils.cache_handler import CacheHandler
+from utils.response_handler import ResponseHandler
 
-from .serializers import (
-    CategorySerializer, SubCategorySerializer, BiochemicalSerializer,
-    ConditionSerializer, FoodSerializer, NutrientSerializer,
-    FoodNutrientSerializer, FoodWeightSerializer, NutrientWeightSerializer,
-    BiochemicalConditionSerializer
-)
-
-import logging
-logger = logging.getLogger(__name__)
-
-
-# Generic views for list and detail
-def generic_list_view(request, model, serializer_class):
-    if request.method == 'GET':
-        objects = model.objects.all()
-        serializer = serializer_class(objects, many=True)
-        return Response(serializer.data)
+objects_handler = ObjectsHandler()
+cache_handler = CacheHandler()
+response_handler = ResponseHandler()
 
 
 @api_view(['GET'])
-def biochemical_list(request):
-    return generic_list_view(request, Biochemical, BiochemicalSerializer)
+def handle_biochemicals(request):
+    try:
+        cache_key = 'biochemicals_data'
+        cached_biochemicals = cache_handler.get_from_cache(cache_key)
 
+        if not cached_biochemicals:
+            response = objects_handler.get_all_objects(
+                model=Biochemical, 
+                serializer_class=BiochemicalSerializer,           
+                prefetch_related_fields=['category']
+            )
 
-@api_view(['GET'])
-def condition_list(request):
-    return generic_list_view(request, Condition, ConditionSerializer)
+            if response.status_code == 200:
+                cache_handler.set_to_cache(cache_key, response.data)  
 
-@api_view(['GET'])
-def food_list(request):
-        objects = Food.objects.select_related('subcategory').prefetch_related('nutrients__nutrient', 'nutrients__nutrient__category').all()
-        serializer = FoodSerializer(objects, many=True)
-        return Response(serializer.data)
+            return response  
 
+        return response_handler.handle_response(response=cached_biochemicals)  
 
-
+    except Exception as e:
+        return response_handler.handle_exception(exception=f"Error handling biochemicals: {str(e)}")

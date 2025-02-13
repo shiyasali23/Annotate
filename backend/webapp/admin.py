@@ -1,8 +1,6 @@
 from django.contrib import admin
-from .models import User, BiometricsEntry, Biometrics, FoodScore
+from .models import (
+    User
+)
 
-# Register the models
 admin.site.register(User)
-admin.site.register(BiometricsEntry)
-admin.site.register(Biometrics)
-admin.site.register(FoodScore)

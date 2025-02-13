@@ -148,7 +148,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
     if (!diseaseDetectionModals.length) {
       loadModels();
     }
-  }, [diseaseDetectionModals, loadModels]);
+  }, []);
 
   if (!isOpen) return null;
   return (

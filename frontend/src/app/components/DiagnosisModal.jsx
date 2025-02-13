@@ -48,7 +48,7 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
 
   const loadModel = useCallback(async () => {
     setLoading(true);
-    const model = await getModels("diagnosis");
+    const model = await getModels("diagnosis_model");
     setDiagnosisModel(model);
     setLoading(false);
   }, [setDiagnosisModel]);

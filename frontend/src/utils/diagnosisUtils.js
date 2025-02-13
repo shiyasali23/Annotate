@@ -1,5 +1,5 @@
 // utils/DiagnosisDetectionUtils.js
-const DIAGNOSIS_API_URL = process.env.DIAGNOSIS_API_URL || 'http://0.0.0.0:8001';
+const DIAGNOSIS_API_URL = process.env.DIAGNOSIS_API_URL || 'http://0.0.0.0:8001/diagnosis';
 
 
 export const getModels = async (type) => {

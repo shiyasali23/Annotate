@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import User, BiometricsEntry, Biometrics
 
+from adminpanel.models import Biochemical
+
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     
@@ -22,12 +24,44 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
     
-class BiometricsEntrySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BiometricsEntry
-        fields = "__all__"
-        
+from rest_framework import serializers
+from adminpanel.models import Biochemical
+from webapp.models import BiometricsEntry, Biometrics
+
 class BiometricsSerializer(serializers.ModelSerializer):
+    biochemical_name = serializers.CharField(source='biochemical.name', read_only=True)
+    health_weight = serializers.FloatField(write_only=True)
+    biochemical = serializers.PrimaryKeyRelatedField(
+        queryset=Biochemical.objects.all(),
+        write_only=True
+    )
+    biometricsentry = serializers.PrimaryKeyRelatedField(
+        queryset=BiometricsEntry.objects.all(),
+        write_only=True
+    )
+    
     class Meta:
         model = Biometrics
-        fields = "__all__"
+        fields = (
+            'biochemical',        
+            'biometricsentry',    
+            'biochemical_name',   
+            'health_weight',
+            'value',
+            'scaled_value',
+            'expiry_date'
+        )
+
+class BiometricsEntrySerializer(serializers.ModelSerializer):
+    biometrics = BiometricsSerializer(many=True, read_only=True)
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        write_only=True
+    )
+    
+    class Meta:
+        model = BiometricsEntry
+        fields = ('created_at', 'user', 'health_score', 'biometrics')
+
+
+        

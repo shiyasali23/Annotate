@@ -6,7 +6,8 @@ from webapp.models import User
 from django.db.utils import IntegrityError
 
 
-from webapp.serializers import UserSerializer
+from webapp.serializers import UserSerializer, BiometricsEntrySerializer
+from webapp.models import BiometricsEntry, FoodScore
 from .response_handler import ResponseHandler
 
 response_handler = ResponseHandler()
@@ -34,9 +35,9 @@ class UserHandler:
             
             user = serialized_data.save()
             token, _ = Token.objects.get_or_create(user=user)
-            return response_handler.handle_response(
-                response=UserSerializer(user).data, 
-                message='User created successfully.'
+            return self.get_user_data(
+                user = user,
+                token = token.key
             )
         except Exception as e:
             return response_handler.handle_exception(
@@ -71,13 +72,9 @@ class UserHandler:
                 )
 
             token, _ = Token.objects.get_or_create(user=user)
-            return response_handler.handle_response(
-                response={
-                    "token": token.key,
-                    "user": UserSerializer(user).data
-                },
-                status_code=200,
-                message=response_handler.MESSAGES['AUTHETICATION_SUCCESS']
+            return self.get_user_data(
+                user = user,
+                token = token.key
             )
 
         except Exception as e:
@@ -99,3 +96,33 @@ class UserHandler:
             return response_handler.handle_exception(
                 exception=f"Error logging out: {str(e)}"
             )
+    
+    def get_user_data(self, user, token=None):
+        try:
+            biometrics_entries = BiometricsEntry.objects.filter(user=user)
+            serializer = BiometricsEntrySerializer(biometrics_entries, many=True)
+            
+            response_data = {
+                "biometrics_entries": serializer.data,
+                "food_scores": []
+            }
+            
+            latest_biometrics_entry = BiometricsEntry.objects.filter(user=user).latest('created_at')
+            if latest_biometrics_entry:
+                food_scores_obj = FoodScore.objects.filter(biometricsentry=latest_biometrics_entry).select_related('food')
+                
+                response_data['food_scores'] = [
+                    {"food_name": fs.food.name, "score": fs.score} for fs in food_scores_obj
+                ]
+            
+            if token:
+                response_data["token"] = token  
+
+            return response_handler.handle_response(response=response_data)
+
+        except Exception as e:
+            return response_handler.handle_exception(
+                exception=f"Error getting user data: {str(e)}"
+            )
+
+        

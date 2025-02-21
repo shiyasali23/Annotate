@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.utils import timezone
 
 from adminpanel.models import BaseModel
 
@@ -76,7 +75,7 @@ class Biometrics(BaseModel):
     value = models.FloatField()
     scaled_value = models.FloatField()  
     health_weight = models.FloatField()  
-    expired_date = models.DateTimeField()
+    expiry_date = models.DateTimeField()
 
     class Meta:
         indexes = [
@@ -87,41 +86,7 @@ class Biometrics(BaseModel):
     def __str__(self):
         return f'{self.biometricsentry.user.get_full_name()} - {self.biochemical.name} - {self.scaled_value}'
 
-    def scale_biometrics(self, healthy_min, healthy_max, i):
-        optimum_value = (healthy_min + healthy_max) / 2
-        if healthy_min <= i <= healthy_max:
-            return round(2 * (i - optimum_value) / (healthy_max - healthy_min), 2)
-        elif i < healthy_min:
-            return round((i - healthy_min), 2)
-        elif i > healthy_max:
-            return round((i - healthy_max), 2)
-
-    def scale_health_score(self, healthy_min, healthy_max, i):
-        optimum_value = (healthy_min + healthy_max) / 2
-        if healthy_min <= i <= healthy_max:
-            return round(1 - abs(2 * (i - optimum_value) / (healthy_max - healthy_min)), 2)
-        elif i < healthy_min:
-            return round((i - healthy_min), 2)
-        elif i > healthy_max:
-            return round((healthy_max - i), 2)
-
-    def get_healthy_range(self, gender):
-        if gender == 'female':
-            return self.biochemical.female_min, self.biochemical.female_max
-        return self.biochemical.male_min, self.biochemical.male_max
-
-    def save(self, *args, **kwargs):
-        if self.value is not None and self.biochemical:
-            healthy_min, healthy_max = self.get_healthy_range(self.biometricsentry.user.gender)
-
-            self.scaled_value = self.scale_biometrics(healthy_min, healthy_max, float(self.value))
-            self.health_weight = self.scale_health_score(healthy_min, healthy_max, float(self.value))
-            self.expired_date = timezone.now() + timedelta(days=self.biochemical.validity_days)
-        else:
-            self.scaled_value = None
-            self.health_weight = None
-            self.expired_date = None
-        super().save(*args, **kwargs)
+    
 
 class FoodScore(BaseModel):
     biometricsentry = models.ForeignKey(BiometricsEntry, on_delete=models.CASCADE, related_name='food_scores')

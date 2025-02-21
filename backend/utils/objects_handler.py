@@ -26,7 +26,7 @@ class ObjectsHandler:
             return serializer.data, None
         
         except Exception as e:
-            logger.error(f"Error fetching {model.__name__}: {e}", exc_info=True)
+            logger.error(f"Error fetching all {model.__name__}: {e}", exc_info=True)
             return None, e
         
     def get_biochemicals(self, is_response=True):
@@ -47,7 +47,7 @@ class ObjectsHandler:
             return data, None
              
         except Exception as e:
-            logger.error(f"Error fetching biochemicals: {e}", exc_info=True)
+            logger.error(f"Error fetching biochemicals ha ha: {e}", exc_info=True)
             return None, e
 
          

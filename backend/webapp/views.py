@@ -11,7 +11,6 @@ from utils.biometrics_handler import BiometricsHandler
 
 user_handler = UserHandler()
 response_handler = ResponseHandler()
-biometrics_handler = BiometricsHandler()
 
 
 #------------------------Authentication------------------------
@@ -35,11 +34,17 @@ def authenticate(request):
 
 #------------------------Biometrics------------------------
 
-@api_view(['POST'])
+
+@api_view(['POST', 'GET'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def biometrics_view(request):
+    biometrics_handler = BiometricsHandler()
     try:
-        return biometrics_handler.handle_biometrics(user=request.user, requested_data=request.data['data'])
+        if request.method == 'POST':
+            return biometrics_handler.handle_biometrics(user=request.user, requested_data=request.data['data'])
+        
+        if request.method == 'GET':
+            return user_handler.get_user_data(user=request.user)
     except Exception as e:
         return response_handler.handle_exception(exception=f"Error handling biometrics: {str(e)}")

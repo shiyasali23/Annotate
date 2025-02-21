@@ -15,7 +15,7 @@ response_handler = ResponseHandler()
 @api_view(['GET'])
 def handle_biochemicals(request):
     try:
-        biochemicals, error = objects_handler.get_biochemicals(is_response=False)
+        biochemicals, error = objects_handler.get_biochemicals()
         if error:
             return response_handler.handle_exception(
                 exception=f"Error fetching biochemicals: {error}"

@@ -5,9 +5,9 @@ from django.utils import timezone
 from datetime import timedelta
 
 
-
 from utils.objects_handler import ObjectsHandler
 from utils.response_handler import ResponseHandler
+from utils.user_handler import UserHandler
 
 from webapp.serializers import BiometricsEntrySerializer,BiometricsSerializer
 
@@ -15,9 +15,18 @@ logger = logging.getLogger(__name__)
 
 objects_handler = ObjectsHandler()
 response_handler = ResponseHandler()
+user_handler = UserHandler()
 
 class BiometricsHandler:
-    def __init__(self):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._init_once()
+        return cls._instance
+
+    def _init_once(self):
         self.male_biochemicals_data = []
         self.female_biochemicals_data = []
         self.biochemicals_validity_data = []
@@ -25,6 +34,7 @@ class BiometricsHandler:
         self._load_biochemicals()
 
     def _load_biochemicals(self):
+        print(f"loading")
         try:
             biochemicals, error = objects_handler.get_biochemicals(is_response=False)       
             if error:
@@ -168,14 +178,11 @@ class BiometricsHandler:
                 return response_handler.handle_exception(
                     exception=f"Error on getting scaled biometrics: {error}"
                 )
-
-            biometrics_data = []
-            # Pre-calculate all expiry dates using datetime.timedelta explicitly
-            expiry_dates = [
-                timezone.now() + datetime.timedelta(days=self.biochemicals_validity_data[id - 1])
-                for id in valid_ids
-            ]
+            current_timestamp = timezone.now()
             
+            
+            
+            biometrics_data = []
             for index, id in enumerate(valid_ids):
                 biometrics_data.append({
                     "biometricsentry": biometrics_entry,  
@@ -183,34 +190,19 @@ class BiometricsHandler:
                     "value": values[index],
                     "scaled_value": scaled_biometrics[index],  
                     "health_weight": scaled_health_weights[index],  
-                    "expired_date": expiry_dates[index]  # Use pre-calculated date
+                    "expiry_date": current_timestamp + timedelta(days=self.biochemicals_validity_data[id - 1])
                 })
 
-            try:
-                print("Debug - Before serializer")
-                biometrics_serializer = BiometricsSerializer(data=biometrics_data, many=True)
-                print("Debug - After serializer creation")
-                if biometrics_serializer.is_valid():
-                    print("Debug - Serializer is valid")
-                    print("Debug - Data being saved:", biometrics_data)  # Let's see the data
-                    biometrics_instances = biometrics_serializer.save()
-                    print("Debug - After save")
-                    return response_handler.handle_response(
-                        response=BiometricsSerializer(biometrics_instances, many=True).data
-                    )
-                else:
-                    print(f"Debug - Serializer errors: {biometrics_serializer.errors}")
-                    return response_handler.handle_exception(
-                        exception=f"Error on Biometrics serializer {biometrics_serializer.errors}"
-                    )
-            except Exception as e:
-                print(f"Debug - Inner exception: {str(e)}")
-                print(f"Debug - Inner timedelta available: {'timedelta' in globals()}")
-                raise
+            biometrics_serializer = BiometricsSerializer(data=biometrics_data, many=True)
+            if biometrics_serializer.is_valid():
+                biometrics_serializer.save()
+                return user_handler.get_user_data(user)
+            else:
+                return response_handler.handle_exception(
+                    exception=f"Error on Biometrics serializer {biometrics_serializer.errors}"
+                )
 
         except Exception as e:
-            print(f"Debug - Outer exception: {str(e)}")
-            print(f"Debug - Outer timedelta available: {'timedelta' in globals()}")
             return response_handler.handle_exception(
                 exception=f"Error creating biometrics: {str(e)}"
             )
@@ -232,13 +224,4 @@ class BiometricsHandler:
     
 
             
-    
-
-
-    
-    
-
-
-
-biometrics_handler = BiometricsHandler()
 

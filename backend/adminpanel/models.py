@@ -5,13 +5,13 @@ import uuid
 class BaseModel(models.Model):
     id = models.BigAutoField(primary_key=True, unique=True, editable=False)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    updated = models.DateTimeField(auto_now=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta:
         abstract = True
         indexes = [
-            models.Index(fields=['created']),
+            models.Index(fields=['created_at']),
         ]
 
 class Category(BaseModel):

@@ -43,4 +43,4 @@ class Command(BaseCommand):
             sys.exit(1)  
 
         self.stdout.write(self.style.SUCCESS("Biochemicals data import completed successfully."))
-        sys.exit(0)  
+         

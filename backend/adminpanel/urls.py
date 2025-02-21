@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
 
-    path('biochemichals/', views.handle_biochemicals, name='biochemicals'),
+    path('biochemichals', views.handle_biochemicals, name='biochemicals'),
 
 
 ]

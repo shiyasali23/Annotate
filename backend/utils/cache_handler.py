@@ -13,7 +13,6 @@ class CacheHandler:
             return None
 
     def set_to_cache(self, cache_key, data):
-        
         try:
             cache.set(cache_key, data, timeout=self.cache_timeout)
         except Exception as e:

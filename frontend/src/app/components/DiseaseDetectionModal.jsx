@@ -23,7 +23,7 @@ import {
 import { Loader } from "lucide-react";
 
 const DiseaseDetectionModal = ({ isOpen, onClose }) => {
-  const { diseaseDetectionModals, setDiseaseDetectionModals } = useData();
+  const { diseaseDetectionModals, setDiseaseDetectionModals, dignosisModelsTypes } = useData();
   const [loading, setLoading] = useState(false);
   const [predictionLoading, setPredictionLoading] = useState(false);
   const [openAcc, setOpenAcc] = useState(null);
@@ -75,7 +75,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
 
   const loadModels = useCallback(async () => {
     setLoading(true);
-    const models = await getModels("disease_detections");
+    const models = await getModels(dignosisModelsTypes[1]);
     setDiseaseDetectionModals(models);
     updateInputValuesArray(models);
     initializeErrorsDict(models);

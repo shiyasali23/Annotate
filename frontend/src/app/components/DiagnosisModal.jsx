@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import DiagnosisResultComponent from "./DiagnosisResultComponent";
 
 const DiagnosisModal = ({ isOpen, onClose }) => {
-  const { diagnosisModel, setDiagnosisModel } = useData();
+  const { diagnosisModel, setDiagnosisModel, dignosisModelsTypes } = useData();
   const [inputValues, setInputValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [predictionLoading, setPredictionLoading] = useState(false);
@@ -41,14 +41,11 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
       : {};
   }, [diagnosisModel]);
 
-  useEffect(() => {
-    if (!diagnosisModel) loadModel();
-    initializeInputValues();
-  }, [featuresCategory, mappableFeatures, diagnosisModel]);
+
 
   const loadModel = useCallback(async () => {
     setLoading(true);
-    const model = await getModels("diagnosis_model");
+    const model = await getModels(dignosisModelsTypes[0]);
     setDiagnosisModel(model);
     setLoading(false);
   }, [setDiagnosisModel]);
@@ -72,11 +69,7 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
     return Object.values(inputValues).filter((v) => v !== 0).length >= 5;
   }, [inputValues]);
 
-  useEffect(() => {
-    setErrorMessage(
-      validateInputValues() ? null : "Select atleast 5 symptoms"
-    );
-  }, [inputValues, validateInputValues]);
+  
 
   const handleChange = (symptom, value) => {
     setInputValues((prev) => ({ ...prev, [symptom]: value }));
@@ -93,11 +86,23 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
     setPredictionLoading(false);
   };
 
+  useEffect(() => {
+    if (diagnosisModel.length === 0) loadModel();
+  }, []);
+
+  useEffect(() => {
+    initializeInputValues();
+  }, [featuresCategory, mappableFeatures]);
+
+  useEffect(() => {
+    setErrorMessage(validateInputValues() ? null : "Select atleast 5 symptoms");
+  }, [inputValues, validateInputValues]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative bg-white shadow-lg w-[95vw] max-w-6xl p-6 h-[90vh] ">
+      <div className="relative  bg-white shadow-lg w-[95vw] max-w-6xl p-6 max-h-[90vh] min-h-[30vh] ">
         <AiOutlineCloseSquare
           className="absolute right-5 top-5 cursor-pointer text-3xl bg-black text-white hover:scale-110 transition duration-150"
           onClick={onClose}
@@ -106,11 +111,11 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
           <LoadingComponent
             text={predictionLoading ? "Finding disease" : "Setting up"}
           />
-        ) : !diagnosisModel ? (
-          <ErrorComponent handleTryAgain={() => window.location.reload()} />
+        ) : diagnosisModel.length === 0 ? (
+          <ErrorComponent handleTryAgain={() => loadModel()} />
         ) : diagnosisPrediction ? (
           <DiagnosisResultComponent
-            onClose={() => setDiagnosisPrediction(null) }
+            onClose={() => setDiagnosisPrediction(null)}
             prediction={diagnosisPrediction}
           />
         ) : (

@@ -25,9 +25,9 @@ const About = () => {
         {/* Text Section */}
         <div className="w-full      flex items-center p-4 lg:p-9">
           <h1 className="tracking-tight   leading-snug text-left text-xs sm:text-sm md:text-base lg:text-xl font-medium">
-            <span className="cursor-pointer font-bold text-sm sm:text-base">
+            <h1 className="cursor-pointer font-bold text-5xl ">
               {companyName}
-            </span>{" "}
+            </h1>{" "}
             is designed to manage health. We offer various services from{" "}
             <span className="cursor-pointer font-semibold underline">
               Recommending Food

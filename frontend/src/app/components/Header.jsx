@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { FaUser, FaCaretDown, FaBook } from "react-icons/fa";
+import { FaUser, FaCaretDown } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 import Link from "next/link";
 import { useData } from "@/contexts/dataContexts";
@@ -45,7 +45,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="  w-full   h-[8vh] xl:h-[12vh] xl:mb-2    flex justify-center items-center  relative">
+    <header className="w-full sticky  z-50 top-0 bg-white   h-[8vh] xl:h-[12vh] xl:mb-2    flex justify-center items-center ">
       {/* Logo section */}
       <div className="text-xl font-semibold flex xl:justify-center xl:items-center w-full sm:text-left ">
         <Link href="/" className="flex items-center">
@@ -82,7 +82,7 @@ const Header = () => {
             <div
               id="dropdownMenu"
               ref={dropdownRef}
-              className="absolute right-0  bg-white bg-opacity-90 text-black rounded-lg shadow-lg w-56 z-10 border border-gray-200"
+              className="absolute right-0  bg-white  text-black rounded-lg shadow-lg w-56 z-10 border border-gray-200"
               onMouseEnter={handleMouseEnter}
             >
               <ul className="py-2">
@@ -90,9 +90,9 @@ const Header = () => {
                   <Link
                     key={index}
                     href={`/${service[1]}`}
-                    className="block px-4 py-2 hover:bg-gray-200 rounded transition duration-200"
+                    className="block  mb-1 pl-4 py-2 hover:bg-gray-200 rounded transition duration-200"
                   >
-                    {service[1]}
+                    <p className="text-sm w-full font-medium border-b border-dashed">{service[1]}</p>
                   </Link>
                 ))}
               </ul>

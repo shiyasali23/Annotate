@@ -14,9 +14,9 @@ export default function Home() {
 
   return (
     <main className="w-full" style={{ scrollBehavior: "smooth" }}>
-      <Header  />
+      <Header  className="fixed top-0 left-0 w-full bg-white shadow-md z-50"/>
 
-      <section className="h-[92vh] xl:h-[88vh] flex flex-col items-center justify-center xl:px-32 border-gray-300 bg-white relative overflow-hidden">
+      <section className="h-[70vh] xl:h-[88vh] flex flex-col items-center justify-center xl:px-32 border-gray-300 bg-white relative overflow-hidden">
         <div className="w-full max-w-6xl mx-auto flex flex-col justify-center items-center text-right gap-5 lg:gap-10">
           <h1 className="text-5xl lg:text-9xl w-full text-center font-bold">
             {Array.from("Who we are?").map((char, i) => (

@@ -9,21 +9,30 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const companyName = "Biolabs";
   const servicesArray = [
-    ["Know which foods are good for you ", "Food Recommendation"],
-    ["Detect diseases with your biochemicals detection", "Diseases Detections"],
-    ["Monitoring  your health and biochemicals", "Analytics Platform"],
-    ["Feeling any symptoms? Check out", "Diagnostics Center"],
-    ["Store you records and get insights", "Bio Records"],
-    ["Artificail inteligence is here to answer you", "Bio Gpt"],
-
-  ]
+    ["Get Suggestions Of Foods For You", "Food Recommendation"],
+    ["Detect Diseases With Biochemicals", "Diseases Detections"],
+    ["Monitoring  Health And Biochemicals", "Analytics Platform"],
+    ["Feeling Any Symptoms? Check Out", "Diagnostics Center"],
+    ["Store Medical Records For Analysis", "Bio Records"],
+    ["Chat With Our Artificial Inteligence", "Bio Gpt"],
+  ];
 
   const [diseaseDetectionModals, setDiseaseDetectionModals] = useState([]);
-  const [diagnosisModel, setDiagnosisModel ] = useState(null);
+  const [diagnosisModel, setDiagnosisModel] = useState([]);
+  const dignosisModelsTypes = ["diagnosis_model", "disease_detections"];
 
-  
   return (
-    <DataContext.Provider value={{ servicesArray,companyName, diseaseDetectionModals, setDiseaseDetectionModals, diagnosisModel, setDiagnosisModel  }}>
+    <DataContext.Provider
+      value={{
+        servicesArray,
+        companyName,
+        diseaseDetectionModals,
+        setDiseaseDetectionModals,
+        diagnosisModel,
+        setDiagnosisModel,
+        dignosisModelsTypes,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

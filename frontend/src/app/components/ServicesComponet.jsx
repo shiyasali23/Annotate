@@ -18,20 +18,21 @@ const ServicesComponent = () => {
   };
 
   return (
-    <div className="w-full min-h-[92vh] xl:h-[88vh] flex items-center justify-center p-4">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-6xl w-full">
+    <div className="w-full min-h-[92vh] xl:h-[88vh] flex flex-col items-center justify-evenly p-4 ">
+      <h1 className="text-4xl xl:text-5xl underline underline-offset-8  font-bold">Our Services</h1>
+      <div className=" grid grid-cols-2 md:grid-cols-3 gap-7 xl:px-12 w-full">
         {servicesArray.map((service, index) => (
           <div
             key={index}
             onClick={() => handleServiceClick(index)}
-            className="bg-white  shadow p-3 sm:p-4 lg:p-6 mx-auto flex flex-col justify-between gap-2 sm:gap-3"
+            className="shadow-xl  hover:shadow-2xl px-1 py-4 xl:p-5 sm:h-[8rem] xl:h-[12rem] flex flex-col justify-center   gap-2"
           >
-            <h1 className="text-sm sm:text-base lg:text-xl font-semibold text-center leading-tight">
+            <p className="text-xs xl:text-xl  font-semibold text-center leading-tight px-2">
               {service[0]}
-            </h1>
-            <span className="mx-auto relative inline-flex w-fit justify-center items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-black text-white text-xs sm:text-sm lg:text-base font-medium cursor-pointer overflow-hidden group border-2 border-black">
+            </p>
+            <span className="mx-auto relative inline-flex w-fit justify-center items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-black text-white text-xs sm:text-xs lg:text-base font-medium cursor-pointer overflow-hidden group border-2 border-black">
               <span className="absolute inset-0 bg-white transform translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-              <span className="relative group-hover:text-black transition-colors duration-500 ease-out">
+              <span className="relative sm:text-xs lg:text-base  group-hover:text-black transition-colors duration-500 ease-out">
                 {service[1]}
               </span>
             </span>

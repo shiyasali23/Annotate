@@ -184,12 +184,14 @@ class BiometricsHandler:
             
             biometrics_data = []
             for index, id in enumerate(valid_ids):
+                scaled_value = scaled_biometrics[index]
                 biometrics_data.append({
                     "biometricsentry": biometrics_entry,  
                     "biochemical": id,  
                     "value": values[index],
-                    "scaled_value": scaled_biometrics[index],  
+                    "scaled_value": scaled_value,  
                     "health_weight": scaled_health_weights[index],  
+                    "is_hyper": True if scaled_value > 1 else (False if scaled_value < -1 else None),
                     "expiry_date": current_timestamp + timedelta(days=self.biochemicals_validity_data[id - 1])
                 })
 

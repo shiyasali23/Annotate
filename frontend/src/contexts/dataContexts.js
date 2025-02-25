@@ -1,11 +1,8 @@
-// src/contexts/DataContext.js
 "use client";
 import React, { createContext, useContext, useState } from "react";
 
-// Define the context
 const DataContext = createContext();
 
-// Provider component
 export const DataProvider = ({ children }) => {
   const companyName = "Biolabs";
   const servicesArray = [
@@ -20,6 +17,7 @@ export const DataProvider = ({ children }) => {
   const [diseaseDetectionModals, setDiseaseDetectionModals] = useState([]);
   const [diagnosisModel, setDiagnosisModel] = useState([]);
   const dignosisModelsTypes = ["diagnosis_model", "disease_detections"];
+  const authApiOPtions = ['authenticate', 'signup']
 
   return (
     <DataContext.Provider
@@ -31,6 +29,7 @@ export const DataProvider = ({ children }) => {
         diagnosisModel,
         setDiagnosisModel,
         dignosisModelsTypes,
+        authApiOPtions
       }}
     >
       {children}
@@ -38,7 +37,6 @@ export const DataProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use data context
 export const useData = () => {
   const context = useContext(DataContext);
   if (!context) {

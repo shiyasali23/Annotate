@@ -1,5 +1,6 @@
 import "./globals.css";
 import { DataProvider } from "@/contexts/dataContexts";
+import { UserProvider } from "@/contexts/userContext";
 
 
 
@@ -26,7 +27,9 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <DataProvider>
+          <UserProvider>
         {children}
+        </UserProvider>
         </DataProvider>
       </body>
     </html>

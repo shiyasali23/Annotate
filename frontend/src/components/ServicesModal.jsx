@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
-import Button from "./Button";
-import { AiOutlineCloseSquare } from "react-icons/ai";
-import { TiTick } from "react-icons/ti";import { useData } from "@/contexts/dataContexts";
 import { useRouter } from "next/navigation";
+
+
+
+import { AiOutlineCloseSquare } from "react-icons/ai";
+import { TiTick } from "react-icons/ti";
+
+import Button from "./Button";
+import { useData } from "@/contexts/dataContexts";
 
 const ServicesModal = ({ isOpen, onClose }) => {
     const router = useRouter();

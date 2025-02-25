@@ -14,17 +14,17 @@ response_handler = ResponseHandler()
 
 class UserHandler:
     
-    def sign_up(self, **extra_fields):
+    def sign_up(self, requested_data):
         try:
-            required_fields = {'first_name', 'last_name', 'password', 'date_of_birth', 'height_cm', 'weight_kg', 'gender', 'email'}
-            missing_fields = required_fields - extra_fields.keys()
+            required_fields = {'first_name', 'last_name', 'password', 'gender', 'email'}
+            missing_fields = required_fields - requested_data.keys()
             if missing_fields:
                 return response_handler.handle_response(
                     error=response_handler.MESSAGES['REQUIRED_FIELDS_MISSING'], 
                     status_code=400, 
                     message=f"Missing required fields: {', '.join(missing_fields)}"
                 )
-            serialized_data = UserSerializer(data=extra_fields)
+            serialized_data = UserSerializer(data=requested_data)
             if not serialized_data.is_valid():
                 return response_handler.handle_exception(
                     exception=f"Error creating user: {serialized_data.errors}",
@@ -47,7 +47,9 @@ class UserHandler:
             )
 
 
-    def authenticate_user(self, email=None, password=None):
+    def authenticate_user(self, requested_data):
+        email = requested_data.get('email')
+        password = requested_data.get('password')
         if not email or not password:
             return response_handler.handle_exception(
                 error=response_handler.MESSAGES['REQUIRED_FIELDS_MISSING'],
@@ -107,13 +109,17 @@ class UserHandler:
                 "food_scores": []
             }
             
-            latest_biometrics_entry = BiometricsEntry.objects.filter(user=user).latest('created_at')
-            if latest_biometrics_entry:
-                food_scores_obj = FoodScore.objects.filter(biometricsentry=latest_biometrics_entry).select_related('food')
-                
-                response_data['food_scores'] = [
-                    {"food_name": fs.food.name, "score": fs.score} for fs in food_scores_obj
-                ]
+            if biometrics_entries.exists():
+                latest_biometrics_entry = biometrics_entries.latest('created_at')
+                if latest_biometrics_entry:
+                    food_scores_qs = FoodScore.objects.filter(
+                        biometricsentry=latest_biometrics_entry
+                    ).select_related('food')
+                    
+                    response_data["food_scores"] = [
+                        {"food_name": fs.food.name, "score": fs.score}
+                        for fs in food_scores_qs
+                    ]
             
             if token:
                 response_data["token"] = token  

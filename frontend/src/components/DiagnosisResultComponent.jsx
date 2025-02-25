@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { IoChevronBackCircle } from "react-icons/io5";
-import ResultComponent from "./ResultComponent";
 import ProbabilitiesGraphComponent from "./ProbabilitiesGraphComponent";
 
 const DiagnosisResultComponent = ({ onClose, prediction }) => {

@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { AiOutlineCloseSquare } from "react-icons/ai";
+
+import { useData } from "@/contexts/dataContexts";
+import { getModels, getDiagnosisPrediction } from "@/utils/diagnosisUtils";
+
 import LoadingComponent from "./LoadingComponent";
 import ErrorComponent from "./ErrorComponent";
-import { getModels, getDiagnosisPrediction } from "@/utils/diagnosisUtils";
-import { useData } from "@/contexts/dataContexts";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,

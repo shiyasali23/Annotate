@@ -4,6 +4,7 @@ import LoadingComponent from "./LoadingComponent";
 import ErrorComponent from "./ErrorComponent";
 import { getModels, getDiseasePredictions } from "@/utils/diagnosisUtils";
 import { useData } from "@/contexts/dataContexts";
+
 import {
   Accordion,
   AccordionContent,

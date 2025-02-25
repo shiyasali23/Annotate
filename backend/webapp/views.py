@@ -18,16 +18,19 @@ response_handler = ResponseHandler()
 @api_view(['POST'])
 def signup(request):
     try:
-        return user_handler.sign_up(**request.data) 
+        return user_handler.sign_up(
+            requested_data=request.data['data']
+        ) 
     except Exception as e:
         return response_handler.handle_exception(exception=f"Error creating user: {str(e)}")
 
 @api_view(['POST'])
 def authenticate(request):
     try:
-        email = request.data.get('email')
-        password = request.data.get('password')
-        return user_handler.authenticate_user(email=email, password=password)
+        
+        return user_handler.authenticate_user(
+            requested_data=request.data['data']
+        )
         
     except Exception as e:
         return response_handler.handle_exception(exception=f"Error authenticating user: {str(e)}")
@@ -42,9 +45,16 @@ def biometrics_view(request):
     biometrics_handler = BiometricsHandler()
     try:
         if request.method == 'POST':
-            return biometrics_handler.handle_biometrics(user=request.user, requested_data=request.data['data'])
+            return biometrics_handler.handle_biometrics(
+                user=request.user, 
+                requested_data=request.data['data']
+            )
         
         if request.method == 'GET':
-            return user_handler.get_user_data(user=request.user)
+            return user_handler.get_user_data(
+                user=request.user
+            )
     except Exception as e:
-        return response_handler.handle_exception(exception=f"Error handling biometrics: {str(e)}")
+        return response_handler.handle_exception(
+            exception=f"Error handling biometrics: {str(e)}"
+        )

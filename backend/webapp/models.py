@@ -7,6 +7,9 @@ from adminpanel.models import BaseModel
 
 #------------------------------User---------------------------------
 
+
+
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -74,8 +77,10 @@ class Biometrics(BaseModel):
     biometricsentry = models.ForeignKey(BiometricsEntry, on_delete=models.CASCADE, related_name='biometrics')
     value = models.FloatField()
     scaled_value = models.FloatField()  
-    health_weight = models.FloatField()  
+    health_weight = models.FloatField() 
+    is_hyper = models.BooleanField(null=True) 
     expiry_date = models.DateTimeField()
+    
 
     class Meta:
         indexes = [

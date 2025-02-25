@@ -1,8 +1,9 @@
-import { useData } from "@/contexts/dataContexts";
 import React, { useState } from "react";
 import ServicesModal from "./ServicesModal";
 import DiseaseDetectionModal from "./DiseaseDetectionModal";
 import DiagnosisModal from "./DiagnosisModal";
+
+import { useData } from "@/contexts/dataContexts";
 
 const ServicesComponent = () => {
   const { servicesArray } = useData();

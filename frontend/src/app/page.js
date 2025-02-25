@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import ServicesComponet from "./components/ServicesComponet";
-import Header from "./components/Header";
+import ServicesComponent from "@/components/ServicesComponet";
+import Header from "@/components/Header";
 
 export default function Home() {
   const handleScanClick = (event) => {
@@ -77,7 +77,7 @@ export default function Home() {
       </section>
 
       <section  id="vision-section">
-        <ServicesComponet />
+        <ServicesComponent />
       </section>
     </main>
   );

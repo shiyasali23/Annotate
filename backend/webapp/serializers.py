@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import User, BiometricsEntry, Biometrics
 
+from .models import User, BiometricsEntry, Biometrics
 from adminpanel.models import Biochemical
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,21 +15,20 @@ class UserSerializer(serializers.ModelSerializer):
             'email': {'required': True},
             'first_name': {'required': True},
             'last_name': {'required': True},
-            'date_of_birth': {'required': True},
-            'height_cm': {'required': True},
-            'weight_kg': {'required': True},
             'gender': {'required': True},
+            'date_of_birth': {'required': False},
+            'height_cm': {'required': False},
+            'weight_kg': {'required': False}
+            
         }
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
     
-from rest_framework import serializers
-from adminpanel.models import Biochemical
-from webapp.models import BiometricsEntry, Biometrics
 
 class BiometricsSerializer(serializers.ModelSerializer):
-    biochemical_name = serializers.CharField(source='biochemical.name', read_only=True)
+    name = serializers.CharField(source='biochemical.name', read_only=True)
+    category = serializers.CharField(source='biochemical.category.name', read_only=True)
     health_weight = serializers.FloatField(write_only=True)
     biochemical = serializers.PrimaryKeyRelatedField(
         queryset=Biochemical.objects.all(),
@@ -43,12 +42,15 @@ class BiometricsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Biometrics
         fields = (
+            'id',
             'biochemical',        
-            'biometricsentry',    
-            'biochemical_name',   
-            'health_weight',
+            'biometricsentry',  
+            'health_weight',  
+            'name',
+            'category',   
             'value',
             'scaled_value',
+            'is_hyper',
             'expiry_date'
         )
 

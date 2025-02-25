@@ -38,6 +38,9 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.NOTICE('Creating biochemicals'))
         call_command("biochemichals_units_create")
+        
+        self.stdout.write(self.style.NOTICE('Demo user creation'))
+        call_command("user_create")
 
         User = get_user_model()
         self.stdout.write(self.style.NOTICE('Checking for existing superuser'))

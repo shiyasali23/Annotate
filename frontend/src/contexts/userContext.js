@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { processBiometricData } from "@/workers/biometricsWorker";
 
 const UserContext = createContext();
@@ -40,11 +40,16 @@ export const UserProvider = ({ children }) => {
     setBiometricsLoading(false);
   };
 
-  console.log("biochemicals", biochemicals);
-  console.log("latestBiometrics", latestBiometrics);
-  console.log("hyperBiochemicals", hyperBiochemicals);
-  console.log("hypoBiometrics", hypoBiometrics);
-  console.log("healthScore", healthScore);
+console.log("biochemicals", biochemicals);
+console.log("latestBiometrics", latestBiometrics);
+console.log("hyperBiochemicals", hyperBiochemicals);
+console.log("hypoBiometrics", hypoBiometrics);
+console.log("healthScore", healthScore);
+
+
+
+
+
 
   return (
     <UserContext.Provider

@@ -34,7 +34,6 @@ class BiometricsHandler:
         self._load_biochemicals()
 
     def _load_biochemicals(self):
-        print(f"loading")
         try:
             biochemicals, error = objects_handler.get_biochemicals(is_response=False)       
             if error:
@@ -71,7 +70,11 @@ class BiometricsHandler:
             logger.error(f"Error validating biochemicals: {e}")
             return np.array([]), [], []
     
-    def handle_biometrics(self, user, requested_data):       
+    def handle_biometrics(self, user, requested_data): 
+        if self.healthy == False:
+            return response_handler.handle_exception(
+                exception=f"Error loading biochemicals in BiometricsHandler"
+        )      
         try: 
             values, valid_ids, invalid_ids = self.validate_requested_data(requested_data=requested_data)
             if len(invalid_ids) > 0:
@@ -152,7 +155,6 @@ class BiometricsHandler:
     def _scale_health_weights(self,values, healthy_mins, healthy_maxs):
         try:
             optimum_value = (healthy_mins + healthy_maxs) / 2.0
-
             result = np.where(
                 (values >= healthy_mins) & (values <= healthy_maxs),
                 np.round(1 - np.abs(2 * (values - optimum_value) / (healthy_maxs - healthy_mins)), 2),

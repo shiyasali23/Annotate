@@ -21,7 +21,7 @@ class Command(BaseCommand):
                     date_of_birth="1990-01-01",
                     height_cm=175,
                     weight_kg=70,
-                    gender="male",
+                    gender="female",
                     email="jhnoe@example.com"
                 )
         except Exception as e:

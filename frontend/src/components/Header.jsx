@@ -57,7 +57,7 @@ const Header = () => {
       </div>
 
       {/* Right section */}
-      <div className="absolute    right-4 flex items-center gap-5 xl:gap-20">
+      <div className="absolute    right-10 flex items-center gap-2 xl:gap-20">
         <div className="relative   group" onMouseEnter={handleMouseEnter}>
           <button
             id="dropdownButton"

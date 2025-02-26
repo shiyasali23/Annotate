@@ -36,14 +36,19 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE('Applying migrations'))
         call_command("migrate")
 
-        self.stdout.write(self.style.NOTICE('Creating biochemicals'))
-        call_command("biochemichals_units_create")
+        self.stdout.write(self.style.NOTICE('Biochemicals units creating'))
+        call_command("biochemicals_units_create")
         
-        self.stdout.write(self.style.NOTICE('Demo user creation'))
+        self.stdout.write(self.style.NOTICE('Conditions creating'))
+        call_command("conditions_create")
+        
+        self.stdout.write(self.style.NOTICE('Demo user creating'))
         call_command("user_create")
+        
+        self.stdout.write(self.style.NOTICE('Biometrics creating'))
+        call_command("biometrics_create")
 
         User = get_user_model()
-        self.stdout.write(self.style.NOTICE('Checking for existing superuser'))
 
         try:
             self.stdout.write(self.style.NOTICE('Creating superuser'))

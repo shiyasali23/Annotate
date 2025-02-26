@@ -28,7 +28,7 @@ const AuthComponent = ({setIsLogined}) => {
   const { authApiOPtions } = useData();
   const {handleAuthResponse} = useUser();
   
-  const [isSignUp, setIsSignUp] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [inputFields, setInputFields] = useState({

@@ -1,13 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
+from django.db.models import Prefetch
+
 from rest_framework.authtoken.models import Token
 
 from webapp.models import User
-from django.db.utils import IntegrityError
-
-
 from webapp.serializers import UserSerializer, BiometricsEntrySerializer
-from webapp.models import BiometricsEntry, FoodScore
+from webapp.models import BiometricsEntry, FoodScore, Biometrics
 from .response_handler import ResponseHandler
 
 response_handler = ResponseHandler()
@@ -101,7 +101,18 @@ class UserHandler:
     
     def get_user_data(self, user, token=None):
         try:
-            biometrics_entries = BiometricsEntry.objects.filter(user=user)
+            biometrics_entries = (
+                BiometricsEntry.objects.filter(user=user)
+                .only('health_score', 'created_at')
+                .prefetch_related(
+                    Prefetch(
+                        'biometrics',
+                        queryset=Biometrics.objects.select_related('biochemical', 'biochemical__category')
+                                    .only('value', 'scaled_value', 'is_hyper', 'expiry_date',
+                                        'biochemical__name', 'biochemical__category__name')
+                    )
+                )
+            )
             serializer = BiometricsEntrySerializer(biometrics_entries, many=True)
             
             response_data = {
@@ -115,11 +126,11 @@ class UserHandler:
                     food_scores_qs = FoodScore.objects.filter(
                         biometricsentry=latest_biometrics_entry
                     ).select_related('food')
-                    
-                    response_data["food_scores"] = [
-                        {"food_name": fs.food.name, "score": fs.score}
-                        for fs in food_scores_qs
-                    ]
+                    if food_scores_qs.exists():
+                        response_data["food_scores"] = [
+                            {"food_name": fs.food.name, "score": fs.score}
+                            for fs in food_scores_qs
+                        ]
             
             if token:
                 response_data["token"] = token  

@@ -64,7 +64,7 @@ const ServicesModal = ({ isOpen, onClose }) => {
             <div>
               <h1 className="mt-5 font-bold text-2xl text-center">Oops.. No Records Found.</h1>
               <div className="flex flex-col items-center gap-5 mt-12">
-                <Button text="Get Started" className="w-1/2 mx-auto" onClick={() => setIsSettingUp(true)} />
+                <Button text="Get Started" className="w-1/2 mx-auto" onClick={() => router.push("/About")} />
                 <span className="font-bold text-center xl:text-xl text-lg">Or</span>
                 <button className="font-bold text-center xl:text-xl text-lg underline hover:scale-110 transition duration-150"
                   onClick={() => setIsSettingUp(true)}>

@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
 
     path('biochemichals', views.handle_biochemicals, name='biochemicals'),
+    path('conditions', views.handle_conditions, name='conditions'),
 
 
 ]

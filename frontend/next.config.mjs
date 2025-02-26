@@ -2,7 +2,12 @@
 import path from 'path';
 
 export default {
-  // Enable all hosts and add needed headers for WebSocket
+  experimental: {
+    turbo: {
+      loaders: {}, // Enables Turbopack
+    },
+  },
+
   headers: async () => {
     return [
       {
@@ -14,22 +19,20 @@ export default {
           { key: 'Access-Control-Allow-Credentials', value: 'true' }
         ],
       },
-    ]
+    ];
   },
 
-  // Add WebSocket rewrite rule
   async rewrites() {
     return [
       {
         source: '/_next/webpack-hmr',
         destination: '/_next/webpack-hmr',
       },
-    ]
+    ];
   },
 
-  // Configure path alias
   webpack(config) {
     config.resolve.alias['@'] = path.join(__dirname, 'src');
     return config;
   },
-}
+};

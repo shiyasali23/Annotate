@@ -106,7 +106,8 @@ export const processBiometricData = (biometricsEntries) => {
             value: latest.value,
             scaledValue: latest.scaledValue,
             expiryDate: latest.expiryDate,
-            isExpired: latest.isExpired
+            isExpired: latest.isExpired,
+            isHyper: latest.isHyper
           };
           latestBiometrics.push(latestBiometric);
   

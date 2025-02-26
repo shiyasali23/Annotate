@@ -27,9 +27,21 @@ class UserSerializer(serializers.ModelSerializer):
     
 
 class BiometricsSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='biochemical.name', read_only=True)
-    category = serializers.CharField(source='biochemical.category.name', read_only=True)
-    health_weight = serializers.FloatField(write_only=True)
+    name = serializers.CharField(
+        source='biochemical.name', 
+        read_only=True
+    )
+    category = serializers.CharField(
+        source='biochemical.category.name', 
+        read_only=True
+    )
+    id = serializers.IntegerField(
+        source='biochemical.id', 
+        read_only=True
+    )
+    health_weight = serializers.FloatField(
+        write_only=True
+    )
     biochemical = serializers.PrimaryKeyRelatedField(
         queryset=Biochemical.objects.all(),
         write_only=True

@@ -21,8 +21,6 @@ export const UserProvider = ({ children }) => {
 
   const [userDataLoading, setUserDataLoading] = useState(true);
 
-
-
   useEffect(() => {
     setUserDataLoading(true);
     const {
@@ -34,10 +32,8 @@ export const UserProvider = ({ children }) => {
       localHyperBiochemicals,
       localHypoBiochemicals,
     } = processLocalStorrageData();
-    
+
     if (localUserData && isLogined) {
-      
-      
       setIsLogined(true);
       setUserData(localUserData);
       setHealthScore(localHealthScore);
@@ -69,8 +65,7 @@ export const UserProvider = ({ children }) => {
         hypoBiochemicals,
         hyperHypoBiochemicalsIds,
       } = processBiometricData(data.biometrics_entries);
-      
-      
+
       setHealthScore(healthScore);
       setBiometrics(biometrics);
       setLatestBiometrics(latestBiometrics);
@@ -79,7 +74,6 @@ export const UserProvider = ({ children }) => {
         healthScore: healthScore,
         biometrics: biometrics,
         latestBiometrics: latestBiometrics,
-        
       });
       if (hyperHypoBiochemicalsIds?.length) {
         handleConditions(
@@ -99,7 +93,6 @@ export const UserProvider = ({ children }) => {
   ) => {
     if (!conditionsIds?.length) return;
 
-
     const conditions = await getConditions(conditionsIds);
     if (conditions) {
       const { processedHyperBiochemicals, processedHypoBiochemicals } =
@@ -116,7 +109,6 @@ export const UserProvider = ({ children }) => {
         hypoBiochemicals: processedHypoBiochemicals,
       });
     }
-
   };
 
   const handleUserdata = (data) => {
@@ -128,10 +120,21 @@ export const UserProvider = ({ children }) => {
 
   const logOutUser = () => {
     setIsLogined(false);
-    ["token", "userdata", "healthScore", "biometrics", "latestBiometrics", "hyperBiochemicals", "hypoBiochemicals"]
-      .forEach(key => localStorage.removeItem(key));
+    setHealthScore(null);
+    setBiometrics(null);
+    setLatestBiometrics(null);
+    setHyperBiochemicals(null);
+    setHypoBiochemicals(null);
+    setUserData(null)[
+      ("token",
+      "userdata",
+      "healthScore",
+      "biometrics",
+      "latestBiometrics",
+      "hyperBiochemicals",
+      "hypoBiochemicals")
+    ].forEach((key) => localStorage.removeItem(key));
   };
-  
 
   return (
     <UserContext.Provider

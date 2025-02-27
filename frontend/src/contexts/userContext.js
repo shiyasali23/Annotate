@@ -1,67 +1,144 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import { processBiometricData } from "@/workers/biometricsWorker";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  processBiometricData,
+  processConditions,
+  processResponseData,
+} from "@/utils/user-data-worker";
+import { getConditions } from "@/lib/user-api";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [foodScore, setFoodScore] = useState([]);
-  const [healthScore, setHealthScore] = useState([]);
-  const [biochemicals, setBiochemicals] = useState([]);
-  const [latestBiometrics, setLatestBiometrics] = useState([]);
-  const [hyperBiochemicals, setHyperBiochemicals] = useState([]);
-  const [hypoBiometrics, setHypoBiometrics] = useState([]);
+  const [isLogined, setIsLogined] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [healthScore, setHealthScore] = useState(null);
+  const [biochemicals, setBiochemicals] = useState(null);
+  const [latestBiometrics, setLatestBiometrics] = useState(null);
+  const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
+  const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
 
   const [biometricsLoading, setBiometricsLoading] = useState(false);
+  const [conditionsLoading, setConditionsLoading] = useState(false);
+
+  useEffect(() => {
+    const {
+      isLogined,
+      localUserData,
+      localHealthScore,
+      localBiochemicals,
+      localLatestBiometrics,
+      localHyperBiochemicals,
+      localHypoBiochemicals,
+    } = processResponseData();
+    
+    if (localUserData && isLogined) {
+      
+      
+      setIsLogined(true);
+      setUserData(localUserData);
+      setHealthScore(localHealthScore);
+      setBiochemicals(localBiochemicals);
+      setLatestBiometrics(localLatestBiometrics);
+      setHyperBiochemicals(localHyperBiochemicals);
+      setHypoBiochemicals(localHypoBiochemicals);
+    }
+  }, []);
 
   const handleAuthResponse = (data) => {
     setBiometricsLoading(true);
-    localStorage.setItem("token", data.token);
-
-    if (data.food_score) {
-      setFoodScore(data.food_score);
+    if (data.token && data.user) {
+      processResponseData({ token: data.token, userdata: data.user });
+      setUserData(data.user);
+      setIsLogined(true);
     }
 
-    if (data.biometrics_entries && Array.isArray(data.biometrics_entries)) {
+    if (
+      Array.isArray(data.biometrics_entries) &&
+      data.biometrics_entries.length
+    ) {
       const {
         healthScore,
         biochemicals,
         latestBiometrics,
         hyperBiochemicals,
         hypoBiometrics,
+        hyperHypoBiochemicalsIds,
       } = processBiometricData(data.biometrics_entries);
+
       setHealthScore(healthScore);
       setBiochemicals(biochemicals);
       setLatestBiometrics(latestBiometrics);
-      setHyperBiochemicals(hyperBiochemicals);
-      setHypoBiometrics(hypoBiometrics);
+
+      processResponseData({
+        healthScore: healthScore,
+        biochemicals: biochemicals,
+        latestBiometrics: latestBiometrics,
+        hyperBiochemicals: hyperBiochemicals,
+        hypoBiochemicals: hypoBiometrics,
+      });
+      if (hyperHypoBiochemicalsIds?.length) {
+        handleConditions(
+          hyperHypoBiochemicalsIds,
+          hyperBiochemicals,
+          hypoBiometrics
+        );
+      }
     }
     setBiometricsLoading(false);
   };
 
-console.log("biochemicals", biochemicals);
-console.log("latestBiometrics", latestBiometrics);
-console.log("hyperBiochemicals", hyperBiochemicals);
-console.log("hypoBiometrics", hypoBiometrics);
-console.log("healthScore", healthScore);
+  const handleConditions = async (
+    conditionsIds,
+    hyperBiochemicals,
+    hypoBiometrics
+  ) => {
+    if (!conditionsIds?.length) return;
 
+    setConditionsLoading(true);
 
+    const conditions = await getConditions(conditionsIds);
+    if (conditions) {
+      const { processedHyperBiochemicals, processedHypoBiochemicals } =
+        processConditions(conditions, hyperBiochemicals, hypoBiometrics);
 
+      if (processedHyperBiochemicals)
+        setHyperBiochemicals(processedHyperBiochemicals);
+      processResponseData({
+        hyperBiochemicals: processedHyperBiochemicals,
+      });
+      if (processedHypoBiochemicals)
+        setHypoBiochemicals(processedHypoBiochemicals);
+      processResponseData({
+        hypoBiochemicals: processedHypoBiochemicals,
+      });
+    }
 
+    setConditionsLoading(false);
+  };
 
+  const logOutUser = () => {
+    setIsLogined(false);
+    ["token", "userdata", "healthScore", "biochemicals", "latestBiometrics", "hyperBiochemicals", "hypoBiochemicals"]
+      .forEach(key => localStorage.removeItem(key));
+  };
+  
 
   return (
     <UserContext.Provider
       value={{
         handleAuthResponse,
-        foodScore,
+        logOutUser,
+        isLogined,
         healthScore,
         biochemicals,
         latestBiometrics,
         hyperBiochemicals,
-        hypoBiometrics,
+        hypoBiochemicals,
         biometricsLoading,
+        conditionsLoading,
+        userData,
       }}
     >
       {children}

@@ -20,7 +20,8 @@ class ResponseHandler():
         "REQUIRED_FIELDS_MISSING": "Required fields are missing.",
         "USER_ALREADY_EXISTS": "User with this email might already exists.",
         "ACCOUNT_DISABLED": "Account is disabled.",
-        "INVALID_DATA": "Error while validating data."
+        "INVALID_DATA": "Error while validating data.",
+        "NO_CONDITIONS": "No conditions found for the ids."
     }
 
     def handle_response(self, status_code=200, message=None, error=None ,response=None):

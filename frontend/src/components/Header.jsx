@@ -2,13 +2,16 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { FaUser, FaCaretDown } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
-import Link from "next/link";
+
 import { useData } from "@/contexts/dataContexts";
+import { useUser } from "@/contexts/userContext";
 
 const Header = () => {
   const { servicesArray } = useData();
+  const {logOutUser} = useUser();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null); // Reference for dropdown menu
@@ -101,7 +104,7 @@ const Header = () => {
         </div>
         <div className="flex items-center gap-5 sm:gap-0 md:gap-7">
           <FaUser className="cursor-pointer" size={25} />
-          <MdLogout className="cursor-pointer" size={25} />
+          <MdLogout className="cursor-pointer" size={25} onClick={() => logOutUser()}/>
         </div>
       </div>
     </header>

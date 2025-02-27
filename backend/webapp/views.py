@@ -52,9 +52,12 @@ def biometrics_view(request):
         
         if request.method == 'GET':
             return user_handler.get_user_data(
-                user=request.user
+                user=request.user,
+                user_data=False
             )
     except Exception as e:
         return response_handler.handle_exception(
-            exception=f"Error handling biometrics: {str(e)}"
+            exception=f"Error handling biometrics view: {str(e)}"
         )
+        
+        

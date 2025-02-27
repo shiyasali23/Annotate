@@ -20,14 +20,12 @@ import { Loader } from "lucide-react";
 import { useData } from "@/contexts/dataContexts";
 import { useUser } from "@/contexts/userContext";
 
-import { authenticate } from "@/utils/authUtils";
+import { authenticate } from "@/lib/auth-api";
 
-
-
-const AuthComponent = ({setIsLogined}) => {
+const AuthComponent = () => {
   const { authApiOPtions } = useData();
-  const {handleAuthResponse} = useUser();
-  
+  const { handleAuthResponse } = useUser();
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -61,23 +59,17 @@ const AuthComponent = ({setIsLogined}) => {
 
   const handleAuthenticate = async (fields, apiOption) => {
     setLoading(true);
-    try {
-      const { data, message: authMessage } = await authenticate(fields, apiOption);
-      if (authMessage) {
-        setMessage(authMessage);
-      } else if (data) {
-        handleAuthResponse(data);
-        setIsLogined(true);
-      }
-    } catch (error) {
-      console.error("Authentication error", error);
-      setMessage("Something went wrong");
-    } finally {
-      setLoading(false);
+    const { data, message: authMessage } = await authenticate(fields, apiOption);
+  
+    if (authMessage) {
+      setMessage(authMessage);
+    } else if (data) {
+      handleAuthResponse(data)
+      
     }
+    
+    setLoading(false);
   };
-
- 
 
   return (
     <Card className="w-full max-w-md border mt-3 rounded-none shadow-xl border-gray-100">
@@ -154,7 +146,9 @@ const AuthComponent = ({setIsLogined}) => {
               <Label htmlFor="gender" className="text-sm text-gray-700">
                 Gender
               </Label>
-              <Select onValueChange={(value) => handleFieldChange("gender", value)}>
+              <Select
+                onValueChange={(value) => handleFieldChange("gender", value)}
+              >
                 <SelectTrigger
                   id="gender"
                   className="h-9 rounded-none bg-white border-gray-300 focus:ring-gray-500 text-sm"

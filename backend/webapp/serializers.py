@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import User, BiometricsEntry, Biometrics
+
 from adminpanel.models import Biochemical
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,18 +28,6 @@ class UserSerializer(serializers.ModelSerializer):
     
 
 class BiometricsSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        source='biochemical.name', 
-        read_only=True
-    )
-    category = serializers.CharField(
-        source='biochemical.category.name', 
-        read_only=True
-    )
-    id = serializers.IntegerField(
-        source='biochemical.id', 
-        read_only=True
-    )
     health_weight = serializers.FloatField(
         write_only=True
     )
@@ -51,20 +40,89 @@ class BiometricsSerializer(serializers.ModelSerializer):
         write_only=True
     )
     
+    name = serializers.CharField(
+        source='biochemical.name', 
+        read_only=True
+    )
+    category = serializers.CharField(
+        source='biochemical.category.name', 
+        read_only=True
+    )
+    
+    id = serializers.IntegerField(
+        source='biochemical.id', 
+        read_only=True
+    )
+    
+    unit = serializers.CharField(
+        source='biochemical.unit', 
+        read_only=True
+    )
+    
+    female_min = serializers.FloatField(
+        source='biochemical.female_min', 
+        read_only=True
+    )
+    female_max = serializers.FloatField(
+        source='biochemical.female_max', 
+        read_only=True
+    )
+    male_min = serializers.FloatField(
+        source='biochemical.male_min', 
+        read_only=True
+    )
+    male_max = serializers.FloatField(
+        source='biochemical.male_max', 
+        read_only=True
+    )
+    
+    
     class Meta:
         model = Biometrics
         fields = (
-            'id',
             'biochemical',        
             'biometricsentry',  
-            'health_weight',  
+            'health_weight',
+            
+            'id',  
             'name',
-            'category',   
+            'category',  
+            'unit',
+            'female_min',
+            'female_max',
+            'male_min',
+            'male_max',
+          
+            'is_hyper',
+            'expiry_date',
             'value',
             'scaled_value',
-            'is_hyper',
-            'expiry_date'
+            
         )
+        
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        gender = self.context.get('gender')
+        
+        if gender == 'female':
+            healthy_min = representation.get('female_min')
+            healthy_max = representation.get('female_max')
+        else:
+            healthy_min = representation.get('male_min')
+            healthy_max = representation.get('male_max')
+        
+        # Add new keys with the healthy values
+        representation['healthy_min'] = healthy_min
+        representation['healthy_max'] = healthy_max
+        
+        # Optionally remove the original gender-specific fields
+        representation.pop('female_min', None)
+        representation.pop('female_max', None)
+        representation.pop('male_min', None)
+        representation.pop('male_max', None)
+        
+        return representation
 
 class BiometricsEntrySerializer(serializers.ModelSerializer):
     biometrics = BiometricsSerializer(many=True, read_only=True)
@@ -76,6 +134,8 @@ class BiometricsEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = BiometricsEntry
         fields = ('created_at', 'user', 'health_score', 'biometrics')
+        
+    
 
 
         

@@ -99,47 +99,59 @@ class UserHandler:
                 exception=f"Error logging out: {str(e)}"
             )
     
-    def get_user_data(self, user, token=None):
+    def get_user_data(self, user, token=None, user_data=True):
         try:
             biometrics_entries = (
                 BiometricsEntry.objects.filter(user=user)
-                .only('health_score', 'created_at')
+                .only('id', 'health_score', 'created_at')  
                 .prefetch_related(
                     Prefetch(
                         'biometrics',
-                        queryset=Biometrics.objects.select_related('biochemical', 'biochemical__category')
-                                    .only('value', 'scaled_value', 'is_hyper', 'expiry_date',
-                                        'biochemical__name', 'biochemical__category__name')
+                        queryset=Biometrics.objects.select_related(
+                            'biochemical', 'biochemical__category'
+                        ).only(
+                            'id', 
+                            'value', 
+                            'scaled_value', 
+                            'is_hyper', 
+                            'expiry_date',
+                            'biochemical__id',
+                            'biochemical__name',
+                            'biochemical__unit',
+                            'biochemical__female_min',
+                            'biochemical__female_max',
+                            'biochemical__male_min',
+                            'biochemical__male_max',
+                            'biochemical__category__name'
+                        )
                     )
                 )
             )
-            serializer = BiometricsEntrySerializer(biometrics_entries, many=True)
+            serializer = BiometricsEntrySerializer(
+                biometrics_entries,
+                many=True, 
+                context={'gender': user.gender}
+            )
             
             response_data = {
-                "biometrics_entries": serializer.data,
-                "food_scores": []
+                "biometrics_entries": serializer.data, 
             }
             
-            if biometrics_entries.exists():
-                latest_biometrics_entry = biometrics_entries.latest('created_at')
-                if latest_biometrics_entry:
-                    food_scores_qs = FoodScore.objects.filter(
-                        biometricsentry=latest_biometrics_entry
-                    ).select_related('food')
-                    if food_scores_qs.exists():
-                        response_data["food_scores"] = [
-                            {"food_name": fs.food.name, "score": fs.score}
-                            for fs in food_scores_qs
-                        ]
+            if user_data:
+                response_data["user"] = UserSerializer(user).data
             
             if token:
                 response_data["token"] = token  
 
-            return response_handler.handle_response(response=response_data)
+            return response_handler.handle_response(
+                response=response_data
+            )
 
         except Exception as e:
             return response_handler.handle_exception(
                 exception=f"Error getting user data: {str(e)}"
             )
+            
+    
 
         

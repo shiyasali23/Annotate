@@ -200,7 +200,7 @@ class BiometricsHandler:
             biometrics_serializer = BiometricsSerializer(data=biometrics_data, many=True)
             if biometrics_serializer.is_valid():
                 biometrics_serializer.save()
-                return user_handler.get_user_data(user)
+                return user_handler.get_user_data(user=user)
             else:
                 return response_handler.handle_exception(
                     exception=f"Error on Biometrics serializer {biometrics_serializer.errors}"

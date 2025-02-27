@@ -7,7 +7,7 @@ import { AiOutlineCloseSquare } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
 
 import CustomButton from "@/components/CustomButton";
-import { useData } from "@/contexts/dataContexts";
+import { useData } from "@/contexts/dataContext";
 
 const ServicesModal = ({ isOpen, onClose }) => {
     const router = useRouter();

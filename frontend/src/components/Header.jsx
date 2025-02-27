@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { FaUser, FaCaretDown } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 
-import { useData } from "@/contexts/dataContexts";
+import { useData } from "@/contexts/dataContext";
 import { useUser } from "@/contexts/userContext";
 
 const Header = () => {

@@ -1,5 +1,6 @@
+import { BiochemicalProvider } from "@/contexts/biochemicalContext";
 import "./globals.css";
-import { DataProvider } from "@/contexts/dataContexts";
+import { DataProvider } from "@/contexts/dataContext";
 import { UserProvider } from "@/contexts/userContext";
 
 
@@ -26,11 +27,13 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body>
+        <BiochemicalProvider>
         <DataProvider>
           <UserProvider>
         {children}
         </UserProvider>
         </DataProvider>
+        </BiochemicalProvider>
       </body>
     </html>
   );

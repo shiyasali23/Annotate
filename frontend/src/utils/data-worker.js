@@ -15,7 +15,7 @@ export const processBiometricData = (biometricsEntries) => {
     .sort((a, b) => a._ts - b._ts)
     .map(({ _ts, ...rest }) => rest);
 
-  // Prepare mappings for biochemicals and their latest entries.
+  // Prepare mappings for biometrics and their latest entries.
   const bioMap = Object.create(null);
   const latestMap = Object.create(null);
   const hyper = [];
@@ -74,8 +74,8 @@ export const processBiometricData = (biometricsEntries) => {
     }
   }
 
-  // Prepare biochemicals mapping and the latestBiometrics array.
-  const biochemicals = Object.create(null);
+  // Prepare biometrics mapping and the latestBiometrics array.
+  const biometrics = Object.create(null);
   const latestBiometrics = [];
 
   for (const bioName in bioMap) {
@@ -101,7 +101,7 @@ export const processBiometricData = (biometricsEntries) => {
         };
       }
 
-      biochemicals[bioName] = {
+      biometrics[bioName] = {
         category: record.category,
         lastUpdated: new Date(record.latestTS).toISOString(),
         expiryOn: record.latestExpiry,
@@ -144,10 +144,10 @@ export const processBiometricData = (biometricsEntries) => {
 
   return {
     healthScore,
-    biochemicals,
+    biometrics,
     latestBiometrics,
     hyperBiochemicals: hyper.length ? hyper : null,
-    hypoBiometrics: hypo.length ? hypo : null,
+    hypoBiochemicals: hypo.length ? hypo : null,
     hyperHypoBiochemicalsIds,
   };
 };
@@ -196,23 +196,25 @@ export const processConditions = (
   };
 };
 
-export const processResponseData = ({
+export const processLocalStorrageData = ({
   token = null,
   healthScore = null,
-  biochemicals = null,
+  biometrics = null,
   latestBiometrics = null,
   hyperBiochemicals = null,
   hypoBiochemicals = null,
   userdata = null,
+  biochemicals = null,
 } = {}) => {
   // Retrieve values from localStorage if not provided, and parse stored JSON.
   token = token || localStorage.getItem("token");
   userdata = userdata ? userdata : JSON.parse(localStorage.getItem("userdata") || "null");
   healthScore = healthScore ? healthScore : JSON.parse(localStorage.getItem("healthScore") || "null");
-  biochemicals = biochemicals ? biochemicals : JSON.parse(localStorage.getItem("biochemicals") || "null");
+  biometrics = biometrics ? biometrics : JSON.parse(localStorage.getItem("biometrics") || "null");
   latestBiometrics = latestBiometrics ? latestBiometrics : JSON.parse(localStorage.getItem("latestBiometrics") || "null");
   hyperBiochemicals = hyperBiochemicals ? hyperBiochemicals : JSON.parse(localStorage.getItem("hyperBiochemicals") || "null");
   hypoBiochemicals = hypoBiochemicals ? hypoBiochemicals : JSON.parse(localStorage.getItem("hypoBiochemicals") || "null");
+  biochemicals = biochemicals ? biochemicals : JSON.parse(localStorage.getItem("biochemicals") || "null");
 
   // Helper function to store objects as JSON.
   const storeData = (key, value) => {
@@ -227,17 +229,19 @@ export const processResponseData = ({
   }
   storeData("userdata", userdata);
   storeData("healthScore", healthScore);
-  storeData("biochemicals", biochemicals);
+  storeData("biometrics", biometrics);
   storeData("latestBiometrics", latestBiometrics);
   storeData("hyperBiochemicals", hyperBiochemicals);
   storeData("hypoBiochemicals", hypoBiochemicals);
+  storeData("biochemicals", biochemicals);
 
   return {
     isLogined: !!token,
+    localBiochemicals: biochemicals || null,
     localToken: token || null,
     localUserData: userdata || null,
     localHealthScore: healthScore || null,
-    localBiochemicals: biochemicals || null,
+    localBiometrics: biometrics || null,
     localLatestBiometrics: latestBiometrics || null,
     localHyperBiochemicals: hyperBiochemicals || null,
     localHypoBiochemicals: hypoBiochemicals || null,
@@ -245,3 +249,17 @@ export const processResponseData = ({
 };
 
 
+export const processBiochemicals = (biochemicals) => {
+  if (!biochemicals || biochemicals.length === 0) return null;
+
+  const biochemicalDict = new Map();
+
+  for (const { id, name, unit, category } of biochemicals) {
+    if (!biochemicalDict.has(category)) {
+      biochemicalDict.set(category, []);
+    }
+    biochemicalDict.get(category).push({ id, name, unit });
+  }
+
+  return Object.fromEntries(biochemicalDict);
+};

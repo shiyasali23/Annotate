@@ -193,14 +193,17 @@ class BiometricsHandler:
                     "value": values[index],
                     "scaled_value": scaled_value,  
                     "health_weight": scaled_health_weights[index],  
-                    "is_hyper": True if scaled_value > 1 else (False if scaled_value < -1 else None),
+                    "is_hyper": True if scaled_value >= 1 else (False if scaled_value <= -1 else None),
                     "expiry_date": current_timestamp + timedelta(days=self.biochemicals_validity_data[id - 1])
                 })
 
             biometrics_serializer = BiometricsSerializer(data=biometrics_data, many=True)
             if biometrics_serializer.is_valid():
                 biometrics_serializer.save()
-                return user_handler.get_user_data(user=user)
+                return user_handler.get_user_data(
+                    user=user, 
+                    user_data=False
+                )
             else:
                 return response_handler.handle_exception(
                     exception=f"Error on Biometrics serializer {biometrics_serializer.errors}"

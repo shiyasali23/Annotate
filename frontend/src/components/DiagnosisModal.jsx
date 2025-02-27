@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 
-import { useData } from "@/contexts/dataContexts";
+import { useData } from "@/contexts/dataContext";
 import { getModels, getDiagnosisPrediction } from "@/lib/diagnosis-api";
 
 import LoadingComponent from "./LoadingComponent";

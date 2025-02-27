@@ -3,7 +3,7 @@ import ServicesModal from "./ServicesModal";
 import DiseaseDetectionModal from "./DiseaseDetectionModal";
 import DiagnosisModal from "./DiagnosisModal";
 
-import { useData } from "@/contexts/dataContexts";
+import { useData } from "@/contexts/dataContext";
 
 const ServicesComponent = () => {
   const { servicesArray } = useData();

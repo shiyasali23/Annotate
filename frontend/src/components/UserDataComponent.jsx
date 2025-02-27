@@ -15,7 +15,8 @@ import { useUser } from "@/contexts/userContext";
 import { updateUser } from "@/lib/user-api";
 
 const UserDataComponent = () => {
-  const { userData, userDataLoading, setUserDataLoading, handleUserdata } = useUser();
+  const { userData, userDataLoading, setUserDataLoading, handleUserdata } =
+    useUser();
   const userDataArray = [
     ["First Name", "first_name", "text", "string"],
     ["Last Name", "last_name", "text", "string"],
@@ -85,8 +86,7 @@ const UserDataComponent = () => {
 
     try {
       const newUserData = await updateUser(inputValues);
-      console.log("newUserData", newUserData);
-      
+
       if (newUserData) {
         handleUserdata(newUserData);
         setMessage("User data updated successfully");
@@ -99,18 +99,12 @@ const UserDataComponent = () => {
   };
 
   return (
-    <div className="w-full h-full mt-5 xl:px-10 px-3 flex flex-col gap-10">
-      <h1 className="xl:text-3xl text-lg font-bold underline underline-offset-8 w-full text-center xl:text-left">
+    <div className="w-full h-full mt-5 xl:px-16 px-3 flex flex-col gap-10">
+      <h1 className="xl:text-3xl xl:ml-2 text-lg font-bold underline underline-offset-8 w-full text-center xl:text-left">
         User Information
       </h1>
       {message && (
-        <p
-          className={`w-full text-center text-md ${
-            message.includes("successfully") ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          {message}
-        </p>
+        <p className="w-full text-center text-md text-red-500">{message}</p>
       )}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
         {userDataArray.map(([label, key, type]) => (
@@ -138,7 +132,7 @@ const UserDataComponent = () => {
             ) : (
               <Input
                 type={type}
-                className="text-xs xl:text-sm w-[150px] xl:w-[180px]"
+                className="text-xs xl:text-sm w-[150px] xl:w-[180px] rounded-none"
                 value={
                   inputValues[key] !== undefined
                     ? inputValues[key] || ""

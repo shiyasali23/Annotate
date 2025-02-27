@@ -3,7 +3,7 @@
 import {  FlipHorizontal, CameraIcon } from "lucide-react";
 import React, {  useRef, useState } from "react";
 import Webcam from "react-webcam";
-import Button from "./Button";
+import CustomButton from "@/components/CustomButton";
 
 const CameraModule = ({setHaveResult}) => {
   const webcamRef = useRef(null);
@@ -30,12 +30,12 @@ const CameraModule = ({setHaveResult}) => {
             />
             {/* Camera Controls */}
             <div className="absolute bottom-4 inset-x-0 flex justify-center gap-4">
-            <Button
+            <CustomButton
                   className="bg-black opacity-50 border-none hover:bg-white text-black p-3 rounded-full"
                   onClick={() => setIsFrontCamera(!isFrontCamera)}
                   text={<FlipHorizontal className="w-6 h-6" />}
                 />
-              <Button
+              <CustomButton
                   className="bg-black opacity-50 border-none hover:bg-white text-black p-3 rounded-full"
                   onClick={() => {
                   const imageSrc = webcamRef.current?.getScreenshot();
@@ -66,7 +66,7 @@ const CameraModule = ({setHaveResult}) => {
       </div>
 
       {/* Camera Toggle Button */}
-      <Button
+      <CustomButton
         className="mt-4 xl:w-1/2 "
         onClick={() => setCameraActive(!cameraActive)}
         text={cameraActive ? "Stop Camera" : "Start Camera"}

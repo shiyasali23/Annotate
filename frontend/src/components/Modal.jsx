@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Button from "./Button";
+import CustomButton from "@/components/CustomButton";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 
 const Modal = ({ isOpen, onClose }) => {
@@ -26,7 +26,7 @@ const Modal = ({ isOpen, onClose }) => {
               <span className="font-bold text-2xl">Oops..</span>
               We couldn't find anything
             </h1>
-            <Button text="Try Again" className="w-1/2 xl:w-1/3" />
+            <CustomButton text="Try Again" className="w-1/2 xl:w-1/3" />
           </div>
         ) : state === 2 ? (
           <div className="flex flex-col gap-10">
@@ -43,7 +43,7 @@ const Modal = ({ isOpen, onClose }) => {
 
             <div className="flex align-center items-center mx-auto xl:ml-7 gap-3">
               <h1 className="font-bold text-5xl">Try our</h1>
-              <Button
+              <CustomButton
                 text={"Food Recommendations"}
                 className="px-1 py-1"
                 onClick={() => setWantToTry(!wantToTry)}
@@ -56,7 +56,7 @@ const Modal = ({ isOpen, onClose }) => {
                   No biochemicals records found.
                 </h1>
                 <div className="flex flex-col align-center justify-center gap-5 mt-5">
-                  <Button text={"Create New"} className="w-1/2 mx-auto" />
+                  <CustomButton text={"Create New"} className="w-1/2 mx-auto" />
                   <h1 className="font-bold text-center xl:text-xl text-l underline cursor-pointer">
                     Try with a dummy data
                   </h1>

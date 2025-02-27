@@ -1,8 +1,9 @@
 import React from "react";
+import { Button } from "@/components/ui/button";
 
-const Button = ({ text, onClick, className = "", type = "button" }) => {
+const CustomButton = ({ text, onClick, className = "", type = "button" }) => {
   return (
-    <button
+    <Button
       type={type}
       onClick={onClick}
       className={`border border-2 border-black relative px-6 py-2 text-sm sm:text-base bg-black text-white 
@@ -13,8 +14,8 @@ const Button = ({ text, onClick, className = "", type = "button" }) => {
       <span className="relative z-10 group-hover:text-black transition-colors duration-300 ease-in-out ">
         {text}
       </span>
-    </button>
+    </Button>
   );
 };
 
-export default Button;
+export default CustomButton;

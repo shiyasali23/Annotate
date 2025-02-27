@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import CameraModule from "../components/CameraModule";
-import ResultComponent from "../components/ResultComponent";
-import ServicesModal from "../components/ServicesModal";
-import Button from "../components/Button";
-import Header from "../components/Header";
-import LoadingComponent from "../components/LoadingComponent";
+import CameraModule from "@/components/CameraModule";
+import ResultComponent from "@/components/ResultComponent";
+import ServicesModal from "@/components/ServicesModal";
+import CustomButton from "@/components/CustomButton";
+import Header from "@/components/Header";
+import LoadingComponent from "@/components/LoadingComponent";
 
 const Food = () => {
   const [loading, setLoading] = useState(false);
@@ -54,7 +54,7 @@ const Food = () => {
                 <h1 className="font-bold text-xl xl:text-5xl">
                   Try our personalized
                 </h1>
-                <Button
+                <CustomButton
                   text={"Food Suggetions"}
                   className="px-1 py-1"
                   onClick={() => setWantToTry(!wantToTry)}

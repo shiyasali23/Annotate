@@ -17,10 +17,7 @@ class Command(BaseCommand):
                 user = User.objects.create_user(
                     first_name="John",
                     last_name="Doe",
-                    password="securepassword123",
-                    date_of_birth="1990-01-01",
-                    height_cm=175,
-                    weight_kg=70,
+                    password="securepassword123",                   
                     gender="female",
                     email="jhnoe@example.com"
                 )

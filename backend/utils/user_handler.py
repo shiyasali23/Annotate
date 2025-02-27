@@ -85,6 +85,25 @@ class UserHandler:
                 status_code=500,
                 message=response_handler.MESSAGES['AUTHETICATION_FAILED']
             )
+            
+    def update_user(self, user, requested_data):
+        try:
+            serialized_data = UserSerializer(user, data=requested_data, partial=True)
+            if not serialized_data.is_valid():
+                return response_handler.handle_exception(
+                    error=response_handler.MESSAGES['INVALID_DATA'],
+                    status_code=400,
+                    message=response_handler.MESSAGES['REQUEST_FAILED']
+                )
+            user_intance = serialized_data.save()
+            return response_handler.handle_response(
+                response=UserSerializer(user_intance).data
+            )
+        except Exception as e:
+            return response_handler.handle_exception(
+                exception=f"Error updating user: {str(e)}",
+                
+            )
 
 
     def logout_user(self, request):

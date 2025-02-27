@@ -205,66 +205,35 @@ export const processResponseData = ({
   hypoBiochemicals = null,
   userdata = null,
 } = {}) => {
-  // Retrieve values from localStorage if not provided.
+  // Retrieve values from localStorage if not provided, and parse stored JSON.
   token = token || localStorage.getItem("token");
-  userdata = userdata || localStorage.getItem("userdata");
-  healthScore = healthScore || localStorage.getItem("healthScore");
-  biochemicals = biochemicals || localStorage.getItem("biochemicals");
-  latestBiometrics =
-    latestBiometrics || localStorage.getItem("latestBiometrics");
-  hyperBiochemicals =
-    hyperBiochemicals || localStorage.getItem("hyperBiochemicals");
-  hypoBiochemicals =
-    hypoBiochemicals || localStorage.getItem("hypoBiochemicals");
+  userdata = userdata ? userdata : JSON.parse(localStorage.getItem("userdata") || "null");
+  healthScore = healthScore ? healthScore : JSON.parse(localStorage.getItem("healthScore") || "null");
+  biochemicals = biochemicals ? biochemicals : JSON.parse(localStorage.getItem("biochemicals") || "null");
+  latestBiometrics = latestBiometrics ? latestBiometrics : JSON.parse(localStorage.getItem("latestBiometrics") || "null");
+  hyperBiochemicals = hyperBiochemicals ? hyperBiochemicals : JSON.parse(localStorage.getItem("hyperBiochemicals") || "null");
+  hypoBiochemicals = hypoBiochemicals ? hypoBiochemicals : JSON.parse(localStorage.getItem("hypoBiochemicals") || "null");
 
-  // Helper function to convert objects to JSON strings.
-  const toStringValue = (value) =>
-    typeof value === "object" && value !== null ? JSON.stringify(value) : value;
+  // Helper function to store objects as JSON.
+  const storeData = (key, value) => {
+    if (value !== null) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+  };
 
-  // Persist values to localStorage if they differ.
+  // Store data in localStorage only if it differs.
   if (token && localStorage.getItem("token") !== token) {
     localStorage.setItem("token", token);
   }
-  if (
-    userdata &&
-    localStorage.getItem("userdata") !== toStringValue(userdata)
-  ) {
-    localStorage.setItem("userdata", toStringValue(userdata));
-  }
-  if (
-    healthScore &&
-    localStorage.getItem("healthScore") !== toStringValue(healthScore)
-  ) {
-    localStorage.setItem("healthScore", toStringValue(healthScore));
-  }
-  if (
-    biochemicals &&
-    localStorage.getItem("biochemicals") !== toStringValue(biochemicals)
-  ) {
-    localStorage.setItem("biochemicals", toStringValue(biochemicals));
-  }
-  if (
-    latestBiometrics &&
-    localStorage.getItem("latestBiometrics") !== toStringValue(latestBiometrics)
-  ) {
-    localStorage.setItem("latestBiometrics", toStringValue(latestBiometrics));
-  }
-  if (
-    hyperBiochemicals &&
-    localStorage.getItem("hyperBiochemicals") !==
-      toStringValue(hyperBiochemicals)
-  ) {
-    localStorage.setItem("hyperBiochemicals", toStringValue(hyperBiochemicals));
-  }
-  if (
-    hypoBiochemicals &&
-    localStorage.getItem("hypoBiochemicals") !== toStringValue(hypoBiochemicals)
-  ) {
-    localStorage.setItem("hypoBiochemicals", toStringValue(hypoBiochemicals));
-  }
+  storeData("userdata", userdata);
+  storeData("healthScore", healthScore);
+  storeData("biochemicals", biochemicals);
+  storeData("latestBiometrics", latestBiometrics);
+  storeData("hyperBiochemicals", hyperBiochemicals);
+  storeData("hypoBiochemicals", hypoBiochemicals);
 
   return {
-    isLogined: token ? true : false,
+    isLogined: !!token,
     localToken: token || null,
     localUserData: userdata || null,
     localHealthScore: healthScore || null,

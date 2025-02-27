@@ -19,10 +19,10 @@ export const UserProvider = ({ children }) => {
   const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
   const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
 
-  const [biometricsLoading, setBiometricsLoading] = useState(false);
-  const [conditionsLoading, setConditionsLoading] = useState(false);
+  const [userDataLoading, setUserDataLoading] = useState(true);
 
   useEffect(() => {
+    setUserDataLoading(true);
     const {
       isLogined,
       localUserData,
@@ -44,10 +44,11 @@ export const UserProvider = ({ children }) => {
       setHyperBiochemicals(localHyperBiochemicals);
       setHypoBiochemicals(localHypoBiochemicals);
     }
+    setUserDataLoading(false);
   }, []);
 
   const handleAuthResponse = (data) => {
-    setBiometricsLoading(true);
+    setUserDataLoading(true);
     if (data.token && data.user) {
       processResponseData({ token: data.token, userdata: data.user });
       setUserData(data.user);
@@ -86,7 +87,7 @@ export const UserProvider = ({ children }) => {
         );
       }
     }
-    setBiometricsLoading(false);
+    setUserDataLoading(false);
   };
 
   const handleConditions = async (
@@ -96,7 +97,6 @@ export const UserProvider = ({ children }) => {
   ) => {
     if (!conditionsIds?.length) return;
 
-    setConditionsLoading(true);
 
     const conditions = await getConditions(conditionsIds);
     if (conditions) {
@@ -115,7 +115,14 @@ export const UserProvider = ({ children }) => {
       });
     }
 
-    setConditionsLoading(false);
+  };
+console.log(userData);
+
+  const handleUserdata = (data) => {
+    setUserDataLoading(true);
+    setUserData(data);
+    processResponseData({ userdata: data });
+    setUserDataLoading(false);
   };
 
   const logOutUser = () => {
@@ -130,14 +137,15 @@ export const UserProvider = ({ children }) => {
       value={{
         handleAuthResponse,
         logOutUser,
+        setUserDataLoading,
+        handleUserdata,
         isLogined,
         healthScore,
         biochemicals,
         latestBiometrics,
         hyperBiochemicals,
         hypoBiochemicals,
-        biometricsLoading,
-        conditionsLoading,
+        userDataLoading,
         userData,
       }}
     >

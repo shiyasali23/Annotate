@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FaUser, FaCaretDown } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 
@@ -11,8 +12,8 @@ import { useUser } from "@/contexts/userContext";
 
 const Header = () => {
   const { servicesArray } = useData();
-  const {logOutUser} = useUser();
-
+  const { logOutUser } = useUser();
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null); // Reference for dropdown menu
   const buttonRef = useRef(null); // Reference for dropdown button
@@ -95,7 +96,9 @@ const Header = () => {
                     href={`/${service[1]}`}
                     className="block  mb-1 pl-4 py-2 hover:bg-gray-200 rounded transition duration-200"
                   >
-                    <p className="text-sm w-full font-medium border-b border-dashed">{service[1]}</p>
+                    <p className="text-sm w-full font-medium border-b border-dashed">
+                      {service[1]}
+                    </p>
                   </Link>
                 ))}
               </ul>
@@ -103,8 +106,16 @@ const Header = () => {
           )}
         </div>
         <div className="flex items-center gap-5 sm:gap-0 md:gap-7">
-          <FaUser className="cursor-pointer" size={25} />
-          <MdLogout className="cursor-pointer" size={25} onClick={() => logOutUser()}/>
+          <FaUser
+            className="cursor-pointer"
+            size={25}
+            onClick={() => router.push("/profile")}
+          />
+          <MdLogout
+            className="cursor-pointer"
+            size={25}
+            onClick={() => logOutUser()}
+          />
         </div>
       </div>
     </header>

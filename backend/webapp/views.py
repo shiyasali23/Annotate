@@ -34,6 +34,24 @@ def authenticate(request):
         
     except Exception as e:
         return response_handler.handle_exception(exception=f"Error authenticating user: {str(e)}")
+    
+#------------------------User------------------------
+  
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def user_view(request):
+    biometrics_handler = BiometricsHandler()
+    try:
+        return user_handler.update_user(
+            user=request.user, 
+            requested_data=request.data['data'],
+        )              
+    except Exception as e:
+        return response_handler.handle_exception(
+            exception=f"Error handling user update view: {str(e)}"
+        )
+    
 
 #------------------------Biometrics------------------------
 

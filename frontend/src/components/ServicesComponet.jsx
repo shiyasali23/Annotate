@@ -1,20 +1,25 @@
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import ServicesModal from "./ServicesModal";
 import DiseaseDetectionModal from "./DiseaseDetectionModal";
 import DiagnosisModal from "./DiagnosisModal";
 
 import { useData } from "@/contexts/dataContext";
 import CustomButton from "./CustomButton";
+import { useUser } from "@/contexts/userContext";
 
 const ServicesComponent = () => {
   const { servicesArray } = useData();
+  const {isLogined} = useUser();
+
+  const router = useRouter();
   const [servicesModalOpen, setServicesModalOpen] = useState(false);
   const [diseaseDetectionModalOpen, setDiseaseDetectionModalOpen] =
     useState(false);
   const [diagnosisModalOpen, setDiagnosisModalOpen] = useState(false);
 
   const handleServiceClick = (index) => {
-    index === 2 && setServicesModalOpen(true);
+    index === 2 && isLogined ? router.push("/analytics") : setServicesModalOpen(true);
     index === 1 && setDiseaseDetectionModalOpen(true);
     index === 3 && setDiagnosisModalOpen(true);
   };

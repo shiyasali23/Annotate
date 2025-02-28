@@ -1,17 +1,13 @@
-// processBiometricData.js
 export const processBiometricData = (biometricsEntries) => {
   const now = Date.now();
 
   // Process health score entries and sort them by timestamp.
   const healthScore = biometricsEntries
-    .map((entry) => {
-      const ts = new Date(entry.created_at).getTime();
-      return {
-        created_at: new Date(ts).toISOString(),
-        health_score: entry.health_score,
-        _ts: ts,
-      };
-    })
+    .map((entry) => ({
+      created_at: entry.created_at, // Keep it unchanged
+      health_score: entry.health_score,
+      _ts: new Date(entry.created_at), // Convert for sorting
+    }))
     .sort((a, b) => a._ts - b._ts)
     .map(({ _ts, ...rest }) => rest);
 
@@ -40,7 +36,8 @@ export const processBiometricData = (biometricsEntries) => {
       }
       const expiryTS = new Date(bio.expiry_date).getTime();
 
-      // Push a full record with all necessary fields.
+      // Push a record that contains all fields.
+      // Note: [4] id, [6] unit, [7] healthy_min, and [8] healthy_max will be moved to the outer object.
       bioRecord.entries.push([
         entryTS, // 0: timestamp
         bio.value, // 1: value
@@ -74,8 +71,8 @@ export const processBiometricData = (biometricsEntries) => {
     }
   }
 
-  // Prepare biometrics mapping and the latestBiometrics array.
-  const biometrics = Object.create(null);
+  // Build a flat mapping for biometrics from bioMap.
+  const flatBiometrics = Object.create(null);
   const latestBiometrics = [];
 
   for (const bioName in bioMap) {
@@ -85,6 +82,7 @@ export const processBiometricData = (biometricsEntries) => {
       // Sort entries by creation timestamp.
       record.entries.sort((a, b) => a[0] - b[0]);
 
+      // Build entries without static properties (id, unit, healthy_min, healthy_max).
       const entriesObj = new Array(record.entries.length);
       for (let k = 0, kLen = record.entries.length; k < kLen; k++) {
         const e = record.entries[k];
@@ -93,18 +91,25 @@ export const processBiometricData = (biometricsEntries) => {
           value: e[1],
           scaledValue: e[2],
           expiryDate: e[3],
-          id: e[4],
           isHyper: e[5],
-          unit: e[6],
-          healthy_min: e[7],
-          healthy_max: e[8],
         };
       }
 
-      biometrics[bioName] = {
+      flatBiometrics[bioName] = {
+        // Move static fields to the outer object.
+        id: latestMap[bioName] ? latestMap[bioName].id : record.entries[0][4],
         category: record.category,
         lastUpdated: new Date(record.latestTS).toISOString(),
         expiryOn: record.latestExpiry,
+        unit: latestMap[bioName]
+          ? latestMap[bioName].unit
+          : record.entries[0][6],
+        healthy_min: latestMap[bioName]
+          ? latestMap[bioName].healthy_min
+          : record.entries[0][7],
+        healthy_max: latestMap[bioName]
+          ? latestMap[bioName].healthy_max
+          : record.entries[0][8],
         entries: entriesObj,
       };
 
@@ -134,6 +139,21 @@ export const processBiometricData = (biometricsEntries) => {
     }
   }
 
+  // Group the flat biometrics by category.
+  const biometrics = Object.create(null);
+  for (const bioName in flatBiometrics) {
+    if (Object.hasOwnProperty.call(flatBiometrics, bioName)) {
+      const record = flatBiometrics[bioName];
+      const category = record.category;
+      if (!biometrics[category]) {
+        biometrics[category] = Object.create(null);
+      }
+      // Remove the category field from the inner object as it’s now represented by the key.
+      const { category: _, ...rest } = record;
+      biometrics[category][bioName] = rest;
+    }
+  }
+
   // Create hyperHypoBiochemicalsIds: exclude any records where isHyper is null.
   const hyperHypoBiochemicalsIds = latestBiometrics
     .filter(({ isHyper }) => isHyper !== null)
@@ -146,8 +166,8 @@ export const processBiometricData = (biometricsEntries) => {
     healthScore,
     biometrics,
     latestBiometrics,
-    hyperBiochemicals: hyper.length ? hyper : null,
-    hypoBiochemicals: hypo.length ? hypo : null,
+    hyperBiochemicals: hyper.length ? hyper : [],
+    hypoBiochemicals: hypo.length ? hypo : [],
     hyperHypoBiochemicalsIds,
   };
 };
@@ -204,17 +224,35 @@ export const processLocalStorrageData = ({
   hyperBiochemicals = null,
   hypoBiochemicals = null,
   userdata = null,
+  biometricsEntries = null,
   biochemicals = null,
 } = {}) => {
   // Retrieve values from localStorage if not provided, and parse stored JSON.
   token = token || localStorage.getItem("token");
-  userdata = userdata ? userdata : JSON.parse(localStorage.getItem("userdata") || "null");
-  healthScore = healthScore ? healthScore : JSON.parse(localStorage.getItem("healthScore") || "null");
-  biometrics = biometrics ? biometrics : JSON.parse(localStorage.getItem("biometrics") || "null");
-  latestBiometrics = latestBiometrics ? latestBiometrics : JSON.parse(localStorage.getItem("latestBiometrics") || "null");
-  hyperBiochemicals = hyperBiochemicals ? hyperBiochemicals : JSON.parse(localStorage.getItem("hyperBiochemicals") || "null");
-  hypoBiochemicals = hypoBiochemicals ? hypoBiochemicals : JSON.parse(localStorage.getItem("hypoBiochemicals") || "null");
-  biochemicals = biochemicals ? biochemicals : JSON.parse(localStorage.getItem("biochemicals") || "null");
+  userdata = userdata
+    ? userdata
+    : JSON.parse(localStorage.getItem("userdata") || "null");
+  healthScore = healthScore
+    ? healthScore
+    : JSON.parse(localStorage.getItem("healthScore") || "null");
+  biometrics = biometrics
+    ? biometrics
+    : JSON.parse(localStorage.getItem("biometrics") || "null");
+  latestBiometrics = latestBiometrics
+    ? latestBiometrics
+    : JSON.parse(localStorage.getItem("latestBiometrics") || "null");
+  hyperBiochemicals = hyperBiochemicals
+    ? hyperBiochemicals
+    : JSON.parse(localStorage.getItem("hyperBiochemicals") || "null");
+  hypoBiochemicals = hypoBiochemicals
+    ? hypoBiochemicals
+    : JSON.parse(localStorage.getItem("hypoBiochemicals") || "null");
+  biometricsEntries = biometricsEntries
+    ? biometricsEntries
+    : JSON.parse(localStorage.getItem("biometricsEntries") || "null");
+  biochemicals = biochemicals
+    ? biochemicals
+    : JSON.parse(localStorage.getItem("biochemicals") || "null");
 
   // Helper function to store objects as JSON.
   const storeData = (key, value) => {
@@ -233,6 +271,7 @@ export const processLocalStorrageData = ({
   storeData("latestBiometrics", latestBiometrics);
   storeData("hyperBiochemicals", hyperBiochemicals);
   storeData("hypoBiochemicals", hypoBiochemicals);
+  storeData("biometricsEntries", biometricsEntries);
   storeData("biochemicals", biochemicals);
 
   return {
@@ -242,12 +281,12 @@ export const processLocalStorrageData = ({
     localUserData: userdata || null,
     localHealthScore: healthScore || null,
     localBiometrics: biometrics || null,
+    localBiometricsEntries: biometricsEntries || null,
     localLatestBiometrics: latestBiometrics || null,
     localHyperBiochemicals: hyperBiochemicals || null,
     localHypoBiochemicals: hypoBiochemicals || null,
   };
 };
-
 
 export const processBiochemicals = (biochemicals) => {
   if (!biochemicals || biochemicals.length === 0) return null;
@@ -263,3 +302,23 @@ export const processBiochemicals = (biochemicals) => {
 
   return Object.fromEntries(biochemicalDict);
 };
+
+
+export const getBiometricEntry = (biometricMap, timeStamp) => {
+  const entry = biometricMap.get(timeStamp);
+  if (!entry) return null;
+  const { created_at: created, biometrics } = entry;
+  return {
+    created,
+    hyperBiochemicals: biometrics.filter(b => b.is_hyper === true),
+    hypoBiochemicals: biometrics.filter(b => b.is_hyper === false),
+    healthy: biometrics.filter(b => b.is_hyper === null)
+  };
+};
+  
+// const a ={
+//   "created":
+//   "hyperBiochemicals": list of biochemicals dict with is_hyper = true
+//   "hypoBiochemicals": list of biochemicals dict with is_hyper = false
+//   "healthy": list of biochemicals dict with is_hyper = null
+// }

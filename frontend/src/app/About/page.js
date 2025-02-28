@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import AuthComponent from "@/components/AuthComponent";
 import { useUser } from "@/contexts/userContext";
-import LoadingComponent from "@/components/LoadingComponent";
 
 const About = () => {
   const { isLogined } = useUser();

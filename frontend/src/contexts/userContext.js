@@ -15,6 +15,7 @@ export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [healthScore, setHealthScore] = useState(null);
   const [biometrics, setBiometrics] = useState(null);
+  const [biometricsEntries, setBiometricsEntries] = useState(null);
   const [latestBiometrics, setLatestBiometrics] = useState(null);
   const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
   const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
@@ -31,6 +32,7 @@ export const UserProvider = ({ children }) => {
       localLatestBiometrics,
       localHyperBiochemicals,
       localHypoBiochemicals,
+      localBiometricsEntries
     } = processLocalStorrageData();
 
     if (localUserData && isLogined) {
@@ -41,6 +43,7 @@ export const UserProvider = ({ children }) => {
       setLatestBiometrics(localLatestBiometrics);
       setHyperBiochemicals(localHyperBiochemicals);
       setHypoBiochemicals(localHypoBiochemicals);
+      setBiometricsEntries(localBiometricsEntries);
     }
     setUserDataLoading(false);
   }, []);
@@ -57,6 +60,10 @@ export const UserProvider = ({ children }) => {
       Array.isArray(data.biometrics_entries) &&
       data.biometrics_entries.length
     ) {
+      setBiometricsEntries(data.biometrics_entries);
+      processLocalStorrageData({
+        biometricsEntries: data.biometrics_entries,
+      })
       const {
         healthScore,
         biometrics,
@@ -126,6 +133,7 @@ export const UserProvider = ({ children }) => {
     setHyperBiochemicals(null);
     setHypoBiochemicals(null);
     setUserData(null);
+    setBiometricsEntries(null);
   
     // Correcting the localStorage removal syntax
     [
@@ -136,8 +144,10 @@ export const UserProvider = ({ children }) => {
       "latestBiometrics",
       "hyperBiochemicals",
       "hypoBiochemicals",
+      "biometricsEntries",
     ].forEach((key) => localStorage.removeItem(key));
   };
+  
   
 
   return (
@@ -150,6 +160,7 @@ export const UserProvider = ({ children }) => {
         isLogined,
         healthScore,
         biometrics,
+        biometricsEntries,
         latestBiometrics,
         hyperBiochemicals,
         hypoBiochemicals,

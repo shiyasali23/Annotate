@@ -40,7 +40,7 @@ export default function Home() {
                 {char}
               </span>
             ))}
-            <Link href="/About">
+            <Link href="/about">
               {Array.from("Know more").map((char, i) => (
                 <span
                   key={i}

@@ -125,16 +125,20 @@ export const UserProvider = ({ children }) => {
     setLatestBiometrics(null);
     setHyperBiochemicals(null);
     setHypoBiochemicals(null);
-    setUserData(null)[
-      ("token",
+    setUserData(null);
+  
+    // Correcting the localStorage removal syntax
+    [
+      "token",
       "userdata",
       "healthScore",
       "biometrics",
       "latestBiometrics",
       "hyperBiochemicals",
-      "hypoBiochemicals")
+      "hypoBiochemicals",
     ].forEach((key) => localStorage.removeItem(key));
   };
+  
 
   return (
     <UserContext.Provider

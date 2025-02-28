@@ -61,7 +61,7 @@ const Header = () => {
       </div>
 
       {/* Right section */}
-      <div className="absolute    right-10 flex items-center gap-2 xl:gap-20">
+      <div className="absolute    right-8 flex items-center gap-3 xl:gap-20">
         <div className="relative   group" onMouseEnter={handleMouseEnter}>
           <button
             id="dropdownButton"
@@ -105,7 +105,7 @@ const Header = () => {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-5 sm:gap-0 md:gap-7">
+        <div className="flex items-center gap-5">
           <FaUser
             className="cursor-pointer"
             size={25}

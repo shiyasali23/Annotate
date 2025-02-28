@@ -72,7 +72,7 @@ const AuthComponent = () => {
   };
 
   return (
-    <Card className="w-full max-w-md border mt-3 rounded-none shadow-xl border-gray-100">
+    <Card className="w-full max-w-md border mt-16 rounded-none shadow-xl border-gray-100">
       <CardHeader className="space-y-1 px-4 py-3">
         <CardTitle className="text-xl md:text-2xl text-center font-bold text-gray-900">
           {isSignUp ? "Create Account" : "Sign In"}
@@ -88,7 +88,7 @@ const AuthComponent = () => {
           {isSignUp && (
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label htmlFor="first_name" className="text-sm text-gray-700">
+                <Label htmlFor="first_name" className="text-sm ">
                   First Name
                 </Label>
                 <Input
@@ -101,7 +101,7 @@ const AuthComponent = () => {
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="last_name" className="text-sm text-gray-700">
+                <Label htmlFor="last_name" className="text-sm ">
                   Last Name
                 </Label>
                 <Input
@@ -115,9 +115,9 @@ const AuthComponent = () => {
               </div>
             </div>
           )}
-          <div>
+          <div className="space-y-5">
             <div className="space-y-1">
-              <Label htmlFor="email" className="text-sm text-gray-700">
+              <Label htmlFor="email" className="text-sm ">
                 Email
               </Label>
               <Input
@@ -129,7 +129,7 @@ const AuthComponent = () => {
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="password" className="text-sm text-gray-700">
+              <Label htmlFor="password" className="text-sm ">
                 Password
               </Label>
               <Input
@@ -143,7 +143,7 @@ const AuthComponent = () => {
           </div>
           {isSignUp && (
             <div>
-              <Label htmlFor="gender" className="text-sm text-gray-700">
+              <Label htmlFor="gender" className="text-sm ">
                 Gender
               </Label>
               <Select
@@ -182,7 +182,7 @@ const AuthComponent = () => {
           {isSignUp ? "Already have an account?" : "Don't have an account?"}
           <Button
             variant="link"
-            className="text-xs font-semibold ml-2 md:text-sm text-gray-900 hover:text-gray-700 px-1 underline h-auto p-0"
+            className="text-xs font-semibold ml-2 md:text-sm text-gray-900 hover  px-1 underline h-auto p-0"
             onClick={() => {
               setIsSignUp((prev) => !prev);
               setMessage("");

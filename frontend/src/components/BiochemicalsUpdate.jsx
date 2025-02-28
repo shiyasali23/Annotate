@@ -62,7 +62,6 @@ const BiochemicalsUpdate = () => {
 
   return (
     <div className="w-full h-full xl:px-16 px-4 mt-10 flex flex-col gap-2 ">
-      
       {biochemicalDataLoading ? (
         <LoadingComponent text="Processing Biometrics Data" />
       ) : !biochemicalData ? (
@@ -76,18 +75,15 @@ const BiochemicalsUpdate = () => {
           className="w-full flex flex-col"
         >
           {message && (
-        <p className="w-full text-center text-md text-red-500">{message}</p>
-      )}
+            <p className="w-full text-center text-md text-red-500">{message}</p>
+          )}
           {Object.entries(biochemicalData).map(([category, items]) => (
             <AccordionItem key={category} value={category}>
-              
               <AccordionTrigger className="text-sm xl:text-md">
                 {category}
               </AccordionTrigger>
               <AccordionContent className="flex flex-col gap-5 px-1 ">
-                
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-10 pt-5 border-t">
-                  
                   {items.map((item) => {
                     const biometricData = getBiometricData(item.id);
                     const isExpired = biometricData?.isExpired;
@@ -100,10 +96,12 @@ const BiochemicalsUpdate = () => {
                     const value = biometricData?.value || null;
 
                     return (
-                      <div key={item.id} className="flex flex-col space-y-2">
+                      <div key={item.id} className="flex flex-col space-y-3">
                         <Label
                           htmlFor={`biochemical-${item.id}`}
-                          className="text-xs xl:text-sm font-semibold"
+                          className={`text-xs xl:text-sm  font-semibold ${
+                            isHyper === true || isHyper === false ? "text-red-600" : ""
+                          }`}
                         >
                           {item.name}
                         </Label>
@@ -118,9 +116,9 @@ const BiochemicalsUpdate = () => {
                             onChange={(e) =>
                               handleInputChange(item.id, e.target.value)
                             }
-                            className="w-[100px] text-xs xl:text-sm"
+                            className="w-[100px] text-xs xl:text-sm rounded-none"
                           />
-                          <h1 className="text-xs xl:text-sm whitespace-nowrap flex items-center">
+                          <h1 className="tracking-wider text-xs xl:text-sm whitespace-nowrap flex items-center">
                             {item.unit}
                           </h1>
                         </div>
@@ -129,14 +127,14 @@ const BiochemicalsUpdate = () => {
                             Expired On: {expiryDate}
                           </h1>
                         )}
-                        {isHyper !== null && (
+
+                        {(isHyper === true || isHyper === false) && (
                           <div className="flex gap-2 items-center">
                             <h1 className="text-xs">Optimum Value:</h1>
                             <div className="flex items-center">
-                              (
                               <p
                                 className={`${
-                                  isHyper ? "" : "text-red-600"
+                                  isHyper ? "" : "text-red-600 font-bold"
                                 } text-xs`}
                               >
                                 {healthyMin}
@@ -144,12 +142,11 @@ const BiochemicalsUpdate = () => {
                               <span>-</span>
                               <p
                                 className={`${
-                                  isHyper ? "text-red-600" : ""
+                                  isHyper ? "text-red-600 font-bold" : ""
                                 } text-xs`}
                               >
                                 {healthyMax}
                               </p>
-                              )
                             </div>
                           </div>
                         )}
@@ -166,7 +163,7 @@ const BiochemicalsUpdate = () => {
                         "Save"
                       )
                     }
-                    className="w-1/8 m-auto"
+                    className="w-1/8 m-auto "
                     onClick={() => handleSave(inputValuesArray)}
                   />
                 )}

@@ -9,8 +9,8 @@ export const DataProvider = ({ children }) => {
     ["Get Suggestions Of Foods For You", "Food Recommendation"],
     ["Detect Diseases With Biochemicals", "Diseases Detections"],
     ["Monitoring  Health And Biochemicals", "Analytics Platform"],
-    ["Feeling Any Symptoms? Check Out", "Diagnostics Center"],
-    ["Store Medical Records For Analysis", "Bio Records"],
+    ["Feeling Any kind of Symptoms?", "Diagnostics Center"],
+    ["Archive Medical Records For Insight", "Bio Records"],
     ["Chat With Our Artificial Inteligence", "Bio Gpt"],
   ];
 

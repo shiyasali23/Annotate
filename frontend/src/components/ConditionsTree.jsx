@@ -191,7 +191,7 @@ const ConditionsTree = ({ biochemicalsArray, isHyper, isVertical = true }) => {
         d3.select(this),
         [ d.data.name ],
         {
-          backgroundColor: 'rgb(0, 37, 45)',
+          backgroundColor: 'rgb(18, 102, 120)',
           textColor: 'white',
           fontSize: '12px',
           fontWeight: 'bold',
@@ -200,7 +200,6 @@ const ConditionsTree = ({ biochemicalsArray, isHyper, isVertical = true }) => {
       );
     });
 
-    // 2) Use a darker variant of #006A71 for biochemical nodes background
     const bioNodes = node.filter(d => d.depth === 1);
     bioNodes.each(function(d) {
       const { name, data } = d.data;
@@ -213,7 +212,7 @@ const ConditionsTree = ({ biochemicalsArray, isHyper, isVertical = true }) => {
         d3.select(this),
         [ line1, line2 ],
         {
-          backgroundColor: 'rgb(12, 59, 74)  ',
+          backgroundColor: 'rgb(20, 82, 102)  ',
           textColor: 'white',
           fontSize: '10px',
           fontWeight: 'bold',
@@ -222,21 +221,16 @@ const ConditionsTree = ({ biochemicalsArray, isHyper, isVertical = true }) => {
       );
     });
 
-    // 3) Use a very darker variant of #6F5C7C for condition nodes background
     const conditionNodes = node.filter(d => d.depth === 2);
     
-    // First, we'll calculate how many condition nodes we have to determine better spacing
     const conditionCount = conditionNodes.size();
     
-    // Apply spacing based on node count - we'll stagger them if needed
     conditionNodes.each(function(d, i) {
-      // Add a slight vertical offset to alternate nodes if they're crowded
       let verticalOffset = 0;
       if (conditionCount > 6) {
         verticalOffset = i % 2 === 0 ? -15 : 15;
       }
       
-      // Apply the transform with the offset
       d3.select(this)
         .attr('transform', `${nodeTransform(d)} translate(0,${verticalOffset})`);
       
@@ -244,7 +238,7 @@ const ConditionsTree = ({ biochemicalsArray, isHyper, isVertical = true }) => {
         d3.select(this),
         [ d.data.name ],
         {
-          backgroundColor: 'rgb(13, 71, 91)',
+          backgroundColor: 'rgb(5, 44, 58)',
           textColor: 'white',
           fontSize: '10px',
           fontWeight: 'bold',

@@ -1,5 +1,6 @@
 "use client";
 
+import BiometricsAccordion from "@/components/BiometricsAccordion";
 import BiometricsEntryModal from "@/components/BiometricsEntryModal";
 import Header from "@/components/Header";
 import HealthScoreGraph from "@/components/HealthScoreGraph";
@@ -48,6 +49,7 @@ const Analytics = () => {
             }
           />
           <HyperHypoConditions/>
+          <BiometricsAccordion/>
         </div>
       )}
 

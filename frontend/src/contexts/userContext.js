@@ -1,18 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  processBiometricData,
-  processConditions,
-  processLocalStorrageData,
-} from "@/utils/data-worker";
+import { processBiometricData, processConditions } from "@/utils/data-worker";
+import { processCacheData, handleCacheLogout } from "@/utils/cache-wroker"
 import { getConditions } from "@/lib/biochemicals-api";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [isLogined, setIsLogined] = useState(false);
-  
   const [userData, setUserData] = useState(null);
   const [healthScore, setHealthScore] = useState(null);
   const [biometrics, setBiometrics] = useState(null);
@@ -20,7 +16,6 @@ export const UserProvider = ({ children }) => {
   const [latestBiometrics, setLatestBiometrics] = useState(null);
   const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
   const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
-
   const [userDataLoading, setUserDataLoading] = useState(true);
 
   useEffect(() => {
@@ -33,8 +28,8 @@ export const UserProvider = ({ children }) => {
       localLatestBiometrics,
       localHyperBiochemicals,
       localHypoBiochemicals,
-      localBiometricsEntries
-    } = processLocalStorrageData();
+      localBiometricsEntries,
+    } = processCacheData();
 
     if (localUserData && isLogined) {
       setIsLogined(true);
@@ -52,19 +47,14 @@ export const UserProvider = ({ children }) => {
   const handleAuthResponse = (data) => {
     setUserDataLoading(true);
     if (data.token && data.user) {
-      processLocalStorrageData({ token: data.token, userdata: data.user });
+      processCacheData({ token: data.token, userdata: data.user });
       setUserData(data.user);
       setIsLogined(true);
     }
 
-    if (
-      Array.isArray(data.biometrics_entries) &&
-      data.biometrics_entries.length
-    ) {
+    if (Array.isArray(data.biometrics_entries) && data.biometrics_entries.length) {
       setBiometricsEntries(data.biometrics_entries);
-      processLocalStorrageData({
-        biometricsEntries: data.biometrics_entries,
-      })
+      processCacheData({ biometricsEntries: data.biometrics_entries });
       const {
         healthScore,
         biometrics,
@@ -77,52 +67,37 @@ export const UserProvider = ({ children }) => {
       setHealthScore(healthScore);
       setBiometrics(biometrics);
       setLatestBiometrics(latestBiometrics);
+      processCacheData({ healthScore, biometrics, latestBiometrics });
 
-      processLocalStorrageData({
-        healthScore: healthScore,
-        biometrics: biometrics,
-        latestBiometrics: latestBiometrics,
-      });
       if (hyperHypoBiochemicalsIds?.length) {
-        handleConditions(
-          hyperHypoBiochemicalsIds,
-          hyperBiochemicals,
-          hypoBiochemicals
-        );
+        handleConditions(hyperHypoBiochemicalsIds, hyperBiochemicals, hypoBiochemicals);
       }
     }
     setUserDataLoading(false);
   };
 
-  const handleConditions = async (
-    conditionsIds,
-    hyperBiochemicals,
-    hypoBiochemicals
-  ) => {
+  const handleConditions = async (conditionsIds, hyperBiochemicals, hypoBiochemicals) => {
     if (!conditionsIds?.length) return;
-
     const conditions = await getConditions(conditionsIds);
     if (conditions) {
       const { processedHyperBiochemicals, processedHypoBiochemicals } =
         processConditions(conditions, hyperBiochemicals, hypoBiochemicals);
 
-      if (processedHyperBiochemicals)
+      if (processedHyperBiochemicals) {
         setHyperBiochemicals(processedHyperBiochemicals);
-      processLocalStorrageData({
-        hyperBiochemicals: processedHyperBiochemicals,
-      });
-      if (processedHypoBiochemicals)
+        processCacheData({ hyperBiochemicals: processedHyperBiochemicals });
+      }
+      if (processedHypoBiochemicals) {
         setHypoBiochemicals(processedHypoBiochemicals);
-      processLocalStorrageData({
-        hypoBiochemicals: processedHypoBiochemicals,
-      });
+        processCacheData({ hypoBiochemicals: processedHypoBiochemicals });
+      }
     }
   };
 
   const handleUserdata = (data) => {
     setUserDataLoading(true);
     setUserData(data);
-    processLocalStorrageData({ userdata: data });
+    processCacheData({ userdata: data });
     setUserDataLoading(false);
   };
 
@@ -135,21 +110,9 @@ export const UserProvider = ({ children }) => {
     setHypoBiochemicals(null);
     setUserData(null);
     setBiometricsEntries(null);
-  
-    // Correcting the localStorage removal syntax
-    [
-      "token",
-      "userdata",
-      "healthScore",
-      "biometrics",
-      "latestBiometrics",
-      "hyperBiochemicals",
-      "hypoBiochemicals",
-      "biometricsEntries",
-    ].forEach((key) => localStorage.removeItem(key));
+    // Clear the in-memory cache
+    handleCacheLogout();
   };
-  
-  
 
   return (
     <UserContext.Provider

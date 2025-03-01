@@ -61,7 +61,7 @@ const BiochemicalsUpdate = () => {
   };
 
   return (
-    <div className="w-full h-full xl:px-16 px-4 mt-10 flex flex-col gap-2 ">
+    <div className="w-full h-full xl:px-16 px-4 my-10 flex flex-col gap-2 ">
       {biochemicalDataLoading ? (
         <LoadingComponent text="Processing Biometrics Data" />
       ) : !biochemicalData ? (
@@ -123,7 +123,7 @@ const BiochemicalsUpdate = () => {
                           </h1>
                         </div>
                         {isExpired && expiryDate && (
-                          <h1 className="text-xs xl:text-sm text-red-800 font-semibold">
+                          <h1 className="text-xs  text-red-800 font-semibold">
                             Expired On: {expiryDate}
                           </h1>
                         )}

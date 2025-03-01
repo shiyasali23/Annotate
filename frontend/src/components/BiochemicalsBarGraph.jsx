@@ -25,7 +25,7 @@ const BiochemicalsBarGraph = ({ biochemicalsArray, isHyper, isHealthy }) => {
   }
 
   // Set the appropriate title based on the parameters
-  let graphTitle = "Normal Biochemicals";
+  let graphTitle = "Minimum Range <= Normal Biochemicals => Maximum Range";
   if (!isHealthy) {
     graphTitle = isHyper ? "Hyper Biochemicals" : "Hypo Biochemicals";
   }

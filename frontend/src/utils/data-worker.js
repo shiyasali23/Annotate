@@ -216,77 +216,8 @@ export const processConditions = (
   };
 };
 
-export const processLocalStorrageData = ({
-  token = null,
-  healthScore = null,
-  biometrics = null,
-  latestBiometrics = null,
-  hyperBiochemicals = null,
-  hypoBiochemicals = null,
-  userdata = null,
-  biometricsEntries = null,
-  biochemicals = null,
-} = {}) => {
-  // Retrieve values from localStorage if not provided, and parse stored JSON.
-  token = token || localStorage.getItem("token");
-  userdata = userdata
-    ? userdata
-    : JSON.parse(localStorage.getItem("userdata") || "null");
-  healthScore = healthScore
-    ? healthScore
-    : JSON.parse(localStorage.getItem("healthScore") || "null");
-  biometrics = biometrics
-    ? biometrics
-    : JSON.parse(localStorage.getItem("biometrics") || "null");
-  latestBiometrics = latestBiometrics
-    ? latestBiometrics
-    : JSON.parse(localStorage.getItem("latestBiometrics") || "null");
-  hyperBiochemicals = hyperBiochemicals
-    ? hyperBiochemicals
-    : JSON.parse(localStorage.getItem("hyperBiochemicals") || "null");
-  hypoBiochemicals = hypoBiochemicals
-    ? hypoBiochemicals
-    : JSON.parse(localStorage.getItem("hypoBiochemicals") || "null");
-  biometricsEntries = biometricsEntries
-    ? biometricsEntries
-    : JSON.parse(localStorage.getItem("biometricsEntries") || "null");
-  biochemicals = biochemicals
-    ? biochemicals
-    : JSON.parse(localStorage.getItem("biochemicals") || "null");
 
-  // Helper function to store objects as JSON.
-  const storeData = (key, value) => {
-    if (value !== null) {
-      localStorage.setItem(key, JSON.stringify(value));
-    }
-  };
 
-  // Store data in localStorage only if it differs.
-  if (token && localStorage.getItem("token") !== token) {
-    localStorage.setItem("token", token);
-  }
-  storeData("userdata", userdata);
-  storeData("healthScore", healthScore);
-  storeData("biometrics", biometrics);
-  storeData("latestBiometrics", latestBiometrics);
-  storeData("hyperBiochemicals", hyperBiochemicals);
-  storeData("hypoBiochemicals", hypoBiochemicals);
-  storeData("biometricsEntries", biometricsEntries);
-  storeData("biochemicals", biochemicals);
-
-  return {
-    isLogined: !!token,
-    localBiochemicals: biochemicals || null,
-    localToken: token || null,
-    localUserData: userdata || null,
-    localHealthScore: healthScore || null,
-    localBiometrics: biometrics || null,
-    localBiometricsEntries: biometricsEntries || null,
-    localLatestBiometrics: latestBiometrics || null,
-    localHyperBiochemicals: hyperBiochemicals || null,
-    localHypoBiochemicals: hypoBiochemicals || null,
-  };
-};
 
 export const processBiochemicals = (biochemicals) => {
   if (!biochemicals || biochemicals.length === 0) return null;
@@ -316,9 +247,3 @@ export const getBiometricEntry = (biometricMap, timeStamp) => {
   };
 };
   
-// const a ={
-//   "created":
-//   "hyperBiochemicals": list of biochemicals dict with is_hyper = true
-//   "hypoBiochemicals": list of biochemicals dict with is_hyper = false
-//   "healthy": list of biochemicals dict with is_hyper = null
-// }

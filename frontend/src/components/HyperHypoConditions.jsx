@@ -3,11 +3,7 @@ import React from "react";
 import ConditionsTree from "./ConditionsTree";
 
 const HyperHypoConditions = () => {
-  const { hyperBiochemicals, hypoBiochemicals } = useUser();
-
-
-  console.log("hypoBiochemicals", hypoBiochemicals);
-  
+  const { hyperBiochemicals, hypoBiochemicals } = useUser();  
 
   const noBiochemicals = (type) => {
     return <h1 className="text-center text-gray-500">No {type} Biochemicals</h1>;
@@ -18,7 +14,7 @@ const HyperHypoConditions = () => {
       <h1 className="text-2xl font-bold w-full text-center my-5">
         Conditions May Have
       </h1>
-      <div className="w-full flex flex-col gap-5">
+      <div className="w-full flex flex-col gap-10">
         <div className="w-full">
           {(!hyperBiochemicals || hyperBiochemicals.length === 0) 
             ? noBiochemicals("Hyper") 

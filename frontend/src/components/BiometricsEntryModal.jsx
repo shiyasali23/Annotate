@@ -10,16 +10,16 @@ const BiometricsEntryModal = ({ isOpen, onClose, selectedBiometricEntry }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="relative bg-white shadow-lg  w-[98vw] p-2 overflow-y-scroll">
         <AiOutlineCloseSquare
-          className="absolute right-5 top-3 cursor-pointer text-3xl bg-black text-white hover:scale-110 transition duration-150"
+          className="absolute right-5 top-1 cursor-pointer text-3xl bg-black text-white hover:scale-110 transition duration-150"
           onClick={onClose}
         />
 
         <div className="flex flex-col gap-1 animate-dropdown">
-          <h1 className="text-base text-gray-800  font-bold my-1 w-full text-center">
+          <h1 className="text-sm   font-bold my-1 w-full text-center ">
             Registered on:{" "}
             {new Date(selectedBiometricEntry.created).toLocaleDateString()}
           </h1>
-          <div className=" flex flex-col xl:flex-row  h-[85vh] w-full gap-1 ">
+          <div className=" flex flex-col xl:flex-row  h-[88vh] w-full gap-2 px-2">
             {selectedBiometricEntry.healthy && (
               <div className="w-full h-full">
                 <BiochemicalsBarGraph
@@ -29,7 +29,7 @@ const BiometricsEntryModal = ({ isOpen, onClose, selectedBiometricEntry }) => {
                 />
               </div>
             )}
-            <div className="w-full h-full ">
+            <div className="w-full h-full flex flex-col gap-2">
               {selectedBiometricEntry.hyperBiochemicals && (
                 <div className="w-full h-1/2">
                   <BiochemicalsBarGraph

@@ -137,9 +137,9 @@ const BiochemicalsBarGraph = ({ biochemicalsArray, isHyper, isHealthy }) => {
             let label = ` ${biochemical.value} ${biochemical.unit}`;
             if (!isHealthy) {
               if (isHyper) {
-                label += ` (Max healthy: ${biochemical.healthy_max})`;
+                label += ` (Max Healthy: ${biochemical.healthy_max})`;
               } else {
-                label += ` (Min healthy: ${biochemical.healthy_min})`;
+                label += ` (Min Healthy: ${biochemical.healthy_min})`;
               }
             }
             return label;
@@ -158,7 +158,7 @@ const BiochemicalsBarGraph = ({ biochemicalsArray, isHyper, isHealthy }) => {
   };
 
   return (
-    <div className={`${isHorizontal ? "h-[75vh]" : "h-[40vh]"} xl:h-full w-full`}>
+    <div className={`${isHorizontal ? "h-[75vh] " : "h-[40vh] "} xl:h-full w-full shadow-[0_0_8px_2px_rgba(0,0,0,0.05)] rounded`}>
       <Bar data={data} options={options} />
     </div>
   );

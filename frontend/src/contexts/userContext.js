@@ -12,6 +12,7 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [isLogined, setIsLogined] = useState(false);
+  
   const [userData, setUserData] = useState(null);
   const [healthScore, setHealthScore] = useState(null);
   const [biometrics, setBiometrics] = useState(null);

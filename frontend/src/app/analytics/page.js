@@ -3,6 +3,7 @@
 import BiometricsEntryModal from "@/components/BiometricsEntryModal";
 import Header from "@/components/Header";
 import HealthScoreGraph from "@/components/HealthScoreGraph";
+import HyperHypoConditions from "@/components/HyperHypoConditions";
 import LoadingComponent from "@/components/LoadingComponent";
 import NotLogined from "@/components/NotLogined";
 import ServicesModal from "@/components/ServicesModal";
@@ -20,8 +21,7 @@ const Analytics = () => {
     ? new Map(biometricsEntries.map((e) => [e.created_at, e]))
     : new Map();
 
-  console.log("biometricsEntryModalOpen", biometricsEntryModalOpen);
-  console.log("selectedBiometricEntry", selectedBiometricEntry);
+
 
   const handleBiometricEntry = (timeStamp) => {
     const processedBiometricEntry = getBiometricEntry(biometricMap, timeStamp);
@@ -47,6 +47,7 @@ const Analytics = () => {
               handleBiometricEntry(timestamp)
             }
           />
+          <HyperHypoConditions/>
         </div>
       )}
 

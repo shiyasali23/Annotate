@@ -4,8 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaUser, FaCaretDown } from "react-icons/fa";
-import { MdLogout } from "react-icons/md";
+import { FaUser, FaSignOutAlt ,FaCaretDown, FaBookMedical } from "react-icons/fa";
+
 
 import { useData } from "@/contexts/dataContext";
 import { useUser } from "@/contexts/userContext";
@@ -49,7 +49,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="w-full sticky  z-50 top-0 bg-white   h-[8vh] xl:h-[12vh] xl:mb-2    flex justify-center items-center ">
+    <header className="w-full sticky z-50 top-0  h-[8vh] xl:h-[12vh] xl:mb-2  flex justify-center items-center bg-white">
       {/* Logo section */}
       <div className="text-xl font-semibold flex xl:justify-center xl:items-center w-full sm:text-left ">
         <Link href="/" className="flex items-center">
@@ -61,17 +61,17 @@ const Header = () => {
       </div>
 
       {/* Right section */}
-      <div className="absolute    right-8 flex items-center gap-3 xl:gap-20">
+      <div className="absolute    right-8 flex items-center gap-3 gap-5 xl:gap-16">
         <div className="relative   group" onMouseEnter={handleMouseEnter}>
           <button
             id="dropdownButton"
             onClick={toggleDropdown}
             ref={buttonRef}
-            className={`group relative flex items-center justify-center rounded-md text-xs sm:text-xs md:text-base px-2 py-2 xl:px-4 xl:py-2  bg-black text-white font-semibold text-center overflow-hidden border-2 border-black transition-all duration-300 hover:bg-white`}
+            className={`group relative flex items-center justify-center rounded-md text-xs sm:text-xs md:text-base p-2   bg-black text-white font-semibold text-center overflow-hidden border-2 border-black transition-all duration-300 hover:bg-white`}
             aria-haspopup="true"
             aria-expanded={dropdownOpen}
           >
-            <span className="relative z-10 group-hover:text-black transition-colors duration-500 ease-out">
+            <span className="text-xs xl:text-sm relative z-10 group-hover:text-black transition-colors duration-500 ease-out">
               Services
             </span>
             <FaCaretDown
@@ -105,15 +105,15 @@ const Header = () => {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 xl:gap-10">
+          <FaBookMedical className="cursor-pointer text-2xl xl:text-3xl font-bold" />
+
           <FaUser
-            className="cursor-pointer"
-            size={25}
+            className="cursor-pointer text-2xl xl:text-3xl font-bold"
             onClick={() => router.push("/profile")}
           />
-          <MdLogout
-            className="cursor-pointer"
-            size={25}
+          <FaSignOutAlt
+            className="cursor-pointer text-2xl xl:text-3xl font-bold"
             onClick={() => logOutUser()}
           />
         </div>

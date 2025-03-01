@@ -19,7 +19,7 @@ export default function Home() {
       <section className="h-[70vh] xl:h-[88vh] flex flex-col items-center justify-center xl:px-32 border-gray-300 bg-white relative overflow-hidden">
         <div className="w-full max-w-6xl mx-auto flex flex-col justify-center items-center text-right gap-5 lg:gap-10">
           <h1 className="text-5xl lg:text-9xl w-full text-center font-bold">
-            {Array.from("Who we are?").map((char, i) => (
+            {Array.from("WHO ARE WE?").map((char, i) => (
               <span
                 key={i}
                 className="animate-char-reveal text-white"
@@ -31,7 +31,7 @@ export default function Home() {
           </h1>
 
           <h2 className="w-full text-sm  lg:text-2xl font-semibold text-center">
-            {Array.from("We help people to stay healthy. ").map((char, i) => (
+            {Array.from("WE helps humans to stay healthy. ").map((char, i) => (
               <span
                 key={i}
                 className="animate-char-reveal text-white"
@@ -41,7 +41,7 @@ export default function Home() {
               </span>
             ))}
             <Link href="/about">
-              {Array.from("Know more").map((char, i) => (
+              {Array.from("Know More").map((char, i) => (
                 <span
                   key={i}
                   className="animate-char-reveal lg:text-3xl underline  text-white"
@@ -54,7 +54,7 @@ export default function Home() {
           </h2>
 
           <h3 className="text-md lg:text-2xl flex items-center gap-1 font-semibold text-center">
-            {Array.from("To get started").map((char, i) => (
+            {Array.from("Get Started").map((char, i) => (
               <span
                 key={i}
                 className="animate-char-reveal text-white"

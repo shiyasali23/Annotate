@@ -25,7 +25,7 @@ const ServicesComponent = () => {
   };
 
   return (
-    <div className="w-full min-h-[92vh] xl:h-[88vh] flex flex-col items-center justify-evenly p-4 ">
+    <div className="w-full min-h-[85vh] xl:h-[88vh] flex flex-col items-center justify-evenly p-4 ">
       <h1 className="text-3xl xl:text-4xl underline underline-offset-8  font-bold">
         Our Services
       </h1>

@@ -1,5 +1,5 @@
-from adminpanel.models import Biochemical
-from adminpanel.serializers import BiochemicalSerializer, BiochemicalViewSerializer
+from adminpanel.models import Biochemical, FoodNutrient
+from adminpanel.serializers import BiochemicalSerializer, BiochemicalViewSerializer, FoodNutrientSerializer
 
 from .response_handler import ResponseHandler
 from .cache_handler import CacheHandler
@@ -47,7 +47,28 @@ class ObjectsHandler:
             return data, None
              
         except Exception as e:
-            logger.error(f"Error fetching biochemicals ha ha: {e}", exc_info=True)
+            logger.error(f"Error fetching biochemicals: {e}", exc_info=True)
+            return None, e
+    
+    def get_food_nutrients(self, is_response=True):
+        cache_key = 'food_nutrients_view' if is_response else 'food_nutrients_data'
+        try:
+            cached_data = cache_handler.get_from_cache(cache_key)
+            if cached_data is not None:
+                return cached_data, None
+            data, error = self.get_all_objects(
+                model=FoodNutrient, 
+                serializer_class=FoodNutrientSerializer ,         
+                prefetch_related_fields=['food', 'nutrient']
+            )
+            if error:
+                return None, error
+
+            cache_handler.set_to_cache(cache_key, data)
+            return data, None
+             
+        except Exception as e:
+            logger.error(f"Error fetching nutrients: {e}", exc_info=True)
             return None, e
 
          

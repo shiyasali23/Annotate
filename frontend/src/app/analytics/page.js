@@ -2,21 +2,24 @@
 
 import BiometricsAccordion from "@/components/BiometricsAccordion";
 import BiometricsEntryModal from "@/components/BiometricsEntryModal";
+import ErrorComponent from "@/components/ErrorComponent";
 import Header from "@/components/Header";
 import HealthScoreGraph from "@/components/HealthScoreGraph";
 import HyperHypoConditions from "@/components/HyperHypoConditions";
 import LoadingComponent from "@/components/LoadingComponent";
-import NotLogined from "@/components/NotLogined";
 import ServicesModal from "@/components/ServicesModal";
 import { useUser } from "@/contexts/userContext";
-import { getBiometricEntry } from "@/utils/data-worker";
+import { getBiometricEntry } from "@/utils/biochemical-worker";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Analytics = () => {
   const { isLogined, userDataLoading, biometricsEntries } = useUser();
   const [selectedBiometricEntry, setSelectedBiometricEntry] = useState(null);
   const [biometricsEntryModalOpen, setBiometricsEntryModalOpen] =
     useState(false);
+
+  const router = useRouter();
 
   const biometricMap = biometricsEntries
     ? new Map(biometricsEntries.map((e) => [e.created_at, e]))
@@ -38,7 +41,7 @@ const Analytics = () => {
       {userDataLoading ? (
         <LoadingComponent text="Processing Data" />
       ) : !isLogined ? (
-        <NotLogined />
+        <ErrorComponent heading={"User Data Not Found"} buttonText={"Login"} handleTryAgain={()=>router.push("/about")}/>
       ) : !biometricsEntries ? (
         <ServicesModal isOpen={true} onClose={() => {}} />
       ) : (

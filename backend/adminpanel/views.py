@@ -1,7 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import  BiochemicalCondition
-from .serializers import BiochemicalConditionSerializer
+
 
 from utils.objects_handler import ObjectsHandler
 from utils.cache_handler import CacheHandler
@@ -12,6 +11,7 @@ objects_handler = ObjectsHandler()
 cache_handler = CacheHandler()
 response_handler = ResponseHandler()
 
+#--------------------Biochemicals----------------------
 
 @api_view(['GET'])
 def handle_biochemicals(request):
@@ -29,6 +29,9 @@ def handle_biochemicals(request):
             exception=f"Error handling biochemicals view: {str(e)}"
         )
 
+#--------------------Conditions----------------------
+
+
 @api_view(['POST'])
 def handle_conditions(request):
     try:
@@ -39,4 +42,23 @@ def handle_conditions(request):
     except Exception as e:
         return response_handler.handle_exception(
             exception=f"Error handling biometrics: {str(e)}"
+        )
+        
+        
+#--------------------Food Nutrients----------------------
+
+@api_view(['GET'])
+def handle_food_nutrients(request):
+    try:
+        food_nutrients, error = objects_handler.get_food_nutrients()
+        if error:
+            return response_handler.handle_exception(
+                exception=f"Error fetching food nutrients: {error}"
+            )
+        return response_handler.handle_response(
+            response=food_nutrients
+        )
+    except Exception as e:
+        return response_handler.handle_exception(
+            exception=f"Error handling nutrients view: {str(e)}"
         )

@@ -3,10 +3,9 @@ import React from "react";
 import Header from "@/components/Header";
 import { useUser } from "@/contexts/userContext";
 import UserDataComponent from "@/components/UserDataComponent";
-import NotLogined from "@/components/NotLogined";
 import LoadingComponent from "@/components/LoadingComponent";
-import { useBiochemical } from "@/contexts/biochemicalContext";
 import BiochemicalsUpdate from "@/components/BiochemicalsUpdate";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const Profile = () => {
   const { isLogined, userDataLoading } = useUser();
@@ -23,7 +22,7 @@ const Profile = () => {
             <BiochemicalsUpdate />
           </div>
         ) : (
-          <NotLogined />
+          <ErrorComponent heading={"User Data Not Found"} buttonText={"Login"} handleTryAgain={()=>router.push("/about")}/>
         )}
       </div>
     </div>

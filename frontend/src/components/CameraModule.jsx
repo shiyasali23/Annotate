@@ -1,26 +1,74 @@
 "use client";
 
-import {  FlipHorizontal, CameraIcon } from "lucide-react";
-import React, {  useRef, useState } from "react";
+import { FlipHorizontal, CameraIcon, Loader } from "lucide-react";
+import React, { useRef, useState } from "react";
 import Webcam from "react-webcam";
 import CustomButton from "@/components/CustomButton";
+import { FaCloudUploadAlt } from "react-icons/fa";
+import LoadingComponent from "./LoadingComponent";
+import { useDropzone } from "react-dropzone";
 
-const CameraModule = ({setHaveResult}) => {
+const CameraModule = ({ handleImage }) => {
   const webcamRef = useRef(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(true);
-  const [loading] = useState(false); 
+  const [fileLoading, setFileLoading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   const videoConstraints = {
     facingMode: isFrontCamera ? "user" : "environment",
   };
 
+  // Handle capturing image from webcam
+  const handleCapture = () => {
+    setFileLoading(true);
+    const imageSrc = webcamRef.current?.getScreenshot();
+    if (imageSrc) {
+      handleImage(imageSrc);
+    }
+    setCameraActive(false);
+    setFileLoading(false);
+  };
+
+  // Dropzone callback for file upload
+  const onDrop = (acceptedFiles, fileRejections) => {
+    if (fileRejections.length > 0) {
+      // Get error messages from rejected files
+      const errorMessages = fileRejections
+        .map((rejection) =>
+          rejection.errors.map((err) => err.message).join(", ")
+        )
+        .join(", ");
+      setUploadError(errorMessages || "Invalid file type or size.");
+      return;
+    }
+    if (acceptedFiles.length > 0) {
+      setUploadError(null);
+      const file = acceptedFiles[0];
+      setFileLoading(true);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleImage(reader.result);
+        setFileLoading(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+    },
+    maxSize: 2 * 1024 * 1024, // 2MB
+  });
+
   return (
-    <div className="w-full flex flex-col items-center p-2">
-      {/* Camera Preview Container */}
-      <div className="w-full md:aspect-video aspect-[3/4] relative  rounded-lg overflow-hidden">
+    <div className="w-full h-full max-w-full max-h-full flex flex-col items-center overflow-hidden">
+      <div className="w-full h-full relative overflow-hidden">
         {cameraActive ? (
-          <div>
+          <div className="w-full h-full">
             <Webcam
               audio={false}
               ref={webcamRef}
@@ -28,48 +76,63 @@ const CameraModule = ({setHaveResult}) => {
               videoConstraints={videoConstraints}
               className="w-full h-full object-cover"
             />
-            {/* Camera Controls */}
             <div className="absolute bottom-4 inset-x-0 flex justify-center gap-4">
-            <CustomButton
-                  className="bg-black opacity-50 border-none hover:bg-white text-black p-3 rounded-full"
-                  onClick={() => setIsFrontCamera(!isFrontCamera)}
-                  text={<FlipHorizontal className="w-6 h-6" />}
-                />
               <CustomButton
-                  className="bg-black opacity-50 border-none hover:bg-white text-black p-3 rounded-full"
-                  onClick={() => {
-                  const imageSrc = webcamRef.current?.getScreenshot();
-                  setCameraActive(false);
-                  setHaveResult(true);
-                }}
-                  text={<CameraIcon className="w-6 h-6" />}
-                />
+                className="bg-white text-black opacity-50 border-none rounded-full"
+                onClick={() => setIsFrontCamera(!isFrontCamera)}
+                text={<FlipHorizontal className="w-6 h-6" />}
+              />
+              <CustomButton
+                className="bg-white text-black opacity-50 border-none rounded-full"
+                onClick={handleCapture}
+                text={<CameraIcon className="w-6 h-6" />}
+              />
             </div>
           </div>
         ) : (
-          // Upload Preview Area
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-400">
-            <svg
-              className="w-8 h-8 mb-2 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span className="text-sm text-gray-500 text-center">
-              JPG, JPEG, PNG<br />(MAX. 2MB)
-            </span>
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-400 p-4">
+            {fileLoading ? (
+              <LoadingComponent text="Processing Data." />
+            ) : (
+              <div
+                {...getRootProps()}
+                className="flex flex-col items-center cursor-pointer border-2 border-dashed border-gray-500 p-4 rounded-lg"
+              >
+                <input {...getInputProps()} />
+                <FaCloudUploadAlt className="text-2xl mb-3 text-gray-500" />
+                <h1 className="text-base mb-3 text-gray-500">Upload Image</h1>
+                <h1 className="text-sm text-gray-500 text-center">
+                  JPG, JPEG, PNG
+                  <br />
+                  (MAX. 2MB)
+                </h1>
+                {uploadError && (
+                  <p className="text-red-500 mt-2 text-sm">{uploadError}</p>
+                )}
+                {isDragActive && (
+                  <p className="text-blue-500 mt-2 text-sm">
+                    Drop the file here...
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
 
       {/* Camera Toggle Button */}
       <CustomButton
-        className="mt-4 xl:w-1/2 "
+        className="mt-4 xl:w-1/2"
         onClick={() => setCameraActive(!cameraActive)}
-        text={cameraActive ? "Stop Camera" : "Start Camera"}
+        text={
+          fileLoading ? (
+            <Loader className="animate-spin" />
+          ) : cameraActive ? (
+            "Stop Camera"
+          ) : (
+            "Start Camera"
+          )
+        }
       />
     </div>
   );

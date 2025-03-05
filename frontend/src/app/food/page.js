@@ -1,73 +1,73 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { detectFood } from "@/lib/food-reccomendation-api";
+
 import CameraModule from "@/components/CameraModule";
-import ResultComponent from "@/components/ResultComponent";
-import ServicesModal from "@/components/ServicesModal";
-import CustomButton from "@/components/CustomButton";
 import Header from "@/components/Header";
+import { useFood } from "@/contexts/foodContext";
 import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const Food = () => {
-  const [loading, setLoading] = useState(false);
-  const [haveResult, setHaveResult] = useState(false);
-  const [wantToTry, setWantToTry] = useState(false);
-  const haveBiochemicals = false;
+  const { foodNutrientsData, foodNutrientsDataLoading, fetchFoodNutrients, foodsNamesArray } =
+    useFood();
 
-  const foodResultsArray = [
-    ["Apple", 45],
-    ["Orange", 60],
-    ["Grapes", 34],
-    ["Milk", 50],
-  ];
+
+    useEffect(() => {
+      if(!foodNutrientsData){
+        fetchFoodNutrients();
+      }
+    }, []);
+
+    console.log(foodNutrientsData);
+    
+
+  const [predictedFoods, setPredictedFoods] = useState(null);
+  const [message, setMessage] = useState(null);
+
+  const handleImage = async (image) => {
+    setPredictedFoods(null);
+    const { detectedFoods, message } = await detectFood(image, foodsNamesArray);
+
+    if (message && !detectedFoods) {
+      setMessage(message || "Something went wrong");
+    } else if (detectedFoods) {
+      setPredictedFoods(detectedFoods);
+    }
+
+    setPredictedFoods(false);
+  };
 
   return (
-    <div className="w-screen  flex flex-col  align-center justify-center">
+    <div className="flex w-screen min-h-screen flex-col">
       <Header />
-      {wantToTry && !haveBiochemicals && (
-        <ServicesModal isOpen={wantToTry} onClose={() => setWantToTry(false)} />
-      )}
-      {haveResult ? (
-        <div className="w-screen h-[78vh] xl:h-[88vh]  flex  align-center justify-center">
-          <div className="w-full  h-full  flex flex-col justify-center align-center">
-            <div className="w-full  h-full  flex justify-center align-center">
-              <div className="w-1/2 h-full  flex flex-col align-center justify-center p-3">
-                <CameraModule />
-              </div>
-              <div className="w-1/2  h-full flex justify-center items-center align-center">
-                {loading ? (
-                  <LoadingComponent text={"Detecting Items"} />
-                ) : (
-                  <ResultComponent  ResultsArray={foodResultsArray} />
-                )}
-              </div>
-            </div>
-            <div className="w-full h-1/2   flex justify-center align-center">
-              left-bottom
-            </div>
-          </div>
+      {message && <p className="w-full text-center text-red-500">{message}</p>}
 
-          <div className="xl:w-1/2 w-1/2  p-2 flex flex-col items-center justify-center">
-            {loading ? (
-              <LoadingComponent text={"Processing Food Score"} />
-            ) : (
-              <div className="flex    flex-col align-center items-center   gap-3">
-                <h1 className="font-bold text-xl xl:text-5xl">
-                  Try our personalized
-                </h1>
-                <CustomButton
-                  text={"Food Suggetions"}
-                  className="px-1 py-1"
-                  onClick={() => setWantToTry(!wantToTry)}
-                />
-              </div>
-            )}
-          </div>
-        </div>
+      {foodNutrientsDataLoading ? (
+        <LoadingComponent text={"Loading Data."} />
+      ) : !foodNutrientsData ? (
+        <ErrorComponent
+          heading={"Something Went Wrong"}
+          buttonText={"Try Again"}
+          handleTryAgain={fetchFoodNutrients}
+        />
       ) : (
-        <div className="w-screen h-[70vh] xl:h-[88vh] flex  items-center justify-center">
-          <div className=" w-1/2  flex  items-center justify-center">
-            <CameraModule setHaveResult={setHaveResult}/>
+        <div>
+          <div className=" w-screen  h-[78vh] xl:h-[87vh] flex ">
+            <div className=" flex  flex-col w-full">
+              <div
+                className={`flex-1  w-full pb-48 pl-1 mt-2 xl:px-24  m-auto ${
+                  predictedFoods && "pb-0 xl:py-0"
+                }`}
+              >
+                <CameraModule handleImage={handleImage} />
+              </div>
+              {predictedFoods && <div className="flex-1">results</div>}
+            </div>
+            <div className=" w-full xl:w-[80vw]">left</div>
           </div>
+          <div className="w-screen  h-[50vh]  flex">graph</div>
         </div>
       )}
     </div>

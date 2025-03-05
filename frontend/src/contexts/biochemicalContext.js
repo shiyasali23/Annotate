@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getBiochemicals } from "@/lib/biochemicals-api";
 import { processCacheData } from "@/utils/cache-wroker";
-import { processBiochemicals } from "@/utils/data-worker";
+import { processBiochemicals } from "@/utils/biochemical-worker";
 
 const BiochemicalContext = createContext();
 

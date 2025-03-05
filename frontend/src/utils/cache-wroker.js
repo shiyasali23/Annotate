@@ -9,6 +9,9 @@ const inMemoryCache = {
   hypoBiochemicals: null,
   biometricsEntries: null,
   biochemicals: null,
+
+  foodNutrients: null,
+  foodsNamesArray: null,
 };
 
 // Ensure localStorage is accessed only on the client side
@@ -31,25 +34,36 @@ if (typeof window !== "undefined" && window.localStorage) {
  */
 export const processCacheData = ({
   token = null,
+  userdata = null,
+  
   healthScore = null,
+  
   biometrics = null,
   latestBiometrics = null,
   hyperBiochemicals = null,
   hypoBiochemicals = null,
-  userdata = null,
   biometricsEntries = null,
   biochemicals = null,
+  
+  foodNutrients = null,
+  foodsNamesArray = null
 } = {}) => {
   const updatedCache = {
     token: token || inMemoryCache.token,
+    
     userdata: userdata || inMemoryCache.userdata,
+    
     healthScore: healthScore || inMemoryCache.healthScore,
     biometrics: biometrics || inMemoryCache.biometrics,
     latestBiometrics: latestBiometrics || inMemoryCache.latestBiometrics,
     hyperBiochemicals: hyperBiochemicals || inMemoryCache.hyperBiochemicals,
     hypoBiochemicals: hypoBiochemicals || inMemoryCache.hypoBiochemicals,
     biometricsEntries: biometricsEntries || inMemoryCache.biometricsEntries,
+    
     biochemicals: biochemicals || inMemoryCache.biochemicals,
+   
+    foodNutrients: foodNutrients || inMemoryCache.foodNutrients,
+    foodsNamesArray: foodsNamesArray || inMemoryCache.foodsNamesArray,
   };
 
   // Update in-memory cache
@@ -65,14 +79,21 @@ export const processCacheData = ({
   return {
     isLogined: !!updatedCache.token,
     localToken: updatedCache.token || null,
+    
     localUserData: updatedCache.userdata || null,
+    
     localHealthScore: updatedCache.healthScore || null,
+    
     localBiometrics: updatedCache.biometrics || null,
     localLatestBiometrics: updatedCache.latestBiometrics || null,
     localHyperBiochemicals: updatedCache.hyperBiochemicals || null,
     localHypoBiochemicals: updatedCache.hypoBiochemicals || null,
     localBiometricsEntries: updatedCache.biometricsEntries || null,
+    
     localBiochemicals: updatedCache.biochemicals || null,
+    
+    localFoodNutrients: updatedCache.foodNutrients || null,
+    localFoodsNamesArray: updatedCache.foodsNamesArray || null
   };
 };
 

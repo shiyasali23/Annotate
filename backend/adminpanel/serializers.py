@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import BiochemicalCondition, Biochemical, BiochemicalCondition, Condition
+from .models import BiochemicalCondition, Biochemical, BiochemicalCondition, Condition, Food, FoodNutrient
 
 
 
@@ -43,4 +43,33 @@ class BiochemicalConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = BiochemicalCondition
         fields = ['name', 'is_hyper', 'biochemical', 'id', 'condition']
+        
+        
 
+class FoodNutrientSerializer(serializers.ModelSerializer):
+    
+    food = serializers.CharField(
+        source='food.name', 
+        read_only=True
+    ) 
+    
+    nutriscore = serializers.FloatField(
+        source='food.nutriscore', 
+        read_only=True
+    )
+    
+    nutrient = serializers.CharField(
+        source='nutrient.name', 
+        read_only=True
+    )
+    
+    unit = serializers.CharField(
+        source='nutrient.unit', 
+        read_only=True
+    )
+    
+    value = serializers.FloatField()
+    
+    class Meta:
+        model = FoodNutrient
+        fields = ["food", "nutriscore", "nutrient", "value", "unit"]

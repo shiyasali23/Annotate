@@ -17,7 +17,7 @@ export const processFoodNutrients = (rawData) => {
   const nutrientsDataSet = new Set();
   const foodsNameSet = new Set();
 
-  // Single pass over the raw data
+  // Process raw data
   for (const entry of rawData) {
     const { food, nutrient, value } = entry;
     const foodName = food.name;
@@ -33,55 +33,51 @@ export const processFoodNutrients = (rawData) => {
     foodsDataSet.add(JSON.stringify({ name: foodName, category, subCategory }));
 
     // Store nutrientsData in the required format
-    nutrientsDataSet.add(JSON.stringify({ name: nutrientName, category: nutrientCategory }));
+    nutrientsDataSet.add(
+      JSON.stringify({ name: nutrientName, category: nutrientCategory })
+    );
 
-    // Update foodNutrientsMap for the given food
+    // Update foodNutrientsMap
     if (!foodNutrientsMap[foodName]) {
       foodNutrientsMap[foodName] = {
         nutriScore: food.nutriscore,
         category,
         subCategory,
+        associations: {},
       };
     }
-    // Set nutrient data for the food
-    foodNutrientsMap[foodName][nutrientName] = {
+    foodNutrientsMap[foodName].associations[nutrientName] = {
       value,
       unit: nutrient.unit,
       category: nutrientCategory,
     };
 
-    // Update nutrientsFoodsMap for the given nutrient
+    // Update nutrientsFoodsMap
     if (!nutrientsFoodsMap[nutrientName]) {
       nutrientsFoodsMap[nutrientName] = {
         category: nutrientCategory,
         unit: nutrient.unit,
+        associations: {},
       };
     }
-    // Set food details for this nutrient
-    nutrientsFoodsMap[nutrientName][foodName] = {
+    nutrientsFoodsMap[nutrientName].associations[foodName] = {
       value,
       category,
       subcategory: subCategory,
     };
   }
 
-  // Convert maps to arrays as specified in the desired output structure
-
-  // foodNutrients: array of objects keyed by food name
+  // Convert maps to arrays in the desired format
   const foodNutrientsArray = Object.entries(foodNutrientsMap).map(
     ([foodName, data]) => ({ [foodName]: data })
   );
 
-  // nutrientsFoods: array of objects keyed by nutrient name
   const nutrientsFoodsArray = Object.entries(nutrientsFoodsMap).map(
     ([nutrientName, data]) => ({ [nutrientName]: data })
   );
 
-  // Convert Sets to arrays and parse JSON back to objects
   const foodsDataArray = Array.from(foodsDataSet).map(JSON.parse);
   const nutrientsDataArray = Array.from(nutrientsDataSet).map(JSON.parse);
-
-  // Convert the Set of food names to an array
   const foodsNameArray = Array.from(foodsNameSet);
 
   return {
@@ -89,7 +85,7 @@ export const processFoodNutrients = (rawData) => {
     nutrientsFoods: nutrientsFoodsArray,
     foodsData: foodsDataArray,
     nutrientsData: nutrientsDataArray,
-    foodsNameArray,
+    foodsNameArray:foodsNameArray,
   };
 };
 

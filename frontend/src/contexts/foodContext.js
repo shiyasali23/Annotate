@@ -67,8 +67,8 @@ export const FoodProvider = ({ children }) => {
     <FoodContext.Provider
       value={{
         fetchFoodNutrients,
-        foodNutrients,
         foodNutrientsDataLoading,
+        foodNutrients, 
         nutrientsFoods,
         foodsData,
         nutrientsData,

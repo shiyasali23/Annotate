@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { FaHeartbeat } from "react-icons/fa";
+import { FaHeartbeat, FaSearch } from "react-icons/fa";
 import { FaBowlFood } from "react-icons/fa6";
 import {
   Command,
@@ -12,11 +12,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 
-const FoodSearch = ({
-  nutrientsData,
-  foodsData,
-  handleSelectedItem,
-}) => {
+const FoodSearch = ({ nutrientsData, foodsData, handleSelectedItem }) => {
   const [query, setQuery] = useState("");
   const searchBoxRef = useRef(null);
 
@@ -46,13 +42,15 @@ const FoodSearch = ({
   };
 
   return (
-    <div className="w-full xl:w-1/2 mx-auto relative mb-10 px-2" ref={searchBoxRef}>
+    <div className="w-full xl:w-1/2 mx-auto relative  px-2" ref={searchBoxRef}>
+      <FaSearch className="absolute right-5  text-2xl text-gray-400 top-1/2 transform -translate-y-1/2 text-xl" />
+
       <input
         type="text"
-        placeholder="Search Foods Or Nutrients"
+        placeholder="Select A Foods Or Nutrients "
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full p-2  border shadow-sm"
+        className="w-full p-2 text-center border shadow-sm text-gray-800 text-base"
       />
 
       {query && (
@@ -62,7 +60,7 @@ const FoodSearch = ({
               {filteredFoods.length === 0 && filteredNutrients.length === 0 ? (
                 <CommandEmpty>No results found.</CommandEmpty>
               ) : (
-                <>
+                <div>
                   {filteredFoods.length > 0 && (
                     <CommandGroup heading="Foods">
                       {filteredFoods.map((food, index) => (
@@ -106,7 +104,7 @@ const FoodSearch = ({
                       ))}
                     </CommandGroup>
                   )}
-                </>
+                </div>
               )}
             </CommandList>
           </Command>

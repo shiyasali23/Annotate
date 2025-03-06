@@ -1,46 +1,64 @@
+"use client";
 import React, { useMemo } from "react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 const FoodNutrientList = ({ itemsArray, selectedItem, handleSelectedItem, isFood }) => {
+  // Group items by category (or subCategory if available)
   const categorizedItems = useMemo(() => {
     return itemsArray.reduce((acc, { category, subCategory, name }) => {
-      const categoryKey = subCategory || category; 
-
+      const categoryKey = subCategory || category;
       if (!acc[categoryKey]) {
         acc[categoryKey] = [];
       }
-
-      acc[categoryKey].push(name); 
-
+      acc[categoryKey].push(name);
       return acc;
     }, {});
-  }, [itemsArray]); 
+  }, [itemsArray]);
 
-  
+  // Compute the default open accordion based on selectedItem
+  const defaultAccordionValue = useMemo(() => {
+    if (!selectedItem) return undefined;
+    for (const [category, items] of Object.entries(categorizedItems)) {
+      if (items.includes(selectedItem)) return category;
+    }
+    return undefined;
+  }, [categorizedItems, selectedItem]);
 
   return (
-    <div className="w-full flex flex-col h-full">
-      {Object.entries(categorizedItems).map(([category, items]) => (
-        <div key={category} className="w-full flex flex-col gap-3 mt-2">
-          <div className="flex flex-col gap-3 mx-auto border p-2">
-            <h1 className="underline font-bold text-sm text-center w-[115px] xl:w-[150px]">
+    <div className="w-full flex-1 flex flex-col h-full overflow-y-scroll border px-5">
+      <Accordion 
+        type="single" 
+        defaultValue={defaultAccordionValue} 
+        collapsible
+        // Using a key ensures the Accordion re-mounts when defaultAccordionValue changes.
+        key={defaultAccordionValue || "none"}
+      >
+        {Object.entries(categorizedItems).map(([category, items]) => (
+          <AccordionItem key={category} value={category}>
+            <AccordionTrigger className="  text-xs font-bold text-center w-full">
               {category}
-            </h1>
-            <div className="flex flex-col gap-2">
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-2">
               {items.map((item) => (
                 <button
                   onClick={() => handleSelectedItem(item, isFood)}
                   key={item}
-                  className={`border border-dashed border-1 border-gray-300 text-xs py-1 w-[115px] xl:w-[150px] ${
+                  className={`border border-dashed border-gray-300 text-xs py-1 w-full mt-2 font-semibold ${
                     item === selectedItem ? "bg-gray-800 text-white border-none" : ""
                   }`}
                 >
                   {item}
                 </button>
               ))}
-            </div>
-          </div>
-        </div>
-      ))}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 };

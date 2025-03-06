@@ -16,6 +16,7 @@ export const UserProvider = ({ children }) => {
   const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
   const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
   const [userDataLoading, setUserDataLoading] = useState(true);
+  const [foodScores, setFoodScores] = useState(null);
 
   useEffect(() => {
     setUserDataLoading(true);
@@ -142,6 +143,7 @@ export const UserProvider = ({ children }) => {
         hypoBiochemicals,
         userDataLoading,
         userData,
+        foodScores
       }}
     >
       {children}

@@ -1,65 +1,39 @@
-import { useBiochemical } from "@/contexts/biochemicalContext";
-import React, { useState } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React from "react";
 
-const BiochemicalsUpdate = () => {
-  const [message, setMessage] = useState();
-  const { biochemicalData } = useBiochemical();
-  const [values, setValues] = useState({});
-
-  const handleInputChange = (id, value) => {
-    setValues((prevValues) => ({
-      ...prevValues,
-      [id]: value,
-    }));
-  };
+const FoodList = ({ foodsData }) => {
+  const categorizedFoods = foodsData.reduce(
+    (acc, { category, subCategory, name }) => {
+      acc[category] ??= {};
+      acc[category][subCategory] ??= [];
+      acc[category][subCategory].push(name);
+      return acc;
+    },
+    {}
+  );
 
   return (
-    <div className="w-full h-full mt-10 xl:px-16 px-4 flex flex-col gap-10 border-t">
-      {message && <p className="text-sm">{message}</p>}
-      
-      <Accordion type="multiple" className="w-full">
-        {Object.entries(biochemicalData).map(([category, items]) => (
-          <AccordionItem key={category} value={category}>
-            <AccordionTrigger className="text-md font-semibold">
-              {category}
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
-                {items.map((item) => (
-                  <div key={item.id} className="flex flex-col space-y-2">
-                    <Label htmlFor={`biochemical-${item.id}`} className="text-sm">
-                      {item.name}
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id={`biochemical-${item.id}`}
-                        type="number"
-                        placeholder="0"
-                        value={values[item.id] || ""}
-                        onChange={(e) => handleInputChange(item.id, e.target.value)}
-                        className="w-[100px]"
-                      />
-                      <span className="text-sm whitespace-nowrap">
-                        {item.unit}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </div>
+    <ol className="px-1 mt-2 flex flex-col gap-2">
+      {Object.entries(categorizedFoods).map(([category, subCategories]) => (
+        <li key={category} className="font-bold text-md capitalize text-center">
+          {category}
+          <ol className="list-disc pl-6 flex flex-col gap-1">
+            {Object.entries(subCategories).map(([subCategory, foods]) => (
+              <li key={subCategory} className="font-semibold text-sm">
+                {subCategory}
+                <ul className="list-inside list-circle pl-3 flex flex-col gap-1 mt-1">
+                  {foods.map((food) => (
+                    <li key={food} className="border text-xs px-3 py-1 text-center">
+                      {food}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        </li>
+      ))}
+    </ol>
   );
 };
 
-export default BiochemicalsUpdate;
+export default FoodList;

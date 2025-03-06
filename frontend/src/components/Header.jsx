@@ -67,7 +67,7 @@ const Header = () => {
             id="dropdownButton"
             onClick={toggleDropdown}
             ref={buttonRef}
-            className={`group relative flex items-center justify-center rounded-md text-xs sm:text-xs md:text-base p-2   bg-black text-white font-semibold text-center overflow-hidden border-2 border-black transition-all duration-300 hover:bg-white`}
+            className={`group relative flex items-center justify-center  text-xs sm:text-xs md:text-base p-2   bg-black text-white font-semibold text-center overflow-hidden border-2 border-black transition-all duration-300 hover:bg-white`}
             aria-haspopup="true"
             aria-expanded={dropdownOpen}
           >

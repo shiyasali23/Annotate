@@ -7,28 +7,22 @@ import CameraModule from "@/components/CameraModule";
 import Header from "@/components/Header";
 import { useFood } from "@/contexts/foodContext";
 import LoadingComponent from "@/components/LoadingComponent";
-import ErrorComponent from "@/components/ErrorComponent";
+import FoodNutrientAnalytics from "@/components/FoodNutrientAnalytics";
 
 const Food = () => {
-  const { foodNutrientsData, foodNutrientsDataLoading, fetchFoodNutrients, foodsNamesArray } =
+  const { foodNutrientsDataLoading, fetchFoodNutrients, foodsNameArray } =
     useFood();
-
-
-    useEffect(() => {
-      if(!foodNutrientsData){
-        fetchFoodNutrients();
-      }
-    }, []);
-
-    console.log(foodNutrientsData);
-    
-
-  const [predictedFoods, setPredictedFoods] = useState(null);
+  const [predictedFoods, setPredictedFoods] = useState(false);
   const [message, setMessage] = useState(null);
 
+  useEffect(() => {
+    if (!foodsNameArray) {
+      fetchFoodNutrients();
+    }
+  }, []);
+
   const handleImage = async (image) => {
-    setPredictedFoods(null);
-    const { detectedFoods, message } = await detectFood(image, foodsNamesArray);
+    const { detectedFoods, message } = await detectFood(image, foodsNameArray);
 
     if (message && !detectedFoods) {
       setMessage(message || "Something went wrong");
@@ -39,6 +33,10 @@ const Food = () => {
     setPredictedFoods(false);
   };
 
+
+
+  
+
   return (
     <div className="flex w-screen min-h-screen flex-col">
       <Header />
@@ -46,28 +44,33 @@ const Food = () => {
 
       {foodNutrientsDataLoading ? (
         <LoadingComponent text={"Loading Data."} />
-      ) : !foodNutrientsData ? (
-        <ErrorComponent
-          heading={"Something Went Wrong"}
-          buttonText={"Try Again"}
-          handleTryAgain={fetchFoodNutrients}
-        />
       ) : (
         <div>
-          <div className=" w-screen  h-[78vh] xl:h-[87vh] flex ">
+          <div
+            className={`w-screen   flex ${
+              predictedFoods ? "h-[70vh]" : "h-[55vh]"
+            }`}
+          >
             <div className=" flex  flex-col w-full">
-              <div
-                className={`flex-1  w-full pb-48 pl-1 mt-2 xl:px-24  m-auto ${
-                  predictedFoods && "pb-0 xl:py-0"
-                }`}
-              >
-                <CameraModule handleImage={handleImage} />
+              <div className="flex-1  w-full     m-auto">
+                <CameraModule
+                  handleImage={handleImage}
+                  setPredictedFoods={setPredictedFoods}
+                  className={`${
+                    predictedFoods ? "px-1 xl:px-32" : "px-16 xl:px-64"
+                  }`}
+                />
               </div>
               {predictedFoods && <div className="flex-1">results</div>}
             </div>
-            <div className=" w-full xl:w-[80vw]">left</div>
+            {predictedFoods && <div className=" w-full xl:w-[80vw]">left</div>}
           </div>
-          <div className="w-screen  h-[50vh]  flex">graph</div>
+
+          {foodsNameArray && (
+            <div className="w-scree flex">
+              <FoodNutrientAnalytics />
+            </div>
+          )}
         </div>
       )}
     </div>

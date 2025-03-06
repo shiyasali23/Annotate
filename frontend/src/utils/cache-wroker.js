@@ -1,114 +1,83 @@
-// In-memory cache object for fast access (data is also persisted in localStorage)
-const inMemoryCache = {
-  token: null,
-  userdata: null,
-  healthScore: null,
-  biometrics: null,
-  latestBiometrics: null,
-  hyperBiochemicals: null,
-  hypoBiochemicals: null,
-  biometricsEntries: null,
-  biochemicals: null,
+// @/utils/cache-worker.js
 
-  foodNutrients: null,
-  foodsNamesArray: null,
-};
+const validCacheKeys = [
+  "token",
+  "userData",
+  "healthScore",
+  "biometrics",
+  "latestBiometrics",
+  "hyperBiochemicals",
+  "hypoBiochemicals",
+  "biometricsEntries",
+  "foodNutrients",
+  "nutrientsFoods",
+  "foodsData",
+  "nutrientsData",
+  "foodsNameArray",
+];
 
-// Ensure localStorage is accessed only on the client side
-if (typeof window !== "undefined" && window.localStorage) {
-  // Load cached data from localStorage on startup
-  for (const key in inMemoryCache) {
-    const value = localStorage.getItem(key);
-    if (value !== null) {
-      try {
-        inMemoryCache[key] = JSON.parse(value);
-      } catch (error) {
-        console.error(`Error parsing localStorage key ${key}:`, error);
-      }
+class CacheManager {
+  constructor(validKeys = []) {
+    this.validKeys = new Set(validKeys);
+  }
+
+  // Check if a key is valid for caching.
+  isValidKey(key) {
+    return this.validKeys.has(key);
+  }
+
+  // Retrieve a single key from localStorage.
+  get(key) {
+    if (!this.isValidKey(key)) return null;
+    if (typeof window === "undefined" || !window.localStorage) return null;
+    const item = localStorage.getItem(key);
+    if (!item) return null;
+    try {
+      return JSON.parse(item);
+    } catch (error) {
+      console.error(`Error parsing localStorage key "${key}":`, error);
+      return null;
     }
+  }
+
+  // Set a single key in localStorage.
+  set(key, value) {
+    if (!this.isValidKey(key)) return;
+    if (typeof window === "undefined" || !window.localStorage) return;
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  // Retrieve multiple keys from localStorage at once.
+  multiGet(keys) {
+    const result = {};
+    keys.forEach((key) => {
+      result[key] = this.get(key);
+    });
+    return result;
+  }
+
+  // Set multiple keys in localStorage at once.
+  multiSet(data) {
+    Object.keys(data).forEach((key) => {
+      if (this.isValidKey(key)) {
+        this.set(key, data[key]);
+      }
+    });
+  }
+
+  // Remove a specific key from localStorage.
+  clear(key) {
+    if (!this.isValidKey(key)) return;
+    if (typeof window === "undefined" || !window.localStorage) return;
+    localStorage.removeItem(key);
+  }
+
+  // Clear all valid keys from localStorage.
+  clearAll() {
+    this.validKeys.forEach((key) => {
+      this.clear(key);
+    });
   }
 }
 
-/**
- * processCacheData - Retrieves and updates the cache (both in-memory & localStorage)
- */
-export const processCacheData = ({
-  token = null,
-  userdata = null,
-  
-  healthScore = null,
-  
-  biometrics = null,
-  latestBiometrics = null,
-  hyperBiochemicals = null,
-  hypoBiochemicals = null,
-  biometricsEntries = null,
-  biochemicals = null,
-  
-  foodNutrients = null,
-  foodsNamesArray = null
-} = {}) => {
-  const updatedCache = {
-    token: token || inMemoryCache.token,
-    
-    userdata: userdata || inMemoryCache.userdata,
-    
-    healthScore: healthScore || inMemoryCache.healthScore,
-    biometrics: biometrics || inMemoryCache.biometrics,
-    latestBiometrics: latestBiometrics || inMemoryCache.latestBiometrics,
-    hyperBiochemicals: hyperBiochemicals || inMemoryCache.hyperBiochemicals,
-    hypoBiochemicals: hypoBiochemicals || inMemoryCache.hypoBiochemicals,
-    biometricsEntries: biometricsEntries || inMemoryCache.biometricsEntries,
-    
-    biochemicals: biochemicals || inMemoryCache.biochemicals,
-   
-    foodNutrients: foodNutrients || inMemoryCache.foodNutrients,
-    foodsNamesArray: foodsNamesArray || inMemoryCache.foodsNamesArray,
-  };
-
-  // Update in-memory cache
-  Object.assign(inMemoryCache, updatedCache);
-
-  // Persist updated values in localStorage if available
-  if (typeof window !== "undefined" && window.localStorage) {
-    for (const key in updatedCache) {
-      localStorage.setItem(key, JSON.stringify(updatedCache[key]));
-    }
-  }
-
-  return {
-    isLogined: !!updatedCache.token,
-    localToken: updatedCache.token || null,
-    
-    localUserData: updatedCache.userdata || null,
-    
-    localHealthScore: updatedCache.healthScore || null,
-    
-    localBiometrics: updatedCache.biometrics || null,
-    localLatestBiometrics: updatedCache.latestBiometrics || null,
-    localHyperBiochemicals: updatedCache.hyperBiochemicals || null,
-    localHypoBiochemicals: updatedCache.hypoBiochemicals || null,
-    localBiometricsEntries: updatedCache.biometricsEntries || null,
-    
-    localBiochemicals: updatedCache.biochemicals || null,
-    
-    localFoodNutrients: updatedCache.foodNutrients || null,
-    localFoodsNamesArray: updatedCache.foodsNamesArray || null
-  };
-};
-
-/**
- * handleCacheLogout - Clears the in-memory cache and localStorage storage.
- */
-export const handleCacheLogout = () => {
-  // Clear in-memory cache
-  for (const key in inMemoryCache) {
-    inMemoryCache[key] = null;
-  }
-  // Clear localStorage if available
-  if (typeof window !== "undefined" && window.localStorage) {
-    for (const key in inMemoryCache) {
-      localStorage.removeItem(key);
-    }
-  }
-};
+export const cacheManager = new CacheManager(validCacheKeys);

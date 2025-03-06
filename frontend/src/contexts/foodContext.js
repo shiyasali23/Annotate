@@ -1,51 +1,78 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getFoodNutrients } from "@/lib/food-reccomendation-api";
-import { processCacheData } from "@/utils/cache-wroker";
+import { cacheManager } from "@/utils/cache-wroker";
 import { processFoodNutrients } from "@/utils/food-woker";
 
 const FoodContext = createContext();
 
 export const FoodProvider = ({ children }) => {
-  const [foodNutrientsData, setFoodNutrientsData] = useState(null);
-  const [foodsNamesArray, setFoodsNamesArray] = useState(null);
+  const [foodNutrients, setFoodNutrients] = useState(null);
+  const [nutrientsFoods, setNutrientsFoods] = useState(null);
+  const [foodsData, setFoodsData] = useState(null);
+  const [nutrientsData, setNutrientsData] = useState(null);
+  const [foodsNameArray, setFoodsNameArray] = useState(null);
   const [foodNutrientsDataLoading, setFoodNutrientsDataLoading] = useState(true);
-
 
   useEffect(() => {
     setFoodNutrientsDataLoading(true);
-      const { localFoodNutrients, localFoodsNamesArray } = processCacheData();
-      if (localFoodNutrients) {
-        setFoodNutrientsData(localFoodNutrients);
-      }
-      if(localFoodsNamesArray) {
-          setFoodsNamesArray(localFoodsNamesArray);
-      }
-      setFoodNutrientsDataLoading(false);
-    }, []);
+    const cached = cacheManager.multiGet([
+      "foodNutrients",
+      "nutrientsFoods",
+      "foodsData",
+      "nutrientsData",
+      "foodsNameArray",
+    ]);
+    if (cached.foodNutrients) setFoodNutrients(cached.foodNutrients);
+    if (cached.nutrientsFoods) setNutrientsFoods(cached.nutrientsFoods);
+    if (cached.foodsData) setFoodsData(cached.foodsData);
+    if (cached.nutrientsData) setNutrientsData(cached.nutrientsData);
+    if (cached.foodsNameArray) setFoodsNameArray(cached.foodsNameArray);
+    setFoodNutrientsDataLoading(false);
+  }, []);
 
   const fetchFoodNutrients = async () => {
     setFoodNutrientsDataLoading(true);
-    const foodNutrients = await getFoodNutrients();
-    if (foodNutrients) {
-      const processedFoodNutrients = processFoodNutrients(foodNutrients);
-      if (processedFoodNutrients) {
-        setFoodNutrientsData(processedFoodNutrients);
-        const foodsNamesArray = processedFoodNutrients.map(item => Object.keys(item)[0]);
-        setFoodsNamesArray(foodsNamesArray);
-        processCacheData({ foodNutrients: processedFoodNutrients, foodsNamesArray: foodsNamesArray });
-      }
+    const foodNutrientsData = await getFoodNutrients();
+    if (foodNutrientsData) {
+      const {
+        foodNutrients,
+        nutrientsFoods,
+        foodsData,
+        nutrientsData,
+        foodsNameArray,
+      } = processFoodNutrients(foodNutrientsData);
+      
+      cacheManager.multiSet({
+        foodNutrients,
+        nutrientsFoods,
+        foodsData,
+        nutrientsData,
+        foodsNameArray,
+      });
+      
+      setFoodNutrients(foodNutrients);
+      setNutrientsFoods(nutrientsFoods);
+      setFoodsData(foodsData);
+      setNutrientsData(nutrientsData);
+      setFoodsNameArray(foodsNameArray);
     }
     setFoodNutrientsDataLoading(false);
   };
 
+  // console.log(JSON.stringify(foodsData, null, 2));
+  // console.log(JSON.stringify(nutrientsData, null, 2));
+
   return (
     <FoodContext.Provider
       value={{
-        foodNutrientsData,
-        foodNutrientsDataLoading,
         fetchFoodNutrients,
-        
+        foodNutrients,
+        foodNutrientsDataLoading,
+        nutrientsFoods,
+        foodsData,
+        nutrientsData,
+        foodsNameArray,
       }}
     >
       {children}

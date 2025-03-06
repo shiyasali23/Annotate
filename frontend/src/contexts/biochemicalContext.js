@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getBiochemicals } from "@/lib/biochemicals-api";
-import { processCacheData } from "@/utils/cache-wroker";
+import { cacheManager } from "@/utils/cache-wroker";
 import { processBiochemicals } from "@/utils/biochemical-worker";
 
 const BiochemicalContext = createContext();
@@ -12,14 +12,13 @@ export const BiochemicalProvider = ({ children }) => {
 
   useEffect(() => {
     setBiochemicalDataLoading(true);
-    // Retrieve data from our in-memory cache
-    const { localBiochemicals } = processCacheData();
+    const localBiochemicals = cacheManager.get("biochemicals");
     if (localBiochemicals) {
       setBiochemicalData(localBiochemicals);
+      setBiochemicalDataLoading(false);
     } else {
       fetchBiochemicals();
     }
-    setBiochemicalDataLoading(false);
   }, []);
 
   const fetchBiochemicals = async () => {
@@ -28,9 +27,8 @@ export const BiochemicalProvider = ({ children }) => {
     if (biochemicals) {
       const processedBiochemicals = processBiochemicals(biochemicals);
       if (processedBiochemicals) {
-        // Update the state and the in-memory cache
         setBiochemicalData(processedBiochemicals);
-        processCacheData({ biochemicals: processedBiochemicals });
+        cacheManager.set("biochemicals", processedBiochemicals);
       }
     }
     setBiochemicalDataLoading(false);

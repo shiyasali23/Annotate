@@ -8,7 +8,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import LoadingComponent from "./LoadingComponent";
 import { useDropzone } from "react-dropzone";
 
-const CameraModule = ({ handleImage }) => {
+const CameraModule = ({ handleImage, setPredictedFoods, className }) => {
   const webcamRef = useRef(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(true);
@@ -65,7 +65,7 @@ const CameraModule = ({ handleImage }) => {
   });
 
   return (
-    <div className="w-full h-full max-w-full max-h-full flex flex-col items-center overflow-hidden">
+    <div className={`w-full h-full max-w-full max-h-full flex flex-col items-center overflow-hidden ${className}`}>
       <div className="w-full h-full relative overflow-hidden">
         {cameraActive ? (
           <div className="w-full h-full">
@@ -90,18 +90,18 @@ const CameraModule = ({ handleImage }) => {
             </div>
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-400 p-4">
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-400 p-4 ">
             {fileLoading ? (
               <LoadingComponent text="Processing Data." />
             ) : (
               <div
                 {...getRootProps()}
-                className="flex flex-col items-center cursor-pointer border-2 border-dashed border-gray-500 p-4 rounded-lg"
+                className="flex flex-col items-center cursor-pointer border-2 border-dashed border-gray-500 p-4 "
               >
                 <input {...getInputProps()} />
                 <FaCloudUploadAlt className="text-2xl mb-3 text-gray-500" />
-                <h1 className="text-base mb-3 text-gray-500">Upload Image</h1>
-                <h1 className="text-sm text-gray-500 text-center">
+                <h1 className="text-sm mb-3 text-gray-500">Upload Image</h1>
+                <h1 className="text-xs text-gray-500 text-center">
                   JPG, JPEG, PNG
                   <br />
                   (MAX. 2MB)
@@ -123,8 +123,10 @@ const CameraModule = ({ handleImage }) => {
       {/* Camera Toggle Button */}
       <CustomButton
         className="mt-4 xl:w-1/2"
-        onClick={() => setCameraActive(!cameraActive)}
-        text={
+        onClick={() => {
+          setCameraActive(!cameraActive);
+          setPredictedFoods(null);
+        }}        text={
           fileLoading ? (
             <Loader className="animate-spin" />
           ) : cameraActive ? (

@@ -9,7 +9,9 @@ frontend/package-lock.json
 frontend/yarn.lock
 frontend/.vscode/
 
-# Python / FastAPI (Backend)
+# Python
+# Fast-Api
+# Dignosis
 diagnosis/env/
 diagnosis/__pycache__/
 diagnosis/*.pyc
@@ -17,6 +19,16 @@ diagnosis/.env
 diagnosis/.env.*.local
 diagnosis/.vscode/
 
+# Detection
+detection/env/
+detection/__pycache__/
+detection/*.pyc
+detection/.env
+detection/.env.*.local
+detection/.vscode/
+
+# Django
+# Backend
 backend/env/
 backend/__pycache__/
 backend/*.pyc

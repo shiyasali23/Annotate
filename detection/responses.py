@@ -7,12 +7,10 @@ class ResponseHandler:
     MESSAGES = {
         "INTERNAL_SERVER_ERROR": "An internal server error occurred.",
         "UNEXPECTED_ERROR": "An unexpected error occurred.",
-        "NOT_FOUND": "Requested object not found.",
         "REQUEST_FAILED": "Requested operation failed.",
         "PREDICTION_SUCCESS": "Prediction successful.",
-        "FEATURES_RETRIEVED": "Features retrieved successfully.",
-        "METADATA_RETRIEVED": "Metadata retrieved successfully.",
-        "INVALID_DATA": "Error while validating data."
+        "NO_DETECTION": "Nothing could be detected",
+        "NO_IMAGE": "No image provided."
     }
 
     def handle_response(self, status_code=200, message=None, error=None, response=None) -> JSONResponse:
@@ -35,8 +33,4 @@ class ResponseHandler:
             logger.error(f"Exception: {exception}")
         return self.handle_response(status_code=status_code, error=error, message=message)
 
-    def handle_logger(self, error=None, message=None, exception=None):
-        if exception:
-            logger.error(f"{error or 'Exception'}: {exception}")
-        if message:
-            logger.info(f"{error or 'Info'}: {message}")
+

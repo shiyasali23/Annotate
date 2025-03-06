@@ -9,7 +9,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import FoodSearch from "@/components/FoodSearch";
 import FoodNutrientList from "@/components/FoodNutrientList";
 import FoodNutrientBarGraph from "@/components/FoodNutrientBarGraph";
-// import FoodNutrientBarGraph from "@/components/FoodNutrientBarGraph"; // if needed
+import FoodScores from "@/components/FoodScores";
 
 const Food = () => {
   const [predictedFoods, setPredictedFoods] = useState(false);
@@ -45,7 +45,7 @@ const Food = () => {
       // Smooth scroll to the chart section
       const section = document.getElementById("food-nutrient-chart");
       if (section) {
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
+        section.scrollIntoView({ behavior: "smooth", block: "end" });
       }
     },
     [foodNutrients, nutrientsFoods]
@@ -67,6 +67,15 @@ const Food = () => {
     }
   }, [foodsNameArray, fetchFoodNutrients]);
 
+  useEffect(() => {
+    if (selectedData) {
+      const section = document.getElementById("food-nutrient-chart");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+    }
+  }, [selectedData]);
+
   return (
     <div className="flex w-screen min-h-screen flex-col">
       <Header />
@@ -74,44 +83,56 @@ const Food = () => {
       {foodNutrientsDataLoading ? (
         <LoadingComponent text="Loading Data." />
       ) : (
-        <div className="flex flex-col w-full gap-32">
+        <div className="flex flex-col w-full">
           {/* First Section */}
-          <section id="food-nutrients-search" className="w-full h-[65vh] my-5">
-            <div className="flex flex-col gap-10 h-full">
-              <FoodSearch
-                nutrientsData={memoizedNutrientsData}
-                foodsData={memoizedFoodsData}
-                handleSelectedItem={handleSelectedItem}
-              />
-              {message && (
-                <p className="w-full text-center text-red-500">{message}</p>
-              )}
-              <div className="w-full h-full flex items-center gap-2 px-2 ">
-                <CameraModule handleImage={handleImage} />
-                <div className="w-full h-full flex items-center gap-2">
-                  <FoodNutrientList
-                    itemsArray={memoizedFoodsData}
-                    selectedItem={selectedItem}
-                    handleSelectedItem={handleSelectedItem}
-                    isFood={true}
-                  />
-                  <FoodNutrientList
-                    itemsArray={memoizedNutrientsData}
-                    selectedItem={selectedItem}
-                    handleSelectedItem={handleSelectedItem}
-                    isFood={false}
-                  />
-                </div>
+          <section className="w-full h-[80vh] flex flex-col gap-5  pb-16 mt-5">
+            <FoodSearch
+              nutrientsData={memoizedNutrientsData}
+              foodsData={memoizedFoodsData}
+              handleSelectedItem={handleSelectedItem}
+            />
+            {message && (
+              <p className="w-full text-center text-red-500">{message}</p>
+            )}
+            <div className="w-full h-full flex items-center gap-2 px-2 ">
+              <CameraModule handleImage={handleImage} />
+              <div className="w-full h-full flex items-center gap-2">
+                <FoodNutrientList
+                  itemsArray={memoizedFoodsData}
+                  selectedItem={selectedItem}
+                  handleSelectedItem={handleSelectedItem}
+                  isFood={true}
+                />
+                <FoodNutrientList
+                  itemsArray={memoizedNutrientsData}
+                  selectedItem={selectedItem}
+                  handleSelectedItem={handleSelectedItem}
+                  isFood={false}
+                />
               </div>
             </div>
           </section>
 
-          <section id="food-nutrient-chart" className="w-full h-[92vh] xl:h-[88vh] p-4 xl:p-20">
+          <section className="w-full min-h-[72vh] xl:min-h-[40vh]   flex ">
+            {predictedFoods && <div className="flex-1 border">hi</div>}
+            <div className="flex-1 ">
+              <FoodScores />
+            </div>
+          </section>
+
+          <section id="food-nutrient-chart">
             {selectedData && (
-              // <h1>{JSON.stringify(selectedData)}</h1>
-              <FoodNutrientBarGraph selectedData={selectedData} isItemFood={isItemFood}/>
+              <div className="w-full  h-full  p-4 xl:p-20 h-[92vh] xl:h-[88vh]">
+                <FoodNutrientBarGraph
+                  selectedData={selectedData}
+                  isItemFood={isItemFood}
+                />
+              </div>
             )}
           </section>
+
+          
+       
         </div>
       )}
     </div>

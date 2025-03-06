@@ -29,7 +29,7 @@ export const getFoodNutrients = async () => {
 
 //----------------------Detection--------------------------------------------------
 
-const DETECTION_API_URL = process.env.DETECTION_API_URL || 'http://0.0.0.0:8002/detection';
+const DETECTION_API_URL = process.env.DETECTION_API_URL || 'http://127.0.0.1:8002/detection';
 export const detectFood = async (file, foodsNamesArray) => {      
     const token = localStorage.getItem("token");
     const controller = new AbortController();

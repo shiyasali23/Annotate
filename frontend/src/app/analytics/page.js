@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import HealthScoreGraph from "@/components/HealthScoreGraph";
 import HyperHypoConditions from "@/components/HyperHypoConditions";
 import LoadingComponent from "@/components/LoadingComponent";
-import ServicesModal from "@/components/ServicesModal";
+import ServicesModal from "@/components/NoDataFound";
 import { useUser } from "@/contexts/userContext";
 import { getBiometricEntry } from "@/utils/biochemical-worker";
 import { useState } from "react";

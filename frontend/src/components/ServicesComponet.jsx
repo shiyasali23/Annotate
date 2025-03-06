@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import ServicesModal from "./ServicesModal";
+import ServicesModal from "./NoDataFound";
 import DiseaseDetectionModal from "./DiseaseDetectionModal";
 import DiagnosisModal from "./DiagnosisModal";
 

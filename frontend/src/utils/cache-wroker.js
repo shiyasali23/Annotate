@@ -1,6 +1,15 @@
 // @/utils/cache-worker.js
 
 const validCacheKeys = [
+
+
+  "biochemicals",
+  "foodNutrients",
+  "nutrientsFoods",
+  "foodsData",
+  "nutrientsData",
+  "foodNutriscoreData",
+
   "token",
   "userData",
   "healthScore",
@@ -9,11 +18,6 @@ const validCacheKeys = [
   "hyperBiochemicals",
   "hypoBiochemicals",
   "biometricsEntries",
-  "foodNutrients",
-  "nutrientsFoods",
-  "foodsData",
-  "nutrientsData",
-  "foodsNameArray",
 ];
 
 class CacheManager {

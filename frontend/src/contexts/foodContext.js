@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getFoodNutrients } from "@/lib/food-reccomendation-api";
+import { getFoodNutrients } from "@/lib/foods-api";
 import { cacheManager } from "@/utils/cache-wroker";
 import { processFoodNutrients } from "@/utils/food-woker";
 
@@ -11,7 +11,7 @@ export const FoodProvider = ({ children }) => {
   const [nutrientsFoods, setNutrientsFoods] = useState(null);
   const [foodsData, setFoodsData] = useState(null);
   const [nutrientsData, setNutrientsData] = useState(null);
-  const [foodsNameArray, setFoodsNameArray] = useState(null);
+  const [foodNutriscoreData, setFoodNutriscoreData] = useState(null);
   const [foodNutrientsDataLoading, setFoodNutrientsDataLoading] = useState(true);
 
   useEffect(() => {
@@ -21,17 +21,17 @@ export const FoodProvider = ({ children }) => {
       "nutrientsFoods",
       "foodsData",
       "nutrientsData",
-      "foodsNameArray",
+      "foodNutriscoreData",
     ]);
     if (cached.foodNutrients) setFoodNutrients(cached.foodNutrients);
     if (cached.nutrientsFoods) setNutrientsFoods(cached.nutrientsFoods);
     if (cached.foodsData) setFoodsData(cached.foodsData);
     if (cached.nutrientsData) setNutrientsData(cached.nutrientsData);
-    if (cached.foodsNameArray) setFoodsNameArray(cached.foodsNameArray);
+    if (cached.foodNutriscoreData) setFoodNutriscoreData(cached.foodNutriscoreData);
     setFoodNutrientsDataLoading(false);
   }, []);
 
-  const fetchFoodNutrients = async () => {
+  const fetchFoodNutrients = async () => {    
     setFoodNutrientsDataLoading(true);
     const foodNutrientsData = await getFoodNutrients();
     if (foodNutrientsData) {
@@ -40,7 +40,7 @@ export const FoodProvider = ({ children }) => {
         nutrientsFoods,
         foodsData,
         nutrientsData,
-        foodsNameArray,
+        foodNutriscoreData,
       } = processFoodNutrients(foodNutrientsData);
       
       cacheManager.multiSet({
@@ -48,14 +48,14 @@ export const FoodProvider = ({ children }) => {
         nutrientsFoods,
         foodsData,
         nutrientsData,
-        foodsNameArray,
+        foodNutriscoreData,
       });
       
       setFoodNutrients(foodNutrients);
       setNutrientsFoods(nutrientsFoods);
       setFoodsData(foodsData);
       setNutrientsData(nutrientsData);
-      setFoodsNameArray(foodsNameArray);
+      setFoodNutriscoreData(foodNutriscoreData);
     }
     setFoodNutrientsDataLoading(false);
   };
@@ -72,7 +72,7 @@ export const FoodProvider = ({ children }) => {
         nutrientsFoods,
         foodsData,
         nutrientsData,
-        foodsNameArray,
+        foodNutriscoreData,
       }}
     >
       {children}

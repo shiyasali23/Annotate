@@ -1,5 +1,8 @@
 "use client";
 import React from "react";
+
+import { useRouter } from "next/navigation";
+
 import Header from "@/components/Header";
 import { useUser } from "@/contexts/userContext";
 import UserDataComponent from "@/components/UserDataComponent";
@@ -9,7 +12,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 
 const Profile = () => {
   const { isLogined, userDataLoading } = useUser();
-
+  const router = useRouter();
   return (
     <div className="w-screen min-h-screen">
       <Header />

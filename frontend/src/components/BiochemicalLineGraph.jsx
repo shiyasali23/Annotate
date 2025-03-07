@@ -93,7 +93,7 @@ const BiochemicalLineGraph = ({ biochemical, name }) => {
     plugins: {
       title: {
         display: true,
-        text: `${name}: ${sortedEntries[sortedEntries.length - 1]?.value ?? 'N/A'}${biochemical.unit} (${biochemical.healthy_min}-${biochemical.healthy_max}) `,
+        text: `${name}: ${(sortedEntries[sortedEntries.length - 1]?.value ?? 'N/A').toFixed(2)} ${biochemical.unit} (${biochemical.healthy_min.toFixed(2)}-${biochemical.healthy_max.toFixed(2)}) `,
         font: {
           size: 13,
           letterSpacing: 2,
@@ -110,7 +110,7 @@ const BiochemicalLineGraph = ({ biochemical, name }) => {
         callbacks: {
           label: (context) => {
             const entry = sortedEntries[context.dataIndex];
-            let label = `${name}: ${entry.value} ${biochemical.unit}`;
+            let label = `${name}: ${entry.value.toFixed(2)} ${biochemical.unit}`;
             if (entry.isHyper === true) {
               label += " (Hyper)";
             } else if (entry.isHyper === false) {
@@ -137,7 +137,7 @@ const BiochemicalLineGraph = ({ biochemical, name }) => {
         },
         ticks: {
           callback: function (value) {
-            return value;
+            return value.toFixed(2);
           },
         },
         grid: {

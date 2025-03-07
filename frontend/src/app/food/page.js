@@ -1,7 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-
-import { detectFood } from "@/lib/food-reccomendation-api";
+import { detectFood } from "@/lib/foods-api";
 import CameraModule from "@/components/CameraModule";
 import Header from "@/components/Header";
 import { useFood } from "@/contexts/foodContext";
@@ -10,11 +9,10 @@ import FoodSearch from "@/components/FoodSearch";
 import FoodNutrientList from "@/components/FoodNutrientList";
 import FoodNutrientBarGraph from "@/components/FoodNutrientBarGraph";
 import FoodScores from "@/components/FoodScores";
+import { mapDetectedFoods, scrollToElementById } from "@/utils/food-utils";
+import FoodPredictionsBarGraph from "@/components/FoodPredictionsBarGraph";
 
 const Food = () => {
-  const [predictedFoods, setPredictedFoods] = useState(false);
-  const [message, setMessage] = useState(null);
-
   const {
     nutrientsData,
     foodsData,
@@ -22,8 +20,12 @@ const Food = () => {
     nutrientsFoods,
     foodNutrientsDataLoading,
     fetchFoodNutrients,
-    foodsNameArray,
+    foodNutriscoreData,
   } = useFood();
+
+  const [predictedFoodsData, setPredictedFoodsData] = useState();
+  const [predictionLoading, setPredictionLoading] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
@@ -32,97 +34,135 @@ const Food = () => {
   const memoizedFoodsData = useMemo(() => foodsData, [foodsData]);
   const memoizedNutrientsData = useMemo(() => nutrientsData, [nutrientsData]);
 
+  const domIds = ["predicted-foods", "food-nutrient-chart"];
+
   const handleSelectedItem = useCallback(
-    (item, isFood) => {
+    (item, isFood) => {      
       setSelectedItem(item);
       setIsItemFood(isFood);
       const selectedDetails = isFood
         ? foodNutrients.find((food) => Object.keys(food)[0] === item)
         : nutrientsFoods.find((nutrient) => Object.keys(nutrient)[0] === item);
-
       setSelectedData(selectedDetails || null);
-
-      // Smooth scroll to the chart section
-      const section = document.getElementById("food-nutrient-chart");
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth", block: "end" });
-      }
+      scrollToElementById(domIds[1]);
     },
     [foodNutrients, nutrientsFoods]
   );
 
   const handleImage = async (image) => {
-    const { detectedFoods, message } = await detectFood(image, foodsNameArray);
-    if (message && !detectedFoods) {
-      setMessage(message || "Something went wrong");
+    setMessage(null);
+    setPredictionLoading(true);
+    setPredictedFoodsData(null);
+
+    const { detectedFoods, message: detectMessage } = await detectFood(
+      image,
+      foodNutriscoreData
+    );
+
+    if (detectMessage && !detectedFoods) {
+      setMessage(detectMessage || "Something went wrong");
+      setPredictedFoodsData(null);
     } else if (detectedFoods) {
-      setPredictedFoods(detectedFoods);
+      const { mappedPredictedFoods, maxNutriScoreFood } = mapDetectedFoods(
+        detectedFoods,
+        foodNutriscoreData
+      );
+      if (mappedPredictedFoods) {
+        setPredictedFoodsData(mappedPredictedFoods);
+        handleSelectedItem(maxNutriScoreFood, true);
+      } else {
+        setMessage("No Food Detected. Try New");
+      }
     }
-    setPredictedFoods(false);
+    setPredictionLoading(false);
   };
 
   useEffect(() => {
-    if (!foodsNameArray) {
-      fetchFoodNutrients();
-    }
-  }, [foodsNameArray, fetchFoodNutrients]);
-
+    if (!foodNutriscoreData && !foodNutrientsDataLoading) fetchFoodNutrients();
+  }, [foodNutriscoreData, foodNutrientsDataLoading, fetchFoodNutrients]);
+  
   useEffect(() => {
-    if (selectedData) {
-      const section = document.getElementById("food-nutrient-chart");
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth", block: "end" });
-      }
+    if (selectedItem && !predictedFoodsData) {
+      scrollToElementById(domIds[1]);
     }
-  }, [selectedData]);
+  }, [selectedItem, predictedFoodsData]);
 
   return (
     <div className="flex w-screen min-h-screen flex-col">
       <Header />
-
       {foodNutrientsDataLoading ? (
         <LoadingComponent text="Loading Data." />
       ) : (
-        <div className="flex flex-col w-full">
-          {/* First Section */}
-          <section className="w-full h-[80vh] flex flex-col gap-5  pb-16 mt-5">
-            <FoodSearch
-              nutrientsData={memoizedNutrientsData}
-              foodsData={memoizedFoodsData}
-              handleSelectedItem={handleSelectedItem}
-            />
+        <div className="flex flex-col w-full gap-10">
+          <section className="w-full h-[75vh] flex flex-col gap-5 mt-5  overflow-hidden">
+            <div className="px-2">
+              <FoodSearch
+                nutrientsData={memoizedNutrientsData}
+                foodsData={memoizedFoodsData}
+                handleSelectedItem={handleSelectedItem}
+              />
+            </div>
+
             {message && (
               <p className="w-full text-center text-red-500">{message}</p>
             )}
-            <div className="w-full h-full flex items-center gap-2 px-2 ">
-              <CameraModule handleImage={handleImage} />
-              <div className="w-full h-full flex items-center gap-2">
-                <FoodNutrientList
-                  itemsArray={memoizedFoodsData}
-                  selectedItem={selectedItem}
-                  handleSelectedItem={handleSelectedItem}
-                  isFood={true}
+
+            <div
+              className="w-full flex gap-2 overflow-hidden"
+              style={{ height: "calc(100% - 60px)" }}
+            >
+              <div className="w-[40%] xl:w-1/2 h-full px-2 overflow-auto">
+                <CameraModule
+                  handleImage={handleImage}
+                  setPredictionLoading={setPredictionLoading}
+                  predictionLoading={predictionLoading}
                 />
-                <FoodNutrientList
-                  itemsArray={memoizedNutrientsData}
-                  selectedItem={selectedItem}
-                  handleSelectedItem={handleSelectedItem}
-                  isFood={false}
-                />
+              </div>
+
+              <div className="w-[60%] xl:w-1/2 h-full flex gap-1 overflow-hidden">
+                {memoizedFoodsData && (
+                  <div className="w-1/2 h-full overflow-auto">
+                    <FoodNutrientList
+                      itemsArray={memoizedFoodsData}
+                      selectedItem={selectedItem}
+                      handleSelectedItem={handleSelectedItem}
+                      isFood={true}
+                    />
+                  </div>
+                )}
+
+                {memoizedNutrientsData && (
+                  <div className="w-1/2 h-full overflow-auto">
+                    <FoodNutrientList
+                      itemsArray={memoizedNutrientsData}
+                      selectedItem={selectedItem}
+                      handleSelectedItem={handleSelectedItem}
+                      isFood={false}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </section>
 
-          <section className="w-full min-h-[72vh] xl:min-h-[40vh]   flex ">
-            {predictedFoods && <div className="flex-1 border">hi</div>}
-            <div className="flex-1 ">
+          <section id={domIds[0]} className="w-full min-h-[40vh] flex">
+            {predictedFoodsData && (
+              <div className="flex-1 px-2 w-1/2">
+                <FoodPredictionsBarGraph
+                  predictedFoodsData={predictedFoodsData}
+                  isNutriScore={true}
+                  handleSelectedItem={handleSelectedItem}
+                />
+              </div>
+            )}
+            <div className="flex-1 w-1/2">
               <FoodScores />
             </div>
           </section>
 
-          <section id="food-nutrient-chart">
+          <section id={domIds[1]}>
             {selectedData && (
-              <div className="w-full  h-full  p-4 xl:p-20 h-[92vh] xl:h-[88vh]">
+              <div className="w-full h-full p-4 xl:px-20 xl:py-10 h-[92vh] xl:h-[80vh]">
                 <FoodNutrientBarGraph
                   selectedData={selectedData}
                   isItemFood={isItemFood}
@@ -130,9 +170,6 @@ const Food = () => {
               </div>
             )}
           </section>
-
-          
-       
         </div>
       )}
     </div>

@@ -5,6 +5,7 @@ import numpy as np
 import cv2
 import httpx
 import sys
+import asyncio
 from ultralytics import YOLO
 from fastapi import UploadFile
 
@@ -43,11 +44,8 @@ class AppManagement:
             raise RuntimeError(f"Failed to load detection model: {e}")
 
     async def get_prediction(self, token: str = None, input_image: UploadFile = None):
-        try:
-            print(f"Input image received: {input_image}")
-        
+        try:        
             if input_image is None:
-                print("Input image is None")
                 return response_handler.handle_response(
                     error=response_handler.MESSAGES["NO_IMAGE"],
                     message=response_handler.MESSAGES["REQUEST_FAILED"]
@@ -81,9 +79,9 @@ class AppManagement:
                         detected_items.add(name)
 
             if detected_items:
-                await self._register_prediction(token, detected_items)
+                asyncio.create_task(self._register_prediction(token, detected_items))
                 return response_handler.handle_response(
-                    response=detected_items
+                    response=list(detected_items)
                 )
             else:
                 return response_handler.handle_response(
@@ -98,8 +96,6 @@ class AppManagement:
     async def _register_prediction(self, token: str, detected_items: set):
         try:
             payload = {"token": token, "predictions": list(detected_items)}
-            logger.info(f"Sending prediction data to {self.BACKEND_URL}/register_prediction: {payload}")
-
             async with httpx.AsyncClient() as client:
                 response = await client.post(f"{self.BACKEND_URL}/register_prediction", json=payload)
                 logger.info(f"Response status: {response.status_code}, Response body: {response.text}")

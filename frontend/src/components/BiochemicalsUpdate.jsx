@@ -1,5 +1,5 @@
 import { useBiochemical } from "@/contexts/biochemicalContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Loader } from "lucide-react";
 import {
   Accordion,
@@ -59,6 +59,14 @@ const BiochemicalsUpdate = () => {
     }
     setBiochemicalDataLoading(false);
   };
+
+
+  useEffect(() => {
+    if (!biochemicalData || !biochemicalDataLoading) {
+      fetchBiochemicals
+    }
+  }, [biochemicalData]);
+
 
   return (
     <div className="w-full h-full xl:px-16 px-4 my-10 flex flex-col gap-2 ">

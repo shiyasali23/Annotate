@@ -72,10 +72,10 @@ const HealthScoreGraph = ({ handleBiometricEntry }) => {
       },
       subtitle: {
         display: true,
-        text: "*Click On The Dates",
+        text: "*(Click on the dates)",
         font: {
           size: 10,
-          weight: "800",
+          weight: "bold",
         },
         color: "rgba(51, 51, 51, 0.84)",
         padding: {

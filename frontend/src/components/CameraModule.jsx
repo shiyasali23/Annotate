@@ -8,32 +8,57 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import LoadingComponent from "./LoadingComponent";
 import { useDropzone } from "react-dropzone";
 
-const CameraModule = ({ handleImage, setPredictedFoods, className }) => {
+const CameraModule = ({
+  handleImage,
+  className,
+  predictionLoading,
+}) => {
   const webcamRef = useRef(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(true);
-  const [fileLoading, setFileLoading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
 
   const videoConstraints = {
     facingMode: isFrontCamera ? "user" : "environment",
   };
 
+  // Convert data URL to File object
+  const dataURLtoFile = (dataUrl, filename = "image.jpg") => {
+    const matches = dataUrl.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      throw new Error("Invalid data URL format");
+    }
+
+    const type = matches[1];
+    const base64Data = matches[2];
+    const binaryData = atob(base64Data);
+    const byteArray = new Uint8Array(binaryData.length);
+
+    for (let i = 0; i < binaryData.length; i++) {
+      byteArray[i] = binaryData.charCodeAt(i);
+    }
+
+    return new File([byteArray], filename, { type });
+  };
+
   // Handle capturing image from webcam
   const handleCapture = () => {
-    setFileLoading(true);
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
-      handleImage(imageSrc);
+      try {
+        const file = dataURLtoFile(imageSrc);
+        handleImage(file);
+      } catch (error) {
+        setUploadError("Failed to process camera image.");
+        console.error(error);
+      }
     }
     setCameraActive(false);
-    setFileLoading(false);
   };
 
   // Dropzone callback for file upload
   const onDrop = (acceptedFiles, fileRejections) => {
     if (fileRejections.length > 0) {
-      // Get error messages from rejected files
       const errorMessages = fileRejections
         .map((rejection) =>
           rejection.errors.map((err) => err.message).join(", ")
@@ -45,13 +70,7 @@ const CameraModule = ({ handleImage, setPredictedFoods, className }) => {
     if (acceptedFiles.length > 0) {
       setUploadError(null);
       const file = acceptedFiles[0];
-      setFileLoading(true);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        handleImage(reader.result);
-        setFileLoading(false);
-      };
-      reader.readAsDataURL(file);
+      handleImage(file);
     }
   };
 
@@ -61,11 +80,13 @@ const CameraModule = ({ handleImage, setPredictedFoods, className }) => {
       "image/jpeg": [],
       "image/png": [],
     },
-    maxSize: 2 * 1024 * 1024, // 2MB
+    maxSize: 5 * 1024 * 1024,
   });
 
   return (
-    <div className={`w-full h-full max-w-full max-h-full flex flex-col items-center overflow-hidden ${className}`}>
+    <div
+      className={`w-full h-full max-w-full max-h-full flex flex-col items-center overflow-hidden ${className}`}
+    >
       <div className="w-full h-full relative overflow-hidden">
         {cameraActive ? (
           <div className="w-full h-full">
@@ -91,7 +112,7 @@ const CameraModule = ({ handleImage, setPredictedFoods, className }) => {
           </div>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-gray-400 p-4 ">
-            {fileLoading ? (
+            {predictionLoading ? (
               <LoadingComponent text="Processing Data." />
             ) : (
               <div
@@ -125,9 +146,9 @@ const CameraModule = ({ handleImage, setPredictedFoods, className }) => {
         className="mt-4 xl:w-1/2"
         onClick={() => {
           setCameraActive(!cameraActive);
-          setPredictedFoods(null);
-        }}        text={
-          fileLoading ? (
+        }}
+        text={
+          predictionLoading ? (
             <Loader className="animate-spin" />
           ) : cameraActive ? (
             "Stop Camera"

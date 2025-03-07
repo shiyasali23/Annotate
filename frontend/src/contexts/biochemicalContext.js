@@ -15,10 +15,8 @@ export const BiochemicalProvider = ({ children }) => {
     const localBiochemicals = cacheManager.get("biochemicals");
     if (localBiochemicals) {
       setBiochemicalData(localBiochemicals);
-      setBiochemicalDataLoading(false);
-    } else {
-      fetchBiochemicals();
     }
+    setBiochemicalDataLoading(false);
   }, []);
 
   const fetchBiochemicals = async () => {

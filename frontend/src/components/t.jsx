@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { detectFood } from "@/lib/food-reccomendation-api";
+import { detectFood } from "@/lib/foods-api";
 
 import CameraModule from "@/components/CameraModule";
 import Header from "@/components/Header";

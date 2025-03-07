@@ -6,7 +6,7 @@ export const processFoodNutrients = (rawData) => {
       nutrientsFoods: null,
       foodsData: null,
       nutrientsData: null,
-      foodsNameArray: null,
+      foodNutriscoreData: null,
     };
   }
 
@@ -15,9 +15,8 @@ export const processFoodNutrients = (rawData) => {
   const nutrientsFoodsMap = {};
   const foodsDataSet = new Set();
   const nutrientsDataSet = new Set();
-  const foodsNameSet = new Set();
 
-  // Process raw data
+  // Single pass over the raw data
   for (const entry of rawData) {
     const { food, nutrient, value } = entry;
     const foodName = food.name;
@@ -26,18 +25,13 @@ export const processFoodNutrients = (rawData) => {
     const subCategory = food.subcategory;
     const nutrientCategory = nutrient.nutrient_category;
 
-    // Record unique food names
-    foodsNameSet.add(foodName);
-
     // Store foodsData in the required format
     foodsDataSet.add(JSON.stringify({ name: foodName, category, subCategory }));
 
     // Store nutrientsData in the required format
-    nutrientsDataSet.add(
-      JSON.stringify({ name: nutrientName, category: nutrientCategory })
-    );
+    nutrientsDataSet.add(JSON.stringify({ name: nutrientName, category: nutrientCategory }));
 
-    // Update foodNutrientsMap
+    // Update foodNutrientsMap for the given food
     if (!foodNutrientsMap[foodName]) {
       foodNutrientsMap[foodName] = {
         nutriScore: food.nutriscore,
@@ -46,13 +40,14 @@ export const processFoodNutrients = (rawData) => {
         associations: {},
       };
     }
+    // Add nutrient details to food associations
     foodNutrientsMap[foodName].associations[nutrientName] = {
       value,
       unit: nutrient.unit,
       category: nutrientCategory,
     };
 
-    // Update nutrientsFoodsMap
+    // Update nutrientsFoodsMap for the given nutrient
     if (!nutrientsFoodsMap[nutrientName]) {
       nutrientsFoodsMap[nutrientName] = {
         category: nutrientCategory,
@@ -60,6 +55,7 @@ export const processFoodNutrients = (rawData) => {
         associations: {},
       };
     }
+    // Add food details to nutrient associations
     nutrientsFoodsMap[nutrientName].associations[foodName] = {
       value,
       category,
@@ -67,27 +63,35 @@ export const processFoodNutrients = (rawData) => {
     };
   }
 
-  // Convert maps to arrays in the desired format
+  // Convert maps to arrays as specified in the desired output structure
+
+  // foodNutrients: array of objects keyed by food name
   const foodNutrientsArray = Object.entries(foodNutrientsMap).map(
     ([foodName, data]) => ({ [foodName]: data })
   );
 
+  // nutrientsFoods: array of objects keyed by nutrient name
   const nutrientsFoodsArray = Object.entries(nutrientsFoodsMap).map(
     ([nutrientName, data]) => ({ [nutrientName]: data })
   );
 
+  // Convert Sets to arrays and parse JSON back to objects
   const foodsDataArray = Array.from(foodsDataSet).map(JSON.parse);
   const nutrientsDataArray = Array.from(nutrientsDataSet).map(JSON.parse);
-  const foodsNameArray = Array.from(foodsNameSet);
+
+  const foodNutriscoreData = Object.entries(foodNutrientsMap).map(
+    ([foodName, data]) => ({ name: foodName, nutriScore: data.nutriScore })
+  );
 
   return {
     foodNutrients: foodNutrientsArray,
     nutrientsFoods: nutrientsFoodsArray,
     foodsData: foodsDataArray,
     nutrientsData: nutrientsDataArray,
-    foodsNameArray:foodsNameArray,
+    foodNutriscoreData:foodNutriscoreData,
   };
 };
+
 
 
 

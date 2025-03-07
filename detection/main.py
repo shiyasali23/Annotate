@@ -33,18 +33,15 @@ except Exception as e:
 
 response_handler = ResponseHandler()
 
-class PredictionInput:
-    def __init__(self, token: Optional[str] = Form(None), file: UploadFile = File(...)):
-        self.token = token
-        self.file = file
-
 @app.post("/detection/detect/")
-async def predict(input_data: PredictionInput = Depends()):
+async def predict(
+    file: UploadFile = File(...),
+    token: Optional[str] = Form(None)
+):
     try:
-        print(input_data.file)
         return await manager.get_prediction(
-            token=input_data.token,
-            input_image=input_data.file
+            token=token,
+            input_image=file
         )
     except Exception as e:
         logger.error(f"Error on prediction view: {str(e)}")

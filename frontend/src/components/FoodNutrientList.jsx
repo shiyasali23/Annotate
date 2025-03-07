@@ -30,7 +30,7 @@ const FoodNutrientList = ({ itemsArray, selectedItem, handleSelectedItem, isFood
   }, [categorizedItems, selectedItem]);
 
   return (
-    <div className="w-full flex-1 flex flex-col h-full overflow-y-scroll border px-5">
+    <div className="w-full  flex flex-col h-full overflow-y-scroll  p-2  border">
       <Accordion 
         type="single" 
         defaultValue={defaultAccordionValue} 

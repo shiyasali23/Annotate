@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from .models import BiochemicalCondition, Biochemical, BiochemicalCondition, Condition, Food, Nutrient, FoodNutrient
+from .models import (
+    BiochemicalCondition, Biochemical, Condition, Food, Nutrient, 
+    FoodNutrient, FoodWeight, NutrientWeight
+)
+
 
 
 
@@ -84,3 +88,15 @@ class FoodNutrientSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodNutrient
         fields = ["food", "nutrient", "value", ]
+
+class FoodWeightSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = FoodWeight
+        fields = ['bias', 'weight', 'food', 'biochemical']
+
+class NutrientWeightSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = NutrientWeight
+        fields = ['bias', 'weight', 'nutrient', 'biochemical']

@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import BiometricsAccordion from "@/components/BiometricsAccordion";
 import BiometricsEntryModal from "@/components/BiometricsEntryModal";
@@ -8,10 +10,10 @@ import HealthScoreGraph from "@/components/HealthScoreGraph";
 import HyperHypoConditions from "@/components/HyperHypoConditions";
 import LoadingComponent from "@/components/LoadingComponent";
 import ServicesModal from "@/components/NoDataFound";
+
 import { useUser } from "@/contexts/userContext";
-import { getBiometricEntry } from "@/utils/biochemical-worker";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { getBiometricEntry } from "@/utils/analytics-utils";
+
 
 const Analytics = () => {
   const { isLogined, userDataLoading, biometricsEntries } = useUser();

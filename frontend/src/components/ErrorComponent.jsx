@@ -7,7 +7,7 @@ const ErrorComponent = ({heading = "Something Went Wrong",buttonText="Try Again"
       <h1 className="w-full  text-center text-3xl font-semibold">
         {heading} 
       </h1>
-      <CustomButton onClick={handleTryAgain} text={buttonText}/>
+      <CustomButton onClick={handleTryAgain} text={buttonText} />
     </div>
   );
 };

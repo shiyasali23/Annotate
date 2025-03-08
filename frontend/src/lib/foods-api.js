@@ -27,6 +27,45 @@ export const getFoodNutrients = async () => {
 };
 
 
+export const createFoodScores = async () => {
+  const token = localStorage.getItem("token");
+  // Instead of throwing, return an error response if token is missing.
+  if (!token) {
+    return { response: null, message: "Something went wrong" };
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/food_scores`, {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error creating food scores: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return { response: result.response || null, message: null };
+  } catch (error) {
+    console.error("Error creating food scores:", error.message);
+    return { response: null, message: "Something went wrong" };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
+
+
+
+
+
 //----------------------Detection--------------------------------------------------
 
 const DETECTION_API_URL = process.env.DETECTION_API_URL || 'http://127.0.0.1:8002/detection';

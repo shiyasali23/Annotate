@@ -2,8 +2,9 @@ import os
 from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.core.management import call_command
 from django.db import transaction
+from django.core.management import call_command
+
 from django.contrib.auth import get_user_model
 
 class Command(BaseCommand):
@@ -30,22 +31,34 @@ class Command(BaseCommand):
                     file.unlink()
                     self.stdout.write(self.style.SUCCESS(f"Removed: {file}"))
 
-        self.stdout.write(self.style.NOTICE('Creating new migrations'))
+        self.stdout.write(self.style.NOTICE('Creating new migrations...'))
         call_command("makemigrations")
 
-        self.stdout.write(self.style.NOTICE('Applying migrations'))
+        self.stdout.write(self.style.NOTICE('Applying migrations...'))
         call_command("migrate")
 
-        self.stdout.write(self.style.NOTICE('Biochemicals units creating'))
+        self.stdout.write(self.style.NOTICE('Biochemicals units creating...'))
         call_command("biochemicals_units_create")
         
-        self.stdout.write(self.style.NOTICE('Conditions creating'))
+        self.stdout.write(self.style.NOTICE('Conditions creating...'))
         call_command("conditions_create")
         
-        self.stdout.write(self.style.NOTICE('Demo user creating'))
+        self.stdout.write(self.style.NOTICE('Food weights/bias creating...'))
+        call_command("food_weights_create")
+        
+        self.stdout.write(self.style.NOTICE('Nutrients weights/bias creating...'))
+        call_command("nutrients_weights_create")
+        
+        self.stdout.write(self.style.NOTICE('Normalizing nutriscores and nutrients...'))
+        call_command("normalize_nutriscore_nutrients")
+        
+        self.stdout.write(self.style.NOTICE('Validating normalization of nutriscores and nutrients...'))
+        call_command("validate_normalization")
+        
+        self.stdout.write(self.style.NOTICE('Demo user creating...'))
         call_command("user_create")
         
-        self.stdout.write(self.style.NOTICE('Biometrics creating'))
+        self.stdout.write(self.style.NOTICE('Biometrics creating...'))
         call_command("biometrics_create")
 
         User = get_user_model()

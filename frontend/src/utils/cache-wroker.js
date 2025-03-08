@@ -12,6 +12,7 @@ const validCacheKeys = [
 
   "token",
   "userData",
+  "latestBiometricsEntryId",
   "healthScore",
   "biometrics",
   "latestBiometrics",

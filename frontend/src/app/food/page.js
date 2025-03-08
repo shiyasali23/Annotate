@@ -156,7 +156,7 @@ const Food = () => {
               </div>
             )}
             <div className="flex-1 w-1/2">
-              <FoodScores />
+              <FoodScores setMessage={setMessage}/>
             </div>
           </section>
 

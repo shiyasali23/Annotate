@@ -28,7 +28,7 @@ class SubCategory(BaseModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategories')
 
     def __str__(self):
-        return f"{self.name} ({self.category.name})"
+        return f"{self.name} - {self.category.name}"
 
     class Meta:
         indexes = [models.Index(fields=['name']), models.Index(fields=['category']), models.Index(fields=['category', 'name'])]

@@ -24,7 +24,7 @@ ChartJS.register(
 );
 
 const HealthScoreGraph = ({ handleBiometricEntry }) => {
-  const { userDataLoading, healthScore } = useUser();
+  const {  healthScore } = useUser();
   if (!healthScore) return null;
 
   const formatDate = (dateString) => {

@@ -8,9 +8,11 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from utils.response_handler import ResponseHandler
 from utils.user_handler import UserHandler
 from utils.biometrics_handler import BiometricsHandler
+from utils.food_score_handler import FoodScoreHandler
 
 user_handler = UserHandler()
 response_handler = ResponseHandler()
+
 
 
 #------------------------Authentication------------------------
@@ -40,7 +42,7 @@ def authenticate(request):
 @api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def user_view(request):
+def handle_user(request):
     biometrics_handler = BiometricsHandler()
     try:
         return user_handler.update_user(
@@ -59,7 +61,7 @@ def user_view(request):
 @api_view(['POST', 'GET'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def biometrics_view(request):
+def handle_biometrics(request):
     biometrics_handler = BiometricsHandler()
     try:
         if request.method == 'POST':
@@ -72,6 +74,30 @@ def biometrics_view(request):
             return user_handler.get_user_data(
                 user=request.user,
                 user_data=False
+            )
+    except Exception as e:
+        return response_handler.handle_exception(
+            exception=f"Error handling biometrics view: {str(e)}"
+        )
+
+
+#------------------------Food Scores------------------------
+
+
+@api_view(['POST', 'GET'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def handle_food_score(request):
+    food_score_handler = FoodScoreHandler()
+    try:
+        if request.method == 'POST':
+            return food_score_handler.create_food_scores(
+                user=request.user, 
+            )
+        
+        if request.method == 'GET':
+            return user_handler.get_food_scores(
+                user=request.user,
             )
     except Exception as e:
         return response_handler.handle_exception(

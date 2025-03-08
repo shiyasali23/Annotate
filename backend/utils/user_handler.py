@@ -152,8 +152,11 @@ class UserHandler:
                 context={'gender': user.gender}
             )
             
+            entry = self.get_latest_biometrics_entry(user)
+            
             response_data = {
                 "biometrics_entries": serializer.data, 
+                "latest_biometrics_entry_id": entry.id if entry else None
             }
             
             if user_data:
@@ -170,6 +173,11 @@ class UserHandler:
             return response_handler.handle_exception(
                 exception=f"Error getting user data: {str(e)}"
             )
+            
+    def get_latest_biometrics_entry(self, user):
+        entry = BiometricsEntry.objects.filter(user=user).order_by('-created_at').first()
+        return entry
+
             
     
 

@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { processBiometricData, processConditions } from "@/utils/biochemical-worker";
+import { processBiometricData, processConditions } from "@/utils/biometrics-worker";
 import { cacheManager } from "@/utils/cache-wroker";
 import { getConditions } from "@/lib/biochemicals-api";
 
@@ -9,6 +9,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [isLogined, setIsLogined] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [latestBiometricsEntryId, setLatestBiometricsEntryId] = useState(null);
   const [healthScore, setHealthScore] = useState(null);
   const [biometrics, setBiometrics] = useState(null);
   const [biometricsEntries, setBiometricsEntries] = useState(null);
@@ -16,13 +17,13 @@ export const UserProvider = ({ children }) => {
   const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
   const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
   const [userDataLoading, setUserDataLoading] = useState(true);
-  const [foodScores, setFoodScores] = useState(null);
 
   useEffect(() => {
     setUserDataLoading(true);
     const cachedData = cacheManager.multiGet([
       "token",
       "userData",
+      "latestBiometricsEntryId",
       "healthScore",
       "biometrics",
       "latestBiometrics",
@@ -40,13 +41,14 @@ export const UserProvider = ({ children }) => {
       setHyperBiochemicals(cachedData.hyperBiochemicals);
       setHypoBiochemicals(cachedData.hypoBiochemicals);
       setBiometricsEntries(cachedData.biometricsEntries);
+      setLatestBiometricsEntryId(cachedData.latestBiometricsEntryId);
     }
     setUserDataLoading(false);
   }, []);
 
   const handleAuthResponse = (data) => {
     setUserDataLoading(true);
-
+    
     if (data.token && data.user) {
       cacheManager.multiSet({
         token: data.token,
@@ -54,6 +56,11 @@ export const UserProvider = ({ children }) => {
       });
       setUserData(data.user);
       setIsLogined(true);
+    }
+
+    if (data.latest_biometrics_entry_id) {
+      cacheManager.set("latestBiometricsEntryId", data.latest_biometrics_entry_id);
+      setLatestBiometricsEntryId(data.latest_biometrics_entry_id);
     }
 
     if (Array.isArray(data.biometrics_entries) && data.biometrics_entries.length) {
@@ -72,7 +79,6 @@ export const UserProvider = ({ children }) => {
       setBiometrics(biometrics);
       setLatestBiometrics(latestBiometrics);
 
-      // Directly update these keys using multiSet
       cacheManager.multiSet({
         biometricsEntries: data.biometrics_entries,
         healthScore,
@@ -124,6 +130,7 @@ export const UserProvider = ({ children }) => {
     setHypoBiochemicals(null);
     setUserData(null);
     setBiometricsEntries(null);
+    setLatestBiometricsEntryId(null);
     cacheManager.clearAll();
   };
 
@@ -135,6 +142,7 @@ export const UserProvider = ({ children }) => {
         setUserDataLoading,
         handleUserdata,
         isLogined,
+        latestBiometricsEntryId,
         healthScore,
         biometrics,
         biometricsEntries,
@@ -143,7 +151,6 @@ export const UserProvider = ({ children }) => {
         hypoBiochemicals,
         userDataLoading,
         userData,
-        foodScores
       }}
     >
       {children}

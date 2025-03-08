@@ -7,6 +7,10 @@ import { processFoodNutrients } from "@/utils/food-woker";
 const FoodContext = createContext();
 
 export const FoodProvider = ({ children }) => {
+
+  const [foodScores, setFoodScores] = useState(null);
+  const [latestFoodScoreBiometricsEntryID, setLatestFoodScoreBiometricsEntryID] = useState(null);
+
   const [foodNutrients, setFoodNutrients] = useState(null);
   const [nutrientsFoods, setNutrientsFoods] = useState(null);
   const [foodsData, setFoodsData] = useState(null);
@@ -60,19 +64,24 @@ export const FoodProvider = ({ children }) => {
     setFoodNutrientsDataLoading(false);
   };
 
-  // console.log(JSON.stringify(foodsData, null, 2));
-  // console.log(JSON.stringify(nutrientsData, null, 2));
+  const processFoodScores = (response) => {
+    setFoodScores(response.food_score || null);
+    setLatestFoodScoreBiometricsEntryID(response.latest_food_score_biometrics_entry_id || null);
+  };
 
   return (
     <FoodContext.Provider
       value={{
         fetchFoodNutrients,
+        processFoodScores,
         foodNutrientsDataLoading,
         foodNutrients, 
         nutrientsFoods,
         foodsData,
         nutrientsData,
         foodNutriscoreData,
+
+        foodScores,
       }}
     >
       {children}

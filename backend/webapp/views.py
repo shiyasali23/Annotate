@@ -93,6 +93,7 @@ def handle_food_score(request):
         if request.method == 'POST':
             return food_score_handler.create_food_scores(
                 user=request.user, 
+                requested_data = request.data['data']
             )
     except Exception as e:
         return response_handler.handle_exception(

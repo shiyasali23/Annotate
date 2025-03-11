@@ -89,14 +89,33 @@ class FoodNutrientSerializer(serializers.ModelSerializer):
         model = FoodNutrient
         fields = ["food", "nutrient", "value", ]
 
+
 class FoodWeightSerializer(serializers.ModelSerializer):
+    food = serializers.CharField(
+        source='food.name', 
+        read_only=True
+    )
+    
+    food_id = serializers.IntegerField(
+        source='food.id', 
+        read_only=True
+    )
     
     class Meta:
         model = FoodWeight
-        fields = ['bias', 'weight', 'food', 'biochemical']
+        fields = ['bias', 'weight', 'food', 'food_id', 'biochemical']
+
 
 class NutrientWeightSerializer(serializers.ModelSerializer):
+    nutrient = serializers.CharField(
+        source='nutrient.name', 
+        read_only=True
+    )
+    nutrient_id = serializers.IntegerField(
+        source='nutrient.id', 
+        read_only=True
+    )
     
     class Meta:
         model = NutrientWeight
-        fields = ['bias', 'weight', 'nutrient', 'biochemical']
+        fields = ['bias', 'weight', 'nutrient', 'nutrient_id', 'biochemical']

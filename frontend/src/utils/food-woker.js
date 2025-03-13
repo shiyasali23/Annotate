@@ -94,7 +94,27 @@ export const processFoodNutrients = (rawData) => {
 
 
 
+export const processFoodsScore = (scoredData, mapData) => {
 
+  
+  // Parse scoredData if it's a string
+  if (typeof scoredData === "string") {
+      scoredData = JSON.parse(scoredData);
+  }
+
+  // Convert mapData into a Map for O(1) lookup
+  const nameToCategory = new Map(mapData.map(({ name, category }) => [name, category]));
+
+  // Sort the entries in ascending order
+  const sortedEntries = Object.entries(scoredData).sort((a, b) => a[1] - b[1]);
+
+  // Construct the result array in a single loop (O(n))
+  return sortedEntries.map(([name], index) => ({
+      name,
+      category: nameToCategory.get(name) || "unknown",
+      value: index + 1
+  }));
+};
 
 
 

@@ -98,7 +98,7 @@ class AppManagement:
             payload = {"token": token, "predictions": list(detected_items)}
             async with httpx.AsyncClient() as client:
                 response = await client.post(f"{self.BACKEND_URL}/register_prediction", json=payload)
-                logger.info(f"Response status: {response.status_code}, Response body: {response.text}")
+                logger.info(f"Response: {response.status_code}")
 
         except Exception as e:
             logger.error(f"Error sending prediction data: {e}")

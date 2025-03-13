@@ -7,16 +7,13 @@ import { processFoodNutrients } from "@/utils/food-woker";
 const FoodContext = createContext();
 
 export const FoodProvider = ({ children }) => {
-
-  const [foodScores, setFoodScores] = useState(null);
-  const [latestFoodScoreBiometricsEntryID, setLatestFoodScoreBiometricsEntryID] = useState(null);
-
   const [foodNutrients, setFoodNutrients] = useState(null);
   const [nutrientsFoods, setNutrientsFoods] = useState(null);
   const [foodsData, setFoodsData] = useState(null);
   const [nutrientsData, setNutrientsData] = useState(null);
   const [foodNutriscoreData, setFoodNutriscoreData] = useState(null);
-  const [foodNutrientsDataLoading, setFoodNutrientsDataLoading] = useState(true);
+  const [foodNutrientsDataLoading, setFoodNutrientsDataLoading] =
+    useState(true);
 
   useEffect(() => {
     setFoodNutrientsDataLoading(true);
@@ -31,11 +28,12 @@ export const FoodProvider = ({ children }) => {
     if (cached.nutrientsFoods) setNutrientsFoods(cached.nutrientsFoods);
     if (cached.foodsData) setFoodsData(cached.foodsData);
     if (cached.nutrientsData) setNutrientsData(cached.nutrientsData);
-    if (cached.foodNutriscoreData) setFoodNutriscoreData(cached.foodNutriscoreData);
+    if (cached.foodNutriscoreData)
+      setFoodNutriscoreData(cached.foodNutriscoreData);
     setFoodNutrientsDataLoading(false);
   }, []);
 
-  const fetchFoodNutrients = async () => {    
+  const fetchFoodNutrients = async () => {
     setFoodNutrientsDataLoading(true);
     const foodNutrientsData = await getFoodNutrients();
     if (foodNutrientsData) {
@@ -46,7 +44,7 @@ export const FoodProvider = ({ children }) => {
         nutrientsData,
         foodNutriscoreData,
       } = processFoodNutrients(foodNutrientsData);
-      
+
       cacheManager.multiSet({
         foodNutrients,
         nutrientsFoods,
@@ -54,7 +52,7 @@ export const FoodProvider = ({ children }) => {
         nutrientsData,
         foodNutriscoreData,
       });
-      
+
       setFoodNutrients(foodNutrients);
       setNutrientsFoods(nutrientsFoods);
       setFoodsData(foodsData);
@@ -64,24 +62,16 @@ export const FoodProvider = ({ children }) => {
     setFoodNutrientsDataLoading(false);
   };
 
-  const processFoodScores = (response) => {
-    setFoodScores(response.food_score || null);
-    setLatestFoodScoreBiometricsEntryID(response.latest_food_score_biometrics_entry_id || null);
-  };
-
   return (
     <FoodContext.Provider
       value={{
         fetchFoodNutrients,
-        processFoodScores,
         foodNutrientsDataLoading,
-        foodNutrients, 
+        foodNutrients,
         nutrientsFoods,
         foodsData,
         nutrientsData,
         foodNutriscoreData,
-
-        foodScores,
       }}
     >
       {children}

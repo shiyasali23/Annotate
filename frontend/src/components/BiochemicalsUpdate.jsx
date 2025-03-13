@@ -60,13 +60,11 @@ const BiochemicalsUpdate = () => {
     setBiochemicalDataLoading(false);
   };
 
-
   useEffect(() => {
-    if (!biochemicalData || !biochemicalDataLoading) {
-      fetchBiochemicals
+    if (!biochemicalData && !biochemicalDataLoading) {
+      fetchBiochemicals();
     }
-  }, [biochemicalData]);
-
+  }, []);
 
   return (
     <div className="w-full h-full xl:px-16 px-4 my-10 flex flex-col gap-2 ">
@@ -108,7 +106,9 @@ const BiochemicalsUpdate = () => {
                         <Label
                           htmlFor={`biochemical-${item.id}`}
                           className={`text-xs xl:text-sm  font-semibold ${
-                            isHyper === true || isHyper === false ? "text-red-600" : ""
+                            isHyper === true || isHyper === false
+                              ? "text-red-600"
+                              : ""
                           }`}
                         >
                           {item.name}

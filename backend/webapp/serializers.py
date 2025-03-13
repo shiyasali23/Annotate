@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, BiometricsEntry, Biometrics, FoodNutrientScore
+from .models import User, BiometricsEntry, Biometrics, FoodsScore
 
 from adminpanel.models import Biochemical
 
@@ -135,16 +135,31 @@ class BiometricsEntrySerializer(serializers.ModelSerializer):
         model = BiometricsEntry
         fields = ('created_at', 'user', 'health_score', 'biometrics')
 
-class FoodNutrientScoreSerializer(serializers.ModelSerializer):
-    
+class FoodsScoreSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(
+        write_only=True,
+        required=False
+    )
+    uuid = serializers.UUIDField(
+        write_only=True,
+        required=False
+    )
+    created_at = serializers.DateTimeField(
+        write_only=True,
+        required=False
+    )
+    updated_at = serializers.DateTimeField(
+        write_only=True,
+        required=False
+    )
     biometricsentry = serializers.PrimaryKeyRelatedField(
         queryset=BiometricsEntry.objects.all(),
         write_only=True
     )
     
     class Meta:
-        model = FoodNutrientScore
-        fields = ['id', 'uuid', 'created_at', 'updated_at', 'biometricsentry', 'foods_score', 'nutrinets_score']
+        model = FoodsScore
+        fields = ['id', 'uuid', 'created_at', 'updated_at', 'biometricsentry', 'foods_score']
         
     
 

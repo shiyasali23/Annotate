@@ -4,22 +4,26 @@
  * Maps detected foods (all lowercase) to the original values from foodNutriscoreData.
  * If a match is found, the original value (with its case) is returned.
  */
-export const mapDetectedFoods = (detectedFoods, foodNutriscoreData) => {
+export const mapDetectedFoods = (detectedFoods, dataset, scoreKey) => {
   const mappedPredictedFoods = detectedFoods
-    .map(detected =>
-      foodNutriscoreData.find(item => item.name.toLowerCase() === detected)
-    )
-    .filter(item => item !== undefined);
+    .map((detected) => {
+      const food = dataset.find((item) => item.name.toLowerCase() === detected.toLowerCase());
+      return food ? { name: food.name, score: food[scoreKey] } : null;
+    })
+    .filter(Boolean); // Remove null values
 
-  if (mappedPredictedFoods.length === 0) return { mappedPredictedFoods: null, maxNutriScoreFood: null };
+  if (mappedPredictedFoods.length === 0) {
+    return { mappedPredictedFoods: null, maxFood: null };
+  }
 
-  // Find the food with the highest nutriScore and return only its name
-  const maxNutriScoreFood = mappedPredictedFoods.reduce((max, food) =>
-    food.nutriScore > max.nutriScore ? food : max
+  // Find the food with the highest score based on scoreKey
+  const maxFood = mappedPredictedFoods.reduce((max, food) =>
+    food.score > max.score ? food : max
   ).name;
 
-  return { mappedPredictedFoods, maxNutriScoreFood };
-};
+  return { mappedPredictedFoods, maxFood };
+}
+
   /**
    * Scrolls smoothly to the element with the given id.
    */

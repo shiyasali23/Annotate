@@ -1,16 +1,21 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+
 import { detectFood } from "@/lib/foods-api";
+import { mapDetectedFoods, scrollToElementById } from "@/utils/food-utils";
+
+import { useFood } from "@/contexts/foodContext";
+
 import CameraModule from "@/components/CameraModule";
 import Header from "@/components/Header";
-import { useFood } from "@/contexts/foodContext";
 import LoadingComponent from "@/components/LoadingComponent";
 import FoodSearch from "@/components/FoodSearch";
 import FoodNutrientList from "@/components/FoodNutrientList";
 import FoodNutrientBarGraph from "@/components/FoodNutrientBarGraph";
-import FoodScores from "@/components/FoodScores";
-import { mapDetectedFoods, scrollToElementById } from "@/utils/food-utils";
+import FoodsScores from "@/components/FoodsScores";
 import FoodPredictionsBarGraph from "@/components/FoodPredictionsBarGraph";
+import { useUser } from "@/contexts/userContext";
+import { processFoodsScore } from "@/utils/food-woker";
 
 const Food = () => {
   const {
@@ -22,6 +27,9 @@ const Food = () => {
     fetchFoodNutrients,
     foodNutriscoreData,
   } = useFood();
+
+  const { foodsScore } = useUser();
+  const [processedFoodsScore, setProcessedFoodsScore] = useState(null);
 
   const [predictedFoodsData, setPredictedFoodsData] = useState();
   const [predictionLoading, setPredictionLoading] = useState(false);
@@ -36,8 +44,28 @@ const Food = () => {
 
   const domIds = ["predicted-foods", "food-nutrient-chart"];
 
+  useEffect(() => {
+    if (!foodNutriscoreData && !foodNutrientsDataLoading) fetchFoodNutrients();
+  }, [foodNutriscoreData, foodNutrientsDataLoading]);
+
+  useEffect(() => {
+    let processedFoodsScore = null;
+
+    if (foodsScore && memoizedFoodsData) {
+      processedFoodsScore = processFoodsScore(foodsScore, memoizedFoodsData);
+    }
+
+    setProcessedFoodsScore(processedFoodsScore);
+  }, [foodsScore, memoizedFoodsData]);
+
+  useEffect(() => {
+    if (selectedItem && !predictedFoodsData) {
+      scrollToElementById(domIds[1]);
+    }
+  }, [selectedItem, predictedFoodsData]);
+
   const handleSelectedItem = useCallback(
-    (item, isFood) => {      
+    (item, isFood) => {
       setSelectedItem(item);
       setIsItemFood(isFood);
       const selectedDetails = isFood
@@ -49,43 +77,38 @@ const Food = () => {
     [foodNutrients, nutrientsFoods]
   );
 
+ 
+  
+
   const handleImage = async (image) => {
     setMessage(null);
     setPredictionLoading(true);
     setPredictedFoodsData(null);
-
+  
     const { detectedFoods, message: detectMessage } = await detectFood(
       image,
       foodNutriscoreData
     );
-
+  
     if (detectMessage && !detectedFoods) {
       setMessage(detectMessage || "Something went wrong");
       setPredictedFoodsData(null);
     } else if (detectedFoods) {
-      const { mappedPredictedFoods, maxNutriScoreFood } = mapDetectedFoods(
-        detectedFoods,
-        foodNutriscoreData
-      );
+      const { mappedPredictedFoods, maxFood } = processedFoodsScore
+        ? mapDetectedFoods(detectedFoods, processedFoodsScore, "value")
+        : mapDetectedFoods(detectedFoods, foodNutriscoreData, "nutriScore");
+  
       if (mappedPredictedFoods) {
         setPredictedFoodsData(mappedPredictedFoods);
-        handleSelectedItem(maxNutriScoreFood, true);
+        handleSelectedItem(maxFood, true);
       } else {
-        setMessage("No Food Detected. Try New");
+        setMessage("No Food Detected. Try Again");
       }
     }
     setPredictionLoading(false);
   };
 
-  useEffect(() => {
-    if (!foodNutriscoreData && !foodNutrientsDataLoading) fetchFoodNutrients();
-  }, [foodNutriscoreData, foodNutrientsDataLoading, fetchFoodNutrients]);
   
-  useEffect(() => {
-    if (selectedItem && !predictedFoodsData) {
-      scrollToElementById(domIds[1]);
-    }
-  }, [selectedItem, predictedFoodsData]);
 
   return (
     <div className="flex w-screen min-h-screen flex-col">
@@ -145,18 +168,18 @@ const Food = () => {
             </div>
           </section>
 
-          <section id={domIds[0]} className="w-full min-h-[40vh] flex">
+          <section id={domIds[0]} className="w-full h-[70vh] flex">
             {predictedFoodsData && (
               <div className="flex-1 px-2 w-1/2">
                 <FoodPredictionsBarGraph
                   predictedFoodsData={predictedFoodsData}
-                  isNutriScore={true}
                   handleSelectedItem={handleSelectedItem}
+                  isNutriScore={processFoodsScore? false : true}
                 />
               </div>
             )}
-            <div className="flex-1 w-1/2">
-              <FoodScores setMessage={setMessage}/>
+            <div className="flex-1 px-2 w-1/2 ">
+              <FoodsScores processedFoodsScore={processedFoodsScore} handleSelectedItem={handleSelectedItem}/>
             </div>
           </section>
 

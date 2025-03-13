@@ -93,10 +93,9 @@ class Biometrics(BaseModel):
 
     
 
-class FoodNutrientScore(BaseModel):
+class FoodsScore(BaseModel):
     biometricsentry = models.ForeignKey(BiometricsEntry, on_delete=models.CASCADE, related_name='food_scores')
     foods_score = models.JSONField()  
-    nutrinets_score = models.JSONField()  
 
     class Meta:
         indexes = [

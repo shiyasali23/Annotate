@@ -8,8 +8,6 @@ export const updateUser = async (inputValues) => {
   if (!token) {
     throw new Error("Something went wrong,");
   }
-  
-
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -43,7 +41,6 @@ export const updateBiometrics = async (inputValues) => {
   if (!token) {
     throw new Error("Something went wrong,");
   }
-
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);

@@ -5,10 +5,12 @@ import numpy as np
 import logging
 import json
 
-from adminpanel.serializers import FoodWeightSerializer, NutrientWeightSerializer, FoodNutrient, Food
-from adminpanel.models import FoodWeight, NutrientWeight
 
-from webapp.serializers import FoodNutrientScoreSerializer
+
+from adminpanel.serializers import FoodWeightSerializer, NutrientWeightSerializer
+from adminpanel.models import FoodWeight, NutrientWeight,FoodNutrient, Food
+
+from webapp.serializers import FoodsScoreSerializer
 
 from utils.objects_handler import ObjectsHandler
 from utils.response_handler import ResponseHandler
@@ -52,8 +54,6 @@ class FoodScoreHandler:
         
         self.nutrient_index_map = {}  # Maps nutrient IDs to their matrix row indices
         self.nutrients_length = 0  # Expected to be 75 nutrients
-        self.nutrient_names = {}  # Maps nutrient IDs to their names
-        self.nutrient_indices = {}  # Maps nutrient names to their matrix row indices
 
         # Matrices for normalized nutrient values and nutriscores
         self.normalized_nutrients_matrix = None
@@ -181,8 +181,7 @@ class FoodScoreHandler:
             # For nutrients:
             self.nutrient_index_map = nutrient_index_map
             self.nutrients_length = len(nutrient_index_map)
-            self.nutrient_names = [nutrient_index_map[nutrient_id]['nutrient'] for nutrient_id in nutrient_index_map]
-            self.nutrient_indices = np.array([nutrient_index_map[nutrient_id]['index'] for nutrient_id in nutrient_index_map])
+
             
     
         except Exception as e:
@@ -246,7 +245,7 @@ class FoodScoreHandler:
 
         
     
-    def create_foods_nutrients_scores(self, biochemicals_scaled_values, latest_biometrics_entry):
+    def create_foods_score(self, biochemicals_scaled_values, latest_biometrics_entry):
         try:
             self.latest_biometrics_entry = latest_biometrics_entry
             # Extract biochemical indices and their scaled values from validated data
@@ -322,9 +321,8 @@ class FoodScoreHandler:
             # Calculate final scores by combining all normalized components
             calculated_food_scores = normalized_nutrients_sum + normalized_added_food_bias_weights + normalized_nutriscore_matrix
             
-            return self._map_nutrinets_food_scores(
+            return self._map_food_scores(
                 calculated_food_scores=calculated_food_scores,
-                normalized_nutrients_sum = normalized_nutrients_sum
             )
         
         except Exception as e:
@@ -333,50 +331,37 @@ class FoodScoreHandler:
             )
             
 
-    def _map_nutrinets_food_scores(self, calculated_food_scores, normalized_nutrients_sum):
+    def _map_food_scores(self, calculated_food_scores):
         try:
             # Extract scores using direct indexing
             food_scores = calculated_food_scores[self.food_indices]
             mapped_food_scores = dict(zip(self.food_names, food_scores))
-
-            # Extract nutrient sums using direct indexing
-            nutrient_sums = normalized_nutrients_sum[self.nutrient_indices]
-            mapped_nutrient_sums = dict(zip(self.nutrient_names, nutrient_sums))
-
-            return self._register_foods_nutrients_scores(
+            
+            return self._register_foods_scores(
                 mapped_food_scores = mapped_food_scores,
-                mapped_nutrient_sums = mapped_nutrient_sums
             )
             
-            return response_handler.handle_response(
-                response={
-                    'mapped_food_scores': mapped_food_scores,
-                    'mapped_nutrient_sums': mapped_nutrient_sums
-                }
-            )
-
         except Exception as e:
             return response_handler.handle_exception(
                 exception=f"Error registering food scores: {str(e)}"
             )
         
-    def _register_foods_nutrients_scores(self, mapped_food_scores, mapped_nutrient_sums):
+    def _register_foods_scores(self, mapped_food_scores):
         try:
             data = {
-                'biometricsentry': self.latest_biometrics_entry,  # Ensure this is just the ID
+                'biometricsentry': self.latest_biometrics_entry, 
                 'foods_score': json.dumps(mapped_food_scores),  
-                'nutrinets_score': json.dumps(mapped_nutrient_sums),
             }
-            foods_nutrients_score_serializer = FoodNutrientScoreSerializer(data=data)
-            if foods_nutrients_score_serializer.is_valid():
-                instance = foods_nutrients_score_serializer.save()
-                return FoodNutrientScoreSerializer(instance).data, None                
+            foods_score_serializer = FoodsScoreSerializer(data=data)
+            if foods_score_serializer.is_valid():
+                instance = foods_score_serializer.save()
+                return FoodsScoreSerializer(instance).data, None                
             else:
-                return None, foods_nutrients_score_serializer.errors
+                return None, foods_score_serializer.errors
 
         except Exception as e:
             return response_handler.handle_exception(
-                exception=f"Error registering food nutrients scores: {str(e)}"
+                exception=f"Error registering food scores: {str(e)}"
             )
 
 

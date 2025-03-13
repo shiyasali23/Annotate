@@ -81,7 +81,7 @@ const NoDataFound = ({
           </div>
         ) : (
           <div>
-            <h1 className="mt-5 font-bold text-xl text-center">{heading}</h1>
+            <h1 className=" font-bold text-xl text-center">{heading}</h1>
             <div className="flex flex-col items-center gap-5 mt-12">
               <button
                 className="font-bold text-center xl:text-xl text-lg underline hover:scale-110 transition duration-150"

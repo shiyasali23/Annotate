@@ -8,8 +8,8 @@ from django.contrib.auth.hashers import check_password
 from rest_framework.authtoken.models import Token
 
 from webapp.models import User
-from webapp.serializers import UserSerializer, BiometricsEntrySerializer, FoodNutrientScoreSerializer
-from webapp.models import BiometricsEntry, Biometrics, FoodNutrientScore
+from webapp.serializers import UserSerializer, BiometricsEntrySerializer, FoodsScoreSerializer
+from webapp.models import BiometricsEntry, Biometrics, FoodsScore
 
 from .response_handler import ResponseHandler
 from .cache_handler import CacheHandler
@@ -175,24 +175,23 @@ class UserHandler:
                 exception=f"Error logging out: {str(e)}"
             )
     
-    def get_user_data(self, user, token=None, food_nutrients_score=None):
+    def get_user_data(self, user, token=None, foods_score=None):
         try:
             has_biometrics = BiometricsEntry.objects.filter(user=user).exists()
             
             response_data = {
                 "user": UserSerializer(user).data,
                 "biometrics_entries": [],
-                "food_nutrients_score": []
             }
             
             if token:
                 response_data["token"] = token
             
             if has_biometrics:
-                if food_nutrients_score is None:
-                    response_data["food_nutrients_score"] = self.get_food_nutrients_score(user)
+                if foods_score is None:
+                    response_data["foods_score"] = self.get_foods_score(user)
                 else:
-                    response_data["food_nutrients_score"] = food_nutrients_score
+                    response_data["foods_score"] = foods_score
                     
                 # Only get biometrics if they exist
                 biometrics_entries = (
@@ -231,18 +230,18 @@ class UserHandler:
                 exception=f"Error getting user data: {str(e)}"
             )
             
-    def get_food_nutrients_score(self, user):
+    def get_foods_score(self, user):
         latest_biometrics_entry = BiometricsEntry.objects.filter(user=user).order_by('-created_at').first()
         
         if not latest_biometrics_entry:
-            return []
+            return None
 
-        food_nutrient_score = FoodNutrientScore.objects.filter(biometricsentry=latest_biometrics_entry).first()
+        foods_score = FoodsScore.objects.filter(biometricsentry=latest_biometrics_entry).first()
 
-        if not food_nutrient_score:
-            return []
+        if not foods_score:
+            return None
 
-        serializer = FoodNutrientScoreSerializer(food_nutrient_score)
+        serializer = FoodsScoreSerializer(foods_score)
 
         return serializer.data  
 

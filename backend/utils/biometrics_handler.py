@@ -203,7 +203,7 @@ class BiometricsHandler:
 
             biometrics_serializer = BiometricsSerializer(data=biometrics_data, many=True)
             if biometrics_serializer.is_valid():
-                food_nutrients_score, error = self._food_score_handler.create_foods_nutrients_scores(
+                foods_score, error = self._food_score_handler.create_foods_score(
                     biochemicals_scaled_values = biochemicals_scaled_values,
                     latest_biometrics_entry = biometrics_entry
                 )
@@ -217,7 +217,7 @@ class BiometricsHandler:
                 biometrics_serializer.save()
                 return user_handler.get_user_data(
                     user = user,
-                    food_nutrients_score = food_nutrients_score,
+                    foods_score = foods_score,
                 )
                 
             else:

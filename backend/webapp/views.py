@@ -43,7 +43,9 @@ def authenticate(request):
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def handle_user(request):
-    biometrics_handler = BiometricsHandler()
+    if not request.user.is_authenticated:
+        return Response({"error": "User not authenticated"}, status=401)
+
     try:
         return user_handler.update_user(
             user=request.user, 

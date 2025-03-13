@@ -12,13 +12,14 @@ const validCacheKeys = [
 
   "token",
   "userData",
-  "latestBiometricsEntryId",
   "healthScore",
   "biometrics",
   "latestBiometrics",
   "hyperBiochemicals",
   "hypoBiochemicals",
   "biometricsEntries",
+
+  "foodsScore",
 ];
 
 class CacheManager {
@@ -37,8 +38,10 @@ class CacheManager {
     if (typeof window === "undefined" || !window.localStorage) return null;
     const item = localStorage.getItem(key);
     if (!item) return null;
+    
     try {
-      return JSON.parse(item);
+      // Return raw string for "token", parse JSON for everything else
+      return key === "token" ? item : JSON.parse(item);
     } catch (error) {
       console.error(`Error parsing localStorage key "${key}":`, error);
       return null;
@@ -49,7 +52,13 @@ class CacheManager {
   set(key, value) {
     if (!this.isValidKey(key)) return;
     if (typeof window === "undefined" || !window.localStorage) return;
-    localStorage.setItem(key, JSON.stringify(value));
+  
+    // Store as raw string if the key is "token"
+    if (key === "token") {
+      localStorage.setItem(key, value);
+    } else {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
   }
 
   // Retrieve multiple keys from localStorage at once.

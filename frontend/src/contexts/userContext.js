@@ -9,13 +9,15 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [isLogined, setIsLogined] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [latestBiometricsEntryId, setLatestBiometricsEntryId] = useState(null);
   const [healthScore, setHealthScore] = useState(null);
   const [biometrics, setBiometrics] = useState(null);
   const [biometricsEntries, setBiometricsEntries] = useState(null);
   const [latestBiometrics, setLatestBiometrics] = useState(null);
   const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
   const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
+  
+  const [foodsScore, setFoodsScore] = useState(null);
+  
   const [userDataLoading, setUserDataLoading] = useState(true);
 
   useEffect(() => {
@@ -23,13 +25,14 @@ export const UserProvider = ({ children }) => {
     const cachedData = cacheManager.multiGet([
       "token",
       "userData",
-      "latestBiometricsEntryId",
       "healthScore",
       "biometrics",
+      "biometricsEntries",
       "latestBiometrics",
       "hyperBiochemicals",
       "hypoBiochemicals",
-      "biometricsEntries",
+      
+      "foodsScore",
     ]);
 
     if (cachedData.token && cachedData.userData) {
@@ -37,11 +40,11 @@ export const UserProvider = ({ children }) => {
       setUserData(cachedData.userData);
       setHealthScore(cachedData.healthScore);
       setBiometrics(cachedData.biometrics);
+      setBiometricsEntries(cachedData.biometricsEntries);
       setLatestBiometrics(cachedData.latestBiometrics);
       setHyperBiochemicals(cachedData.hyperBiochemicals);
       setHypoBiochemicals(cachedData.hypoBiochemicals);
-      setBiometricsEntries(cachedData.biometricsEntries);
-      setLatestBiometricsEntryId(cachedData.latestBiometricsEntryId);
+      setFoodsScore(cachedData.foodsScore);
     }
     setUserDataLoading(false);
   }, []);
@@ -57,11 +60,13 @@ export const UserProvider = ({ children }) => {
       setUserData(data.user);
       setIsLogined(true);
     }
-
-    if (data.latest_biometrics_entry_id) {
-      cacheManager.set("latestBiometricsEntryId", data.latest_biometrics_entry_id);
-      setLatestBiometricsEntryId(data.latest_biometrics_entry_id);
+    
+    if (data.foods_score.foods_score){
+      cacheManager.set("foodsScore", data.foods_score.foods_score);
+      setFoodsScore(data.foods_score.foods_score);
     }
+
+   
 
     if (Array.isArray(data.biometrics_entries) && data.biometrics_entries.length) {
       setBiometricsEntries(data.biometrics_entries);
@@ -130,7 +135,7 @@ export const UserProvider = ({ children }) => {
     setHypoBiochemicals(null);
     setUserData(null);
     setBiometricsEntries(null);
-    setLatestBiometricsEntryId(null);
+    setFoodsScore(null);
     cacheManager.clearAll();
   };
 
@@ -142,15 +147,16 @@ export const UserProvider = ({ children }) => {
         setUserDataLoading,
         handleUserdata,
         isLogined,
-        latestBiometricsEntryId,
         healthScore,
+        userData,
         biometrics,
         biometricsEntries,
         latestBiometrics,
         hyperBiochemicals,
         hypoBiochemicals,
+        foodsScore,
         userDataLoading,
-        userData,
+        
       }}
     >
       {children}

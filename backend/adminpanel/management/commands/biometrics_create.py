@@ -109,6 +109,7 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.SUCCESS(f"{count} Set of biometrics creation successful."))
                     else:
                         self.stdout.write(self.style.ERROR(f"Biometrics creation failed in set {count}: {response.content.decode()}"))
+                        sys.exit(1)
 
             else:
                 self.stdout.write(self.style.ERROR(f"Login failed: {token_response.content.decode()}"))

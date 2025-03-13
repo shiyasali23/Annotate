@@ -37,16 +37,19 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE('Applying migrations...'))
         call_command("migrate")
 
-        self.stdout.write(self.style.NOTICE('Biochemicals units creating...'))
+        self.stdout.write(self.style.NOTICE('Biochemicals data creating...'))
         call_command("biochemicals_units_create")
         
-        self.stdout.write(self.style.NOTICE('Conditions creating...'))
+        self.stdout.write(self.style.NOTICE('Conditions data creating...'))
         call_command("conditions_create")
         
-        self.stdout.write(self.style.NOTICE('Food weights/bias creating...'))
+        self.stdout.write(self.style.NOTICE('Nutrients categories data creating...'))
+        call_command("create_food")
+        
+        self.stdout.write(self.style.NOTICE('Food weights/bias data creating...'))
         call_command("food_weights_create")
         
-        self.stdout.write(self.style.NOTICE('Nutrients weights/bias creating...'))
+        self.stdout.write(self.style.NOTICE('Nutrients weights/bias data creating...'))
         call_command("nutrients_weights_create")
         
         self.stdout.write(self.style.NOTICE('Normalizing nutriscores and nutrients...'))

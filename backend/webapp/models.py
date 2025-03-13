@@ -93,16 +93,15 @@ class Biometrics(BaseModel):
 
     
 
-class FoodScore(BaseModel):
+class FoodNutrientScore(BaseModel):
     biometricsentry = models.ForeignKey(BiometricsEntry, on_delete=models.CASCADE, related_name='food_scores')
-    food = models.ForeignKey('adminpanel.Food', on_delete=models.CASCADE, related_name='food_scores')
-    score = models.FloatField()
+    foods_score = models.JSONField()  
+    nutrinets_score = models.JSONField()  
 
     class Meta:
         indexes = [
             models.Index(fields=['biometricsentry']),
-            models.Index(fields=['food']),
         ]
 
     def __str__(self):
-        return f'{self.biometricsentry.user.get_full_name()} - {self.food.name} - {self.score}'
+        return f'{self.biometricsentry.user.get_full_name()} - {self.biometricsentry}'

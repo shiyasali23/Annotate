@@ -18,9 +18,4 @@ class CacheHandler:
         except Exception as e:
             logging.error(f"Error setting to cache: {e}")
 
-    def delete_from_cache(self, cache_key):
-        try:
-            cache.delete(cache_key)
-        except Exception as e:
-            logging.error(f"Error deleting from cache: {e}")
-
+    

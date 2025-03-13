@@ -8,6 +8,7 @@ from datetime import timedelta
 from utils.objects_handler import ObjectsHandler
 from utils.response_handler import ResponseHandler
 from utils.user_handler import UserHandler
+from utils.food_score_handler import FoodScoreHandler
 
 from webapp.serializers import BiometricsEntrySerializer,BiometricsSerializer
 
@@ -31,6 +32,7 @@ class BiometricsHandler:
         self.female_biochemicals_data = []
         self.biochemicals_validity_data = []
         self.healthy = False
+        self._food_score_handler = FoodScoreHandler()
         self._load_biochemicals()
 
     def _load_biochemicals(self):
@@ -65,7 +67,7 @@ class BiometricsHandler:
                     except ValueError:
                         invalid_ids.append(item['id'])
 
-            return np.array(valid_values, dtype=float), valid_ids, invalid_ids, 
+            return np.array(valid_values), valid_ids, invalid_ids, 
         except Exception as e:
             logger.error(f"Error validating biochemicals: {e}")
             return np.array([]), [], []
@@ -185,8 +187,10 @@ class BiometricsHandler:
             
             
             biometrics_data = []
+            biochemicals_scaled_values = []
             for index, id in enumerate(valid_ids):
                 scaled_value = scaled_biometrics[index]
+                biochemicals_scaled_values.append({"id": id, "value": scaled_value})
                 biometrics_data.append({
                     "biometricsentry": biometrics_entry,  
                     "biochemical": id,  
@@ -199,11 +203,23 @@ class BiometricsHandler:
 
             biometrics_serializer = BiometricsSerializer(data=biometrics_data, many=True)
             if biometrics_serializer.is_valid():
+                food_nutrients_score, error = self._food_score_handler.create_foods_nutrients_scores(
+                    biochemicals_scaled_values = biochemicals_scaled_values,
+                    latest_biometrics_entry = biometrics_entry
+                )
+                
+                
+                if error:
+                    return response_handler.handle_exception(
+                        exception=f"Error creating food nutrinets scores: {error}"
+                    )
+                
                 biometrics_serializer.save()
                 return user_handler.get_user_data(
-                    user=user, 
-                    user_data=False
+                    user = user,
+                    food_nutrients_score = food_nutrients_score,
                 )
+                
             else:
                 return response_handler.handle_exception(
                     exception=f"Error on Biometrics serializer {biometrics_serializer.errors}"

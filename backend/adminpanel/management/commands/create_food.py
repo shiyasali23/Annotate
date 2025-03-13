@@ -48,6 +48,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Nutrients categories data imported successfully."))
 
         # ----------------------- Food Object Creation --------------------
+        self.stdout.write(self.style.NOTICE('Food nutrients data creating...'))
         food_dict = {}  # Cache for Food objects to avoid repeated DB queries
         subcategory_dict = {}  # Cache for SubCategory objects
 

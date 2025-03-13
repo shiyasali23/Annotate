@@ -58,46 +58,24 @@ def handle_user(request):
 #------------------------Biometrics------------------------
 
 
-@api_view(['POST', 'GET'])
+@api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def handle_biometrics(request):
     try:
         biometrics_handler = BiometricsHandler()
-        if request.method == 'POST':
-            return biometrics_handler.handle_biometrics(
-                user=request.user, 
-                requested_data=request.data['data']
-            )
-        
-        if request.method == 'GET':
-            return user_handler.get_user_data(
-                user=request.user,
-                user_data=False
-            )
+        return biometrics_handler.handle_biometrics(
+            user=request.user, 
+            requested_data=request.data['data']
+        )                
     except Exception as e:
         return response_handler.handle_exception(
             exception=f"Error handling biometrics view: {str(e)}"
         )
 
 
-#------------------------Food Scores------------------------
 
 
-@api_view(['POST'])
-@authentication_classes([authentication.TokenAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def handle_food_score(request):
-    try:
-        food_score_handler = FoodScoreHandler()
-        if request.method == 'POST':
-            return food_score_handler.create_food_scores(
-                user=request.user, 
-                requested_data = request.data['data']
-            )
-    except Exception as e:
-        return response_handler.handle_exception(
-            exception=f"Error handling biometrics view: {str(e)}"
-        )
+
         
         

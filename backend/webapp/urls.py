@@ -12,7 +12,6 @@ urlpatterns = [
     
     path('biometrics', views.handle_biometrics, name='biometrics'),
    
-    path('food_scores', views.handle_food_score, name='food_scores'),
 
 
 ]

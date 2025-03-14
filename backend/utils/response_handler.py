@@ -1,5 +1,5 @@
 import logging
-from rest_framework.response import Response
+from rest_framework.response import Response 
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,9 @@ class ResponseHandler():
         "ACCOUNT_DISABLED": "Account is disabled.",
         "INVALID_DATA": "Error while validating data.",
         "NO_CONDITIONS": "No conditions found for the ids.",
-        "NO_DISEASE_DATA": "No data found for the requested disease."
+        "NO_DISEASE_DATA": "No data found for the requested disease.",
+        
+        "INVALID_ML_MODEL_DATA": "Model id, prediction are required."
     }
 
     def handle_response(self, status_code=200, message=None, error=None ,response=None):

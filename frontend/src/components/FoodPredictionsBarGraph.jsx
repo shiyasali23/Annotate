@@ -22,8 +22,8 @@ const FoodPredictionsBarGraph = ({ predictedFoodsData, isNutriScore, handleSelec
   
   const chartTitle = isNutriScore ? 'Nutriscore' : 'Reccomendation';
   
-  const barColor = '#272B4D';
-  const barBorderColor = '#272B4D';
+  const barColor = '#001D3D';
+  const barBorderColor = '#001D3D';
   
   const options = {
     responsive: true,

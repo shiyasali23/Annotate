@@ -1,13 +1,13 @@
 import os
 import logging
 import json
-import numpy as np
-import cv2
-import httpx
+import numpy as np 
+import cv2 
+import httpx 
 import sys
 import asyncio
-from ultralytics import YOLO
-from fastapi import UploadFile
+from ultralytics import YOLO 
+from fastapi import UploadFile 
 
 from responses import ResponseHandler
 
@@ -97,9 +97,9 @@ class AppManagement:
 
     async def _register_prediction(self, token: str, detected_items: set):
         try:
-            payload = {"token": token, "predictions": list(detected_items)}
+            payload = {"token": token, "prediction": list(detected_items), "model_id": "qrtdh67fhtyrhd"}
             async with httpx.AsyncClient() as client:
-                response = await client.post(f"{self.BACKEND_URL}/register_prediction", json=payload)
+                response = await client.post(f"{self.BACKEND_URL}/register_prediction", json={'data': payload})
                 logger.info(f"Response: {response.status_code}")
 
         except Exception as e:

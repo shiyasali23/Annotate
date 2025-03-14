@@ -1,13 +1,13 @@
-import joblib
+import joblib 
 import os
-import numpy as np
+import numpy as np 
 import sys
 import logging
 
 from typing import Dict, Union, Optional
 
 import asyncio
-import httpx
+import httpx 
 import json
 
 from responses import ResponseHandler
@@ -159,24 +159,35 @@ class AppManagement:
             
             if probabilities:
                 class_probs = {k: round(prob * 100, 2) for k, prob in zip(output_map.keys(), probabilities)}
+                       
             
-            response_data = {
+            asyncio.create_task(self._register_prediction(
+                model_id=model_id,
+                prediction=mapped_predictions,
+                probabilities=class_probs,
+                token=token,
+                
+            ))
+            
+            return response_handler.handle_response(
+                response={
                 "prediction": mapped_predictions,
                 "probabilities": class_probs
-            }
-            
-            if token:
-                asyncio.create_task(self._register_prediction(
-                    token=token,
-                    response_data=response_data,
-                    model_id=model_id
-                ))
-            
-            return response_handler.handle_response(response=response_data)
+                }
+            )
         except Exception as e:
             return response_handler.handle_exception(
                 exception=f"Error while aligning prediction: {str(e)}"
             )
+        
+    async def _register_prediction(self, model_id: str, prediction: str, probabilities: dict, token: str,):
+        try:
+            payload = {"token": token, "prediction": prediction, "probabilities": probabilities, 'model_id': model_id}
+            async with httpx.AsyncClient() as client:
+                response = await client.post(f"{self.BACKEND_URL}/register_prediction", json={"data": payload})
+                logger.info(f"Response: {response.status_code}")
+        except Exception as e:
+            logger.error(f"Error sending prediction data: {e}")
 
     async def get_features(self, is_diagnosis: bool) -> list:
         target_id = "tdsevgg53h5f53e6"
@@ -207,12 +218,4 @@ class AppManagement:
                 exception=f"Error in metadata retrieval: {e}"
             )
     
-    async def _register_prediction(self, token: str, response_data: dict, model_id: str):
-        try:
-            payload = {"token": token, "predictions": response_data, 'model_id': model_id}
-            async with httpx.AsyncClient() as client:
-                response = await client.post(f"{self.BACKEND_URL}/register_prediction", json=payload)
-                logger.info(f"Response: {response.status_code}")
-
-        except Exception as e:
-            logger.error(f"Error sending prediction data: {e}")
+    

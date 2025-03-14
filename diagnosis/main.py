@@ -1,12 +1,13 @@
-import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from starlette.concurrency import run_in_threadpool
-from typing import Dict, Union
+import uvicorn
 
-from management import AppManagement
-from responses import ResponseHandler
+from pydantic import BaseModel
+from typing import Dict, Union, Optional
+import logging
+import sys
+
+
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
@@ -19,27 +20,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize managers
-models_dir = "models"  # Adjust as needed
-manager = AppManagement(models_dir)
+try:
+    from management import AppManagement
+    from responses import ResponseHandler
+except ImportError as e:
+    logger.critical(f"Failed to import required modules: {e}")
+    sys.exit(1)
+
+try:
+    app_manager = AppManagement()
+except Exception as e:
+    logger.critical(f"Failed to initialize AppManagement: {e}")
+    sys.exit(1)
+
 response_handler = ResponseHandler()
 
 class PredictionInput(BaseModel):
     data: Dict[str, Union[str, int, float]]
+    token: Optional[str] = None
 
 @app.post("/diagnosis/predict/{model_id}")
 async def predict(model_id: str, input_data: PredictionInput):
     try:
-        prediction_data = await run_in_threadpool(manager.get_prediction, model_id, input_data.data)
-        return response_handler.handle_response(
-            message=response_handler.MESSAGES.get("PREDICTION_SUCCESS"),
-            response=prediction_data
+        return await app_manager.get_prediction(
+            model_id=model_id, 
+            data=input_data.data,
+            token=input_data.token
         )
-    except HTTPException as e:
-        return response_handler.handle_response(status_code=e.status_code, error=str(e.detail))
     except Exception as e:
-        logger.error(f"Unexpected error in prediction endpoint: {e}")
-        return response_handler.handle_exception(exception=e)
+        return response_handler.handle_exception(exception=f"Error in prediction endpoint: {e}")
 
 @app.get("/diagnosis/get_features/{pk}")
 async def get_features(pk: str):
@@ -47,31 +56,16 @@ async def get_features(pk: str):
         if pk not in ["diagnosis_model", "disease_detections"]:
             raise HTTPException(status_code=400, detail="Invalid parameter value")
         is_diagnosis = (pk == "diagnosis_model")
-        features = await run_in_threadpool(manager.get_features, is_diagnosis)
-        return response_handler.handle_response(
-            message=response_handler.MESSAGES.get("FEATURES_RETRIEVED"),
-            response=features
-        )
-    except HTTPException as e:
-        return response_handler.handle_response(status_code=e.status_code, error=str(e.detail))
+        return await app_manager.get_features(is_diagnosis)
     except Exception as e:
-        logger.error(f"Unexpected error in features endpoint: {e}")
-        return response_handler.handle_exception(exception=e)
+        return response_handler.handle_exception(exception=f"Error in features endpoint: {e}")
 
 @app.get("/diagnosis/metadata")
 async def get_metadata():
     try:
-        metadata_list = await run_in_threadpool(manager.get_all_metadata)
-        return response_handler.handle_response(
-            message=response_handler.MESSAGES.get("METADATA_RETRIEVED"),
-            response=metadata_list
-        )
-    except HTTPException as e:
-        return response_handler.handle_response(status_code=e.status_code, error=str(e.detail))
+        return await app_manager.get_all_metadata()
     except Exception as e:
-        logger.error(f"Unexpected error in metadata endpoint: {e}")
-        return response_handler.handle_exception(exception=e)
+        return response_handler.handle_exception(exception=f"Error in metadata view: {e}")
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

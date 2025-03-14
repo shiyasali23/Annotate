@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     
     'adminpanel.apps.AdminpanelConfig',
     'webapp.apps.WebappConfig',
+    'diagnosis.apps.DiagnosisConfig',
 ]
 
 MIDDLEWARE = [

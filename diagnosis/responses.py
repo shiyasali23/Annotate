@@ -35,8 +35,4 @@ class ResponseHandler:
             logger.error(f"Exception: {exception}")
         return self.handle_response(status_code=status_code, error=error, message=message)
 
-    def handle_logger(self, error=None, message=None, exception=None):
-        if exception:
-            logger.error(f"{error or 'Exception'}: {exception}")
-        if message:
-            logger.info(f"{error or 'Info'}: {message}")
+    

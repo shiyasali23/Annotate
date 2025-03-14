@@ -21,7 +21,8 @@ class ResponseHandler():
         "USER_ALREADY_EXISTS": "User with this email might already exists.",
         "ACCOUNT_DISABLED": "Account is disabled.",
         "INVALID_DATA": "Error while validating data.",
-        "NO_CONDITIONS": "No conditions found for the ids."
+        "NO_CONDITIONS": "No conditions found for the ids.",
+        "NO_DISEASE_DATA": "No data found for the requested disease."
     }
 
     def handle_response(self, status_code=200, message=None, error=None ,response=None):

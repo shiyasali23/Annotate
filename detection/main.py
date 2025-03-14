@@ -1,8 +1,12 @@
 from fastapi import FastAPI, Form, UploadFile, File, Depends
 from fastapi.middleware.cors import CORSMiddleware
+
 from typing import Optional
 import logging
 import sys
+
+import uvicorn
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -50,5 +54,4 @@ async def predict(
         )
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8002)

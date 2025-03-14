@@ -43,8 +43,6 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
       : {};
   }, [diagnosisModel]);
 
-
-
   const loadModel = useCallback(async () => {
     setLoading(true);
     const model = await getModels(dignosisModelsTypes[0]);
@@ -70,8 +68,6 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
   const validateInputValues = useCallback(() => {
     return Object.values(inputValues).filter((v) => v !== 0).length >= 5;
   }, [inputValues]);
-
-  
 
   const handleChange = (symptom, value) => {
     setInputValues((prev) => ({ ...prev, [symptom]: value }));
@@ -126,14 +122,14 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(mappableFeatures).map(([symptom, options]) => (
                   <div key={symptom} className="flex items-center gap-2">
-                    <label className="text-md" htmlFor={symptom}>
+                    <label className="text-md font-semibold" htmlFor={symptom}>
                       {symptom}
                     </label>
                     <Select
                       value={inputValues[symptom]}
                       onValueChange={(value) => handleChange(symptom, value)}
                     >
-                      <SelectTrigger className="h-8">
+                      <SelectTrigger className="rounded-none">
                         <SelectValue placeholder="Select value" />
                       </SelectTrigger>
                       <SelectContent>
@@ -156,7 +152,7 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
                 {Object.entries(featuresCategory || {}).map(
                   ([category, symptoms]) => (
                     <AccordionItem key={category} value={category}>
-                      <AccordionTrigger>{category}</AccordionTrigger>
+                      <AccordionTrigger className="ml-7 font-semibold text-xs">{category}</AccordionTrigger>
                       <AccordionContent>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {symptoms
@@ -169,6 +165,7 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
                                 <Checkbox
                                   id={symptom}
                                   checked={inputValues[symptom] === 1}
+                                  className="w-4 h-4 rounded-none"
                                   onCheckedChange={() =>
                                     handleChange(
                                       symptom,
@@ -176,7 +173,7 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
                                     )
                                   }
                                 />
-                                <label htmlFor={symptom}>{symptom}</label>
+                                <label className="text-xs" htmlFor={symptom}>{symptom}</label>
                               </div>
                             ))}
                         </div>
@@ -194,18 +191,23 @@ const DiagnosisModal = ({ isOpen, onClose }) => {
                 {Object.entries(inputValues)
                   .filter(([, v]) => v !== 0)
                   .map(([symptom]) => (
-                    <h1
-                      key={symptom}
-                      className="text-sm p-2 bg-gray-100 rounded text-center"
-                    >
-                      {symptom}
-                    </h1>
+                    <div key={symptom} className=" p-2 bg-gray-100 flex items-center justify-between gap-2">
+                      <h1
+                        key={symptom}
+                        className="text-xs ml-10 font-semibold  text-center"
+                      >
+                        {symptom}
+                      </h1>
+                      {!mappableFeatures[symptom] && (
+                        <AiOutlineCloseSquare className={"text-xl ml-10 font-semibold cursor-pointer"} onClick={() => handleChange(symptom, 0)}/>
+                      )}
+                    </div>
                   ))}
               </div>
               <Button
                 variant="default"
                 size="lg"
-                className="absolute mx-auto bottom-4 w-full"
+                className="absolute mx-auto bottom-4 w-full rounded-none"
                 disabled={!validateInputValues()}
                 onClick={handleDiagnosis}
               >

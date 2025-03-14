@@ -79,7 +79,9 @@ class AppManagement:
                         detected_items.add(name)
 
             if detected_items:
-                asyncio.create_task(self._register_prediction(token, detected_items))
+                if token:
+                    asyncio.create_task(self._register_prediction(token, detected_items))
+                
                 return response_handler.handle_response(
                     response=list(detected_items)
                 )

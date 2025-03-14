@@ -24,7 +24,11 @@ import {
 import { Loader } from "lucide-react";
 
 const DiseaseDetectionModal = ({ isOpen, onClose }) => {
-  const { diseaseDetectionModals, setDiseaseDetectionModals, dignosisModelsTypes } = useData();
+  const {
+    diseaseDetectionModals,
+    setDiseaseDetectionModals,
+    dignosisModelsTypes,
+  } = useData();
   const [loading, setLoading] = useState(false);
   const [predictionLoading, setPredictionLoading] = useState(false);
   const [openAcc, setOpenAcc] = useState(null);
@@ -225,7 +229,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
                                 }
                               >
                                 <SelectTrigger
-                                  className={`${
+                                  className={`rounded-none ${
                                     checkIsMostImpacted(feature, model.id)
                                       ? "border-2 border-red-500 text-red-500"
                                       : ""
@@ -233,7 +237,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
                                 >
                                   <SelectValue
                                     placeholder={`Select ${feature}`}
-                                    className={`${
+                                    className={` ${
                                       checkIsMostImpacted(feature, model.id)
                                         ? "text-red-500"
                                         : ""
@@ -252,6 +256,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
                               </Select>
                             ) : (
                               <Input
+                              
                                 type="text"
                                 value={
                                   inputValuesArray.find(
@@ -265,7 +270,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
                                     e.target.value
                                   )
                                 }
-                                className={`${
+                                className={`rounded-none ${
                                   checkIsMostImpacted(feature, model.id)
                                     ? "border-2 border-red-500 text-red-500"
                                     : ""
@@ -287,7 +292,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
                                   ? "destructive"
                                   : "secondary"
                               }`}
-                              className="w-full sm:w-auto sm:min-w-[120px] "
+                              className="w-full sm:w-auto sm:min-w-[120px] rounded-none"
                             >
                               {label}{" "}
                               {predictionsDict?.[model.id]?.probabilities?.[
@@ -309,7 +314,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
                       <Button
                         variant="default"
                         size="lg"
-                        className="mr-10 w-1/2 xl:w-1/4"
+                        className="mr-10 w-1/2 xl:w-1/4 rounded-none"
                         disabled={predictionLoading}
                         onClick={() => handlePredict(model.id)}
                       >

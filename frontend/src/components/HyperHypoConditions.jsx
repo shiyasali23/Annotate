@@ -1,16 +1,15 @@
-import { useUser } from "@/contexts/userContext";
 import React from "react";
 import ConditionsTree from "./ConditionsTree";
 
-const HyperHypoConditions = () => {
-  const { hyperBiochemicals, hypoBiochemicals } = useUser();  
+const HyperHypoConditions = ({ hyperBiochemicals, hypoBiochemicals }) => {
+   
 
   const noBiochemicals = (type) => {
     return <h1 className="text-center text-gray-500">No {type} Biochemicals</h1>;
   };
 
   return (
-    <div className="w-[97vw] xl:w-[85vw] m-auto  my-5 ">
+    <div className="w-full h-full">
       <h1 className="text-2xl font-bold w-full text-center my-5">
         Conditions May Have
       </h1>

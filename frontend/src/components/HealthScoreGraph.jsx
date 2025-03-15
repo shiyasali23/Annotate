@@ -23,8 +23,8 @@ ChartJS.register(
   SubTitle
 );
 
-const HealthScoreGraph = ({ handleBiometricEntry }) => {
-  const {  healthScore } = useUser();
+const HealthScoreGraph = ({ handleBiometricEntry, healthScore }) => {
+  
   if (!healthScore) return null;
 
   const formatDate = (dateString) => {
@@ -114,7 +114,7 @@ const HealthScoreGraph = ({ handleBiometricEntry }) => {
   };
 
   return (
-    <div className="w-[97vw] xl:w-[85vw] m-auto h-[40vh] xl:h-[50vh] mt-5 bg-[#ECF4F3] shadow-[0_0_8px_2px_rgba(0,0,0,0.05)]">
+    <div className="w-full h-full bg-[#ECF4F3] shadow-[0_0_8px_2px_rgba(0,0,0,0.05)]">
       {!healthScore ? (
         <ErrorComponent/>
       ) : (

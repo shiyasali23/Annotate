@@ -92,7 +92,6 @@ const BiochemicalsUpdate = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-10 pt-5 border-t">
                   {items.map((item) => {
                     const biometricData = getBiometricData(item.id);
-                    const isExpired = biometricData?.isExpired;
                     const expiryDate = biometricData?.expiryDate
                       ? new Date(biometricData.expiryDate).toLocaleDateString()
                       : null;
@@ -130,8 +129,8 @@ const BiochemicalsUpdate = () => {
                             {item.unit}
                           </h1>
                         </div>
-                        {isExpired && expiryDate && (
-                          <h1 className="text-xs  text-red-800 font-semibold">
+                        {expiryDate && new Date(expiryDate) < new Date() && (
+                          <h1 className="text-xs text-red-800 font-semibold">
                             Expired On: {expiryDate}
                           </h1>
                         )}

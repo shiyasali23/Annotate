@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 class Command(BaseCommand):
     help = "Resets database, runs migrations, and creates a superuser."
 
-    apps = ['webapp', 'adminpanel']
+    apps = ['webapp', 'adminpanel', 'diagnosis', 'mlmodel']
 
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.NOTICE('Creating admin data'))
@@ -57,6 +57,9 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.NOTICE('Validating normalization of nutriscores and nutrients...'))
         call_command("validate_normalization")
+       
+        self.stdout.write(self.style.NOTICE('Diagnosis weights/bias data creating...'))
+        call_command("diagnosis_create")
         
         self.stdout.write(self.style.NOTICE('Demo user creating...'))
         call_command("user_create")

@@ -1,4 +1,3 @@
-import { useUser } from "@/contexts/userContext";
 import React, { useMemo } from "react";
 import {
   Accordion,
@@ -8,13 +7,13 @@ import {
 } from "@/components/ui/accordion";
 import BiochemicalLineGraph from "./BiochemicalLineGraph";
 
-const BiometricsAccordion = () => {
-  const { biometrics } = useUser();
+const BiometricsAccordion = ({biometrics}) => {
+  
 
   const categories = useMemo(() => biometrics ? Object.keys(biometrics) : [], [biometrics]);
 
   return (
-    <div className="w-[97vw] xl:w-[95vw] m-auto my-5">
+    <div className="w-full h-full">
       {biometrics && (
         <Accordion type="single" collapsible className="border ">
           {categories.map((category) => (

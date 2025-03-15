@@ -1,6 +1,4 @@
 export const processBiometricData = (biometricsEntries) => {
-  const now = Date.now();
-
   // Process health score entries.
   const healthScore = biometricsEntries
     .map((entry) => ({
@@ -31,10 +29,9 @@ export const processBiometricData = (biometricsEntries) => {
         };
         bioMap[bioName] = bioRecord;
       }
-      const expiryTS = new Date(bio.expiry_date).getTime();
 
       const recordEntry = [
-        entryTS,           // Timestamp
+        entryTS,
         bio.value,
         bio.scaled_value,
         bio.expiry_date,
@@ -61,7 +58,6 @@ export const processBiometricData = (biometricsEntries) => {
           scaledValue: bio.scaled_value,
           expiryDate: bio.expiry_date,
           isHyper: bio.is_hyper,
-          isExpired: expiryTS < now,
         };
       }
     });
@@ -75,7 +71,7 @@ export const processBiometricData = (biometricsEntries) => {
     if (Object.hasOwnProperty.call(bioMap, bioName)) {
       const record = bioMap[bioName];
       record.entries.sort((a, b) => a[0] - b[0]);
-      const entriesObj = record.entries.map(e => ({
+      const entriesObj = record.entries.map((e) => ({
         createdAt: new Date(e[0]).toISOString(),
         value: e[1],
         scaledValue: e[2],
@@ -88,9 +84,15 @@ export const processBiometricData = (biometricsEntries) => {
         category: record.category,
         lastUpdated: new Date(record.latestTS).toISOString(),
         expiryOn: record.latestExpiry,
-        unit: latestMap[bioName] ? latestMap[bioName].unit : record.entries[0][6],
-        healthy_min: latestMap[bioName] ? latestMap[bioName].healthy_min : record.entries[0][7],
-        healthy_max: latestMap[bioName] ? latestMap[bioName].healthy_max : record.entries[0][8],
+        unit: latestMap[bioName]
+          ? latestMap[bioName].unit
+          : record.entries[0][6],
+        healthy_min: latestMap[bioName]
+          ? latestMap[bioName].healthy_min
+          : record.entries[0][7],
+        healthy_max: latestMap[bioName]
+          ? latestMap[bioName].healthy_max
+          : record.entries[0][8],
         entries: entriesObj,
       };
 
@@ -107,7 +109,6 @@ export const processBiometricData = (biometricsEntries) => {
           value: latest.value,
           scaledValue: latest.scaledValue,
           expiryDate: latest.expiryDate,
-          isExpired: latest.isExpired,
           isHyper: latest.isHyper,
         };
         latestBiometrics.push(latestBiochemical);
@@ -138,10 +139,7 @@ export const processBiometricData = (biometricsEntries) => {
   // Create a list of biochemical IDs with defined isHyper values.
   const hyperHypoBiochemicalsIds = latestBiometrics
     .filter(({ isHyper }) => isHyper !== null)
-    .map(({ id, isHyper }) => ({
-      id,
-      is_hyper: isHyper,
-    }));
+    .map(({ id, isHyper }) => ({ id, is_hyper: isHyper }));
 
   return {
     healthScore,
@@ -161,7 +159,7 @@ export const processConditions = (
   if (!conditions?.length) {
     return {
       processedHyperBiochemicals: hyperBiochemicals || [],
-      processedHypoBiochemicals: hypoBiochemicals || []
+      processedHypoBiochemicals: hypoBiochemicals || [],
     };
   }
 
@@ -169,14 +167,14 @@ export const processConditions = (
   const hypoMap = new Map();
 
   if (Array.isArray(hyperBiochemicals)) {
-    hyperBiochemicals.forEach(bio => hyperMap.set(bio.id, bio));
+    hyperBiochemicals.forEach((bio) => hyperMap.set(bio.id, bio));
   }
 
   if (Array.isArray(hypoBiochemicals)) {
-    hypoBiochemicals.forEach(bio => hypoMap.set(bio.id, bio));
+    hypoBiochemicals.forEach((bio) => hypoMap.set(bio.id, bio));
   }
 
-  conditions.forEach(condition => {
+  conditions.forEach((condition) => {
     const { id, is_hyper, conditions: conds } = condition;
     const targetBio = is_hyper ? hyperMap.get(id) : hypoMap.get(id);
     if (targetBio) {
@@ -186,13 +184,6 @@ export const processConditions = (
 
   return {
     processedHyperBiochemicals: hyperBiochemicals || [],
-    processedHypoBiochemicals: hypoBiochemicals || []
+    processedHypoBiochemicals: hypoBiochemicals || [],
   };
 };
-
-
-
-
-
-
-  

@@ -14,8 +14,8 @@ import FoodNutrientList from "@/components/FoodNutrientList";
 import FoodNutrientBarGraph from "@/components/FoodNutrientBarGraph";
 import FoodsScores from "@/components/FoodsScores";
 import FoodPredictionsBarGraph from "@/components/FoodPredictionsBarGraph";
-import { useUser } from "@/contexts/userContext";
 import { processFoodsScore } from "@/utils/food-woker";
+import { useUser } from "@/contexts/userContext";
 
 const Food = () => {
   const {
@@ -26,9 +26,11 @@ const Food = () => {
     foodNutrientsDataLoading,
     fetchFoodNutrients,
     foodNutriscoreData,
+   
   } = useFood();
 
   const { foodsScore } = useUser();
+
   const [processedFoodsScore, setProcessedFoodsScore] = useState(null);
 
   const [predictedFoodsData, setPredictedFoodsData] = useState();
@@ -77,19 +79,16 @@ const Food = () => {
     [foodNutrients, nutrientsFoods]
   );
 
- 
-  
-
   const handleImage = async (image) => {
     setMessage(null);
     setPredictionLoading(true);
     setPredictedFoodsData(null);
-  
+
     const { detectedFoods, message: detectMessage } = await detectFood(
       image,
       foodNutriscoreData
     );
-  
+
     if (detectMessage && !detectedFoods) {
       setMessage(detectMessage || "Something went wrong");
       setPredictedFoodsData(null);
@@ -97,7 +96,7 @@ const Food = () => {
       const { mappedPredictedFoods, maxFood } = processedFoodsScore
         ? mapDetectedFoods(detectedFoods, processedFoodsScore, "value")
         : mapDetectedFoods(detectedFoods, foodNutriscoreData, "nutriScore");
-  
+
       if (mappedPredictedFoods) {
         setPredictedFoodsData(mappedPredictedFoods);
         handleSelectedItem(maxFood, true);
@@ -107,8 +106,6 @@ const Food = () => {
     }
     setPredictionLoading(false);
   };
-
-  
 
   return (
     <div className="flex w-screen min-h-screen flex-col">
@@ -174,12 +171,16 @@ const Food = () => {
                 <FoodPredictionsBarGraph
                   predictedFoodsData={predictedFoodsData}
                   handleSelectedItem={handleSelectedItem}
-                  isNutriScore={processFoodsScore? false : true}
+                  isNutriScore={processFoodsScore ? false : true}
                 />
               </div>
             )}
-            <div className="flex-1 px-2 w-1/2 ">
-              <FoodsScores processedFoodsScore={processedFoodsScore} handleSelectedItem={handleSelectedItem}/>
+            <div className="flex-1 px-2 w-1/2 h-full">
+              <FoodsScores
+                processedFoodsScore={processedFoodsScore}
+                handleSelectedItem={handleSelectedItem}
+                setMessage={setMessage}
+              />
             </div>
           </section>
 

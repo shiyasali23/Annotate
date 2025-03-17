@@ -26,6 +26,40 @@ export const getFoodNutrients = async () => {
   }
 };
 
+export const createFoodsscore = async (unExpiredBiometricsData) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Something went wrong,");
+  }
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/foods_score/create`, {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({ data: unExpiredBiometricsData }),
+      
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.response || null;
+  } catch (error) {
+    console.error("Error creaating foods score:", error);
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 
 
 

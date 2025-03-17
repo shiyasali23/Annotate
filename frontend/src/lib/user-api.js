@@ -1,7 +1,6 @@
 //utils/DiagnosisDetectionUtils.js
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://127.0.0.1:8000/backend';
-
-
+const BACKEND_API_URL =
+  process.env.BACKEND_API_URL || "http://127.0.0.1:8000/backend";
 
 export const updateUser = async (inputValues) => {
   const token = localStorage.getItem("token");
@@ -36,11 +35,16 @@ export const updateUser = async (inputValues) => {
   }
 };
 
-export const updateBiometrics = async (inputValues) => {  
+export const updateBiometrics = async (
+  updatedBiochemicalsData,
+  unExpiredBiometricsData
+) => {
   const token = localStorage.getItem("token");
   if (!token) {
-    throw new Error("Something went wrong,");
+    throw new Error("Something went wrong, token is missing");
   }
+
+
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -53,8 +57,16 @@ export const updateBiometrics = async (inputValues) => {
         "Content-Type": "application/json",
         Authorization: `Token ${token}`,
       },
-      body: JSON.stringify({ data: inputValues }),
+      body: JSON.stringify({
+        data: {
+          updatedBiochemicalsData: updatedBiochemicalsData,
+          unExpiredBiometricsData: unExpiredBiometricsData,
+        },
+      }),
     });
+
+    console.log(response);
+    
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -63,7 +75,7 @@ export const updateBiometrics = async (inputValues) => {
     const result = await response.json();
     return result.response || null;
   } catch (error) {
-    console.error("Error updating user:", error.message);
+    console.error("Error updating biometrics:", error.message);
     return null;
   } finally {
     clearTimeout(timeoutId);

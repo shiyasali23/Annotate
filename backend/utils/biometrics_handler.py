@@ -1,6 +1,7 @@
 import numpy as np
 import logging
 
+from django.db import transaction
 from django.utils import timezone
 from datetime import timedelta
 
@@ -8,7 +9,7 @@ from datetime import timedelta
 from utils.objects_handler import ObjectsHandler
 from utils.response_handler import ResponseHandler
 from utils.user_handler import UserHandler
-from utils.food_score_handler import FoodScoreHandler
+from utils.foods_score_handler import FoodScoreHandler
 
 from webapp.serializers import BiometricsEntrySerializer,BiometricsSerializer
 
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 objects_handler = ObjectsHandler()
 response_handler = ResponseHandler()
 user_handler = UserHandler()
+foods_score_handler = FoodScoreHandler()
 
 class BiometricsHandler:
     _instance = None
@@ -32,7 +34,6 @@ class BiometricsHandler:
         self.female_biochemicals_data = []
         self.biochemicals_validity_data = []
         self.healthy = False
-        self._food_score_handler = FoodScoreHandler()
         self._load_biochemicals()
 
     def _load_biochemicals(self):
@@ -67,79 +68,93 @@ class BiometricsHandler:
                     except ValueError:
                         invalid_ids.append(item['id'])
 
-            return np.array(valid_values), valid_ids, invalid_ids, 
+            return np.array(valid_values, dtype=np.float16), valid_ids, invalid_ids, 
         except Exception as e:
             logger.error(f"Error validating biochemicals: {e}")
             return np.array([]), [], []
     
-    def handle_biometrics(self, user, requested_data): 
+    def handle_biometrics(self, user, updated_biochemicals, unexpired_biochemicals = None): 
         if self.healthy == False:
             return response_handler.handle_exception(
                 exception=f"Error loading biochemicals in BiometricsHandler"
-        )      
+        )   
         try: 
-            values, valid_ids, invalid_ids = self.validate_requested_data(requested_data=requested_data)
-            if len(invalid_ids) > 0:
+            updated_biochemicals_values, updated_biochemicals_valid_ids, updated_biochemicals_invalid_ids = self.validate_requested_data(
+                requested_data=updated_biochemicals
+            )
+            if len(updated_biochemicals_invalid_ids) > 0:
                 return response_handler.handle_response(
                     error=response_handler.MESSAGES['INVALID_DATA'],
                     status_code=400, 
-                    message=f"Invalid fields: {', '.join(map(str, invalid_ids))}" 
+                    message=f"Invalid fields: {', '.join(map(str, updated_biochemicals_invalid_ids))}" 
                 )
             
+            if unexpired_biochemicals:
+                _, _, unexpired_biochemicals_invalid_ids = self.validate_requested_data(
+                    requested_data=unexpired_biochemicals
+                )
+                if len(unexpired_biochemicals_invalid_ids) > 0:
+                    return response_handler.handle_response(
+                        error=response_handler.MESSAGES['INVALID_DATA'],
+                        status_code=400, 
+                        message=f"Invalid fields: {', '.join(map(str, unexpired_biochemicals_invalid_ids))}" 
+                    )
+           
             return self._create_biometrics_entry(
                 user=user,
-                values=values,
-                valid_ids=valid_ids
+                values=updated_biochemicals_values,
+                valid_ids=updated_biochemicals_valid_ids,
+                unexpired_biochemicals=unexpired_biochemicals
             )                     
         except Exception as e:
             response_handler.handle_exception(
                 exception=f"Error handling biochemicals view: {str(e)}"
             )
     
-    def _create_biometrics_entry(self, user, values, valid_ids,):
+    def _create_biometrics_entry(self, user, values, valid_ids, unexpired_biochemicals=None):
         try:
-            
-            healthy_mins, healthy_maxs, error = self.get_min_healthy_maxs(
-                valid_ids=valid_ids,
-                gender=user.gender
-            )
-            if error:
-                return response_handler.handle_exception(
-                    exception=f"Error getting min/max values min: {error}"
-                )
-            
-            scaled_health_weights, error = self._scale_health_weights(
-                values=values,
-                healthy_mins=healthy_mins,
-                healthy_maxs=healthy_maxs
-            )
-            if error:
-                return response_handler.handle_exception(
-                    exception=f"Error scaling health weights: {error}"
-                )
-            
-            health_score = float(np.sum(scaled_health_weights))
-            biometrics_entry = BiometricsEntrySerializer(data={"user": user.id, "health_score": health_score})
-            if biometrics_entry.is_valid():
-                biometrics_entry_instance = biometrics_entry.save()
-                return self._create_biometrics(
-                    user=user,
-                    values=values,
+            with transaction.atomic():  
+                healthy_mins, healthy_maxs, error = self.get_min_healthy_maxs(
                     valid_ids=valid_ids,
+                    gender=user.gender
+                )
+                if error:
+                    return response_handler.handle_exception(
+                        exception=f"Error getting min/max values min: {error}"
+                    )
+
+                scaled_health_weights, error = self._scale_health_weights(
+                    values=values,
                     healthy_mins=healthy_mins,
-                    healthy_maxs=healthy_maxs,
-                    scaled_health_weights=scaled_health_weights,
-                    biometrics_entry = biometrics_entry_instance.id
+                    healthy_maxs=healthy_maxs
                 )
-            else:
-                return response_handler.handle_exception(
-                    exception=f"Error on BiometricsEntry serializer: {str(biometrics_entry.errors)}"
-                )
+                if error:
+                    return response_handler.handle_exception(
+                        exception=f"Error scaling health weights: {error}"
+                    )
+
+                health_score = float(np.sum(scaled_health_weights))
+                biometrics_entry = BiometricsEntrySerializer(data={"user": user.id, "health_score": health_score})
+                
+                if biometrics_entry.is_valid():
+                    biometrics_entry_instance = biometrics_entry.save()
+
+                    return self._create_biometrics(
+                        user=user,
+                        values=values,
+                        valid_ids=valid_ids,
+                        healthy_mins=healthy_mins,
+                        healthy_maxs=healthy_maxs,
+                        scaled_health_weights=scaled_health_weights,
+                        biometrics_entry=biometrics_entry_instance.id,
+                        unexpired_biochemicals=unexpired_biochemicals
+                    )
+                else:
+                    raise Exception(f"Error on BiometricsEntry serializer: {str(biometrics_entry.errors)}")
 
         except Exception as e:
-            response_handler.handle_exception(
-                exception=f"Error creating biometrics entry: {str(e)}"
-            )
+            raise Exception(f"Error creating biometrics entry: {str(e)}")
+
         
     def get_min_healthy_maxs(self, valid_ids, gender):
         try:
@@ -149,7 +164,7 @@ class BiometricsHandler:
             healthy_mins = np.take(biochemicals_data, indices, mode='clip')  
             healthy_maxs = np.take(biochemicals_data, indices + 1, mode='clip')  
 
-            return healthy_mins.astype(float), healthy_maxs.astype(float), None
+            return healthy_mins.astype(np.float16), healthy_maxs.astype(np.float16), None
         except Exception as e:
             return np.array([]), np.array([]), str(e)
         
@@ -171,7 +186,7 @@ class BiometricsHandler:
             return None, str(e)
         
     
-    def _create_biometrics(self, user, valid_ids, values, healthy_mins, healthy_maxs, scaled_health_weights, biometrics_entry):
+    def _create_biometrics(self, user, valid_ids, values, healthy_mins, healthy_maxs, scaled_health_weights, biometrics_entry, unexpired_biochemicals = None):
         try:
             scaled_biometrics, error = self._scale_biometrics(
                 values=values,
@@ -203,9 +218,17 @@ class BiometricsHandler:
 
             biometrics_serializer = BiometricsSerializer(data=biometrics_data, many=True)
             if biometrics_serializer.is_valid():
-                foods_score, error = self._food_score_handler.create_foods_score(
-                    biochemicals_scaled_values = biochemicals_scaled_values,
-                    latest_biometrics_entry = biometrics_entry
+                
+                latest_biochemicals_scaled_values = biochemicals_scaled_values
+               
+                if unexpired_biochemicals:
+                    updated_ids = {biochemical["id"] for biochemical in biochemicals_scaled_values}  
+                    filtered_unexpired_biochemicals = [b for b in unexpired_biochemicals if b["id"] not in updated_ids]  
+                    latest_biochemicals_scaled_values = biochemicals_scaled_values + filtered_unexpired_biochemicals  
+
+                foods_score, error = foods_score_handler.create_foods_score(
+                    biochemicals_scaled_values = latest_biochemicals_scaled_values,
+                    user = user.id
                 )
                 
                 
@@ -247,4 +270,3 @@ class BiometricsHandler:
     
 
             
-

@@ -50,8 +50,16 @@ const BiochemicalsUpdate = () => {
 
   const handleSave = async (inputValuesArray) => {
     setBiochemicalDataLoading(true);
-    const updatedInputValuesArray = Object.values(inputValuesArray);
-    const response = await updateBiometrics(updatedInputValuesArray);
+    const updatedBiochemicalsData = Object.values(inputValuesArray);
+    const currentDate = new Date().toISOString();
+    const unExpiredBiometricsData =
+  latestBiometrics
+    ?.filter(({ expiryDate }) => expiryDate >= currentDate)
+    .map(({ id, scaledValue }) => ({ id, value: scaledValue })) || null;
+    const response = await updateBiometrics(
+      updatedBiochemicalsData,
+      unExpiredBiometricsData
+    );
     if (response) {
       handleAuthResponse(response);
     } else {
@@ -93,7 +101,7 @@ const BiochemicalsUpdate = () => {
                   {items.map((item) => {
                     const biometricData = getBiometricData(item.id);
                     const expiryDate = biometricData?.expiryDate
-                      ? new Date(biometricData.expiryDate).toLocaleDateString()
+                      ? new Date(biometricData.expiryDate)
                       : null;
                     const healthyMin = biometricData?.healthy_min;
                     const healthyMax = biometricData?.healthy_max;
@@ -104,7 +112,7 @@ const BiochemicalsUpdate = () => {
                       <div key={item.id} className="flex flex-col space-y-3">
                         <Label
                           htmlFor={`biochemical-${item.id}`}
-                          className={`text-xs xl:text-sm  font-semibold ${
+                          className={`text-xs xl:text-sm font-semibold ${
                             isHyper === true || isHyper === false
                               ? "text-red-600"
                               : ""
@@ -129,12 +137,11 @@ const BiochemicalsUpdate = () => {
                             {item.unit}
                           </h1>
                         </div>
-                        {expiryDate && new Date(expiryDate) < new Date() && (
+                        {expiryDate && expiryDate < new Date() && (
                           <h1 className="text-xs text-red-800 font-semibold">
-                            Expired On: {expiryDate}
+                            Expired On: {expiryDate.toLocaleDateString()}
                           </h1>
                         )}
-
                         {(isHyper === true || isHyper === false) && (
                           <div className="flex gap-2 items-center">
                             <h1 className="text-xs">Optimum Value:</h1>

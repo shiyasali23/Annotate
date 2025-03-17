@@ -94,13 +94,13 @@ class Biometrics(BaseModel):
     
 
 class FoodsScore(BaseModel):
-    biometricsentry = models.ForeignKey(BiometricsEntry, on_delete=models.CASCADE, related_name='food_scores')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='food_scores')
     foods_score = models.JSONField()  
 
     class Meta:
         indexes = [
-            models.Index(fields=['biometricsentry']),
+            models.Index(fields=['user']),
         ]
 
     def __str__(self):
-        return f'{self.biometricsentry.user.get_full_name()} - {self.biometricsentry}'
+        return f'{self.user.get_full_name()}'

@@ -76,7 +76,7 @@ const Analytics = () => {
           </div>
 
           {latestBiometrics && (
-            <div className="w-[97vw] xl:w-[95vw] h-[100vh] m-auto my-5 p-2 shadow-lg">
+            <div className="w-[97vw] xl:w-[95vw] max-h-[100vh] m-auto my-5 p-2 shadow-lg">
               <LatestBiometricsTable latestBiometrics={latestBiometrics} biometrics={biometrics}/>
             </div>
           )}

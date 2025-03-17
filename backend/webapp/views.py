@@ -8,10 +8,11 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from utils.response_handler import ResponseHandler
 from utils.user_handler import UserHandler
 from utils.biometrics_handler import BiometricsHandler
-from utils.food_score_handler import FoodScoreHandler
+from utils.foods_score_handler import FoodScoreHandler
 
 user_handler = UserHandler()
 response_handler = ResponseHandler()
+
 
 
 
@@ -68,8 +69,29 @@ def handle_biometrics(request):
         biometrics_handler = BiometricsHandler()
         return biometrics_handler.handle_biometrics(
             user=request.user, 
-            requested_data=request.data['data']
+            updated_biochemicals=request.data['data']['updatedBiochemicalsData'],
+            unexpired_biochemicals = request.data.get('data', {}).get('unExpiredBiometricsData', None)
         )                
+    except Exception as e:
+        return response_handler.handle_exception(
+            exception=f"Error handling biometrics view: {str(e)}"
+        )
+
+
+#------------------------Foods Score------------------------
+
+
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def handle_foods_score(request):
+    try:
+        foods_score_handler = FoodScoreHandler()
+        return foods_score_handler.handle_create_foods_score(
+            biochemicals_scaled_values = request.data['data'],
+            user = request.user
+        )
+                       
     except Exception as e:
         return response_handler.handle_exception(
             exception=f"Error handling biometrics view: {str(e)}"

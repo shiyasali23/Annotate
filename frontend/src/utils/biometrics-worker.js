@@ -1,4 +1,9 @@
-export const processBiometricData = (biometricsEntries) => {
+// utils/biometrics-worker.js
+import { getConditions } from "@/lib/biochemicals-api";
+
+export const processBiometricData = async (biometricsEntries) => {
+  
+
   // Process health score entries.
   const healthScore = biometricsEntries
     .map((entry) => ({
@@ -141,13 +146,38 @@ export const processBiometricData = (biometricsEntries) => {
     .filter(({ isHyper }) => isHyper !== null)
     .map(({ id, isHyper }) => ({ id, is_hyper: isHyper }));
 
+  // Set default values for processed data (the original extracted data)
+  let processedHyperBiochemicals = hyper.length ? hyper : [];
+  let processedHypoBiochemicals = hypo.length ? hypo : [];
+
+  // Make API call directly if there are hyperHypoBiochemicalsIds
+  if (hyperHypoBiochemicalsIds?.length) {
+    try {
+      const conditions = await getConditions(hyperHypoBiochemicalsIds);
+      if (conditions) {
+        const processed = processConditions(
+          conditions, 
+          // Create copies of the arrays to avoid mutation issues
+          [...processedHyperBiochemicals], 
+          [...processedHypoBiochemicals]
+        );
+        // Only update if processing was successful
+        processedHyperBiochemicals = processed.processedHyperBiochemicals;
+        processedHypoBiochemicals = processed.processedHypoBiochemicals;
+      }
+    } catch (error) {
+      console.error("Error fetching conditions:", error);
+      // On error, we keep the original hyper/hypo arrays (already set above)
+    }
+  }
+
   return {
     healthScore,
     biometrics,
     latestBiometrics,
-    hyperBiochemicals: hyper.length ? hyper : [],
-    hypoBiochemicals: hypo.length ? hypo : [],
-    hyperHypoBiochemicalsIds,
+    hyperBiochemicals: processedHyperBiochemicals,
+    hypoBiochemicals: processedHypoBiochemicals,
+    
   };
 };
 

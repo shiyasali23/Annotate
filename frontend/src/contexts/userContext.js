@@ -1,8 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { processBiometricData, processConditions } from "@/utils/biometrics-worker";
+import { processBiometricData } from "@/utils/biometrics-worker";
 import { cacheManager } from "@/utils/cache-wroker";
-import { getConditions } from "@/lib/biochemicals-api";
 
 const UserContext = createContext();
 
@@ -15,23 +14,23 @@ export const UserProvider = ({ children }) => {
   const [latestBiometrics, setLatestBiometrics] = useState(null);
   const [hyperBiochemicals, setHyperBiochemicals] = useState(null);
   const [hypoBiochemicals, setHypoBiochemicals] = useState(null);
-  
-  const [foodsScore, setFoodsScore] = useState(null);
-  
   const [userDataLoading, setUserDataLoading] = useState(true);
+
+  const [foodsScore, setFoodsScore] = useState(null);
+
 
   useEffect(() => {
     setUserDataLoading(true);
     const cachedData = cacheManager.multiGet([
       "token",
       "userData",
+      "latestBiometrics",
       "healthScore",
       "biometrics",
       "biometricsEntries",
-      "latestBiometrics",
       "hyperBiochemicals",
       "hypoBiochemicals",
-      
+
       "foodsScore",
     ]);
 
@@ -44,12 +43,15 @@ export const UserProvider = ({ children }) => {
       setLatestBiometrics(cachedData.latestBiometrics);
       setHyperBiochemicals(cachedData.hyperBiochemicals);
       setHypoBiochemicals(cachedData.hypoBiochemicals);
+
       setFoodsScore(cachedData.foodsScore);
     }
     setUserDataLoading(false);
   }, []);
 
-  const handleAuthResponse = (data) => {
+  const handleAuthResponse = async (data) => {
+    console.log(data);
+    
     setUserDataLoading(true);
     
     if (data.token && data.user) {
@@ -61,62 +63,42 @@ export const UserProvider = ({ children }) => {
       setIsLogined(true);
     }
     
-    if (data.foods_score.foods_score){
-      cacheManager.set("foodsScore", data.foods_score.foods_score);
-      setFoodsScore(data.foods_score.foods_score);
-    }
-
-   
-
     if (Array.isArray(data.biometrics_entries) && data.biometrics_entries.length) {
       setBiometricsEntries(data.biometrics_entries);
 
+      // The processBiometricData now handles API calls internally and returns processed data
       const {
         healthScore,
         biometrics,
         latestBiometrics,
         hyperBiochemicals: processedHyperBiochemicals,
         hypoBiochemicals: processedHypoBiochemicals,
-        hyperHypoBiochemicalsIds,
-      } = processBiometricData(data.biometrics_entries);
-
+      } = await processBiometricData(data.biometrics_entries);
       setHealthScore(healthScore);
       setBiometrics(biometrics);
       setLatestBiometrics(latestBiometrics);
+      setHyperBiochemicals(processedHyperBiochemicals);
+      setHypoBiochemicals(processedHypoBiochemicals);
 
+      // Cache all the processed data
       cacheManager.multiSet({
         biometricsEntries: data.biometrics_entries,
         healthScore,
         biometrics,
         latestBiometrics,
-      });
-
-      if (hyperHypoBiochemicalsIds?.length) {
-        handleConditions(
-          hyperHypoBiochemicalsIds,
-          processedHyperBiochemicals,
-          processedHypoBiochemicals
-        );
-      }
-    }
-    setUserDataLoading(false);
-  };
-
-  const handleConditions = async (conditionsIds, hyperData, hypoData) => {
-    if (!conditionsIds?.length) return;
-    const conditions = await getConditions(conditionsIds);
-    if (conditions) {
-      const { processedHyperBiochemicals, processedHypoBiochemicals } =
-        processConditions(conditions, hyperData, hypoData);
-
-      cacheManager.multiSet({
         hyperBiochemicals: processedHyperBiochemicals,
         hypoBiochemicals: processedHypoBiochemicals,
       });
-
-      setHyperBiochemicals(processedHyperBiochemicals);
-      setHypoBiochemicals(processedHypoBiochemicals);
     }
+
+    if (data.foods_score?.foods_score) {
+      setFoodsScore(data.foods_score.foods_score);
+      cacheManager.multiSet({
+        foodsScore: data.foods_score.foods_score,
+      });
+    } 
+    
+    setUserDataLoading(false);
   };
 
   const handleUserdata = (data) => {
@@ -154,9 +136,9 @@ export const UserProvider = ({ children }) => {
         latestBiometrics,
         hyperBiochemicals,
         hypoBiochemicals,
+
         foodsScore,
         userDataLoading,
-        
       }}
     >
       {children}

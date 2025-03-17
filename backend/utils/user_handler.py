@@ -176,24 +176,23 @@ class UserHandler:
             )
     
     def get_user_data(self, user, token=None, foods_score=None):
-        try:
-            has_biometrics = BiometricsEntry.objects.filter(user=user).exists()
-            
+        try:            
             response_data = {
                 "user": UserSerializer(user).data,
                 "biometrics_entries": [],
             }
             
+            if foods_score:
+                response_data["foods_score"] = foods_score
+            else:
+                response_data["foods_score"] = self.get_foods_score(user)
+            
             if token:
                 response_data["token"] = token
             
+            has_biometrics = BiometricsEntry.objects.filter(user=user).exists()
             if has_biometrics:
-                if foods_score is None:
-                    response_data["foods_score"] = self.get_foods_score(user)
-                else:
-                    response_data["foods_score"] = foods_score
                     
-                # Only get biometrics if they exist
                 biometrics_entries = (
                     BiometricsEntry.objects.filter(user=user)
                     .only('id', 'health_score', 'created_at')
@@ -231,19 +230,8 @@ class UserHandler:
             )
             
     def get_foods_score(self, user):
-        latest_biometrics_entry = BiometricsEntry.objects.filter(user=user).order_by('-created_at').first()
-        
-        if not latest_biometrics_entry:
-            return None
-
-        foods_score = FoodsScore.objects.filter(biometricsentry=latest_biometrics_entry).first()
-
-        if not foods_score:
-            return None
-
-        serializer = FoodsScoreSerializer(foods_score)
-
-        return serializer.data  
+        latest_food_score = FoodsScore.objects.filter(user=user).order_by('-created_at').first()
+        return FoodsScoreSerializer(latest_food_score).data if latest_food_score else None
 
             
     

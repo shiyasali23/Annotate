@@ -131,9 +131,14 @@ class BiometricsEntrySerializer(serializers.ModelSerializer):
         write_only=True
     )
     
+    biometrics_entry_id = serializers.IntegerField(
+        source='id', 
+        read_only=True
+    )
+    
     class Meta:
         model = BiometricsEntry
-        fields = ('created_at', 'user', 'health_score', 'biometrics')
+        fields = ('biometrics_entry_id', 'created_at', 'user', 'health_score', 'biometrics')
 
 class FoodsScoreSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(
@@ -152,14 +157,15 @@ class FoodsScoreSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
-    biometricsentry = serializers.PrimaryKeyRelatedField(
-        queryset=BiometricsEntry.objects.all(),
+
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
         write_only=True
     )
     
     class Meta:
         model = FoodsScore
-        fields = ['id', 'uuid', 'created_at', 'updated_at', 'biometricsentry', 'foods_score']
+        fields = ['id', 'uuid', 'created_at', 'updated_at', 'user', 'foods_score']
         
     
 

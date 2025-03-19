@@ -7,6 +7,9 @@ import { getModels, getDiagnosisPrediction } from "@/lib/diagnosis-api";
 import LoadingComponent from "./LoadingComponent";
 import ErrorComponent from "./ErrorComponent";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import DiagnosisResultComponent from "./DiagnosisResultComponent";
+
 import {
   Select,
   SelectTrigger,
@@ -20,8 +23,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import DiagnosisResultComponent from "./DiagnosisResultComponent";
+
 
 const DiagnosisModal = ({ isOpen, onClose }) => {
   const { diagnosisModel, setDiagnosisModel, dignosisModelsTypes } = useData();

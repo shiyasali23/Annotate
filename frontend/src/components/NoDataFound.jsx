@@ -14,11 +14,13 @@ const NoDataFound = ({
   heading = "Oops.. No Records Found.",
   buttonText,
   handleButtonClick,
+  route,
 }) => {
   const router = useRouter();
   const { servicesArray } = useData();
   const [isSettingUp, setIsSettingUp] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [hasNavigated, setHasNavigated] = useState(false);
 
   const settingUpArray = useMemo(
     () => [0, 2, 1, 3].map((index) => servicesArray[index][1]),
@@ -26,23 +28,34 @@ const NoDataFound = ({
   );
 
   useEffect(() => {
-    if (!isSettingUp) return setCurrentStep(0);
-    if (currentStep >= settingUpArray.length) {
-      setTimeout(() => router.push("/food"), 500);
+    if (!isSettingUp) {
+      setCurrentStep(0);
+      setHasNavigated(false);
+      return;
+    }
+    
+    // If we've completed all steps and haven't navigated yet
+    if (currentStep >= settingUpArray.length && !hasNavigated) {
+      setHasNavigated(true);
+      setTimeout(() => router.push(`/${route ?? "analytics"}`), 500);
+      return;
     }
 
-    const timer = setTimeout(
-      () => setCurrentStep((prev) => prev + 1),
-      currentStep === 0 ? 0 : 1000
-    );
-    return () => clearTimeout(timer);
-  }, [isSettingUp, currentStep]);
+    // Only continue with the timer if we haven't navigated yet
+    if (!hasNavigated && currentStep < settingUpArray.length) {
+      const timer = setTimeout(
+        () => setCurrentStep((prev) => prev + 1),
+        currentStep === 0 ? 0 : 1000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [isSettingUp, currentStep, settingUpArray.length, router, route, hasNavigated]);
 
   // For modal mode, if it's not open then don't render anything.
   if (isModal && !isOpen) return null;
 
   const content = (
-    <div className="relative bg-white  w-11/12 max-w-md sm:max-w-lg lg:max-w-xl p-6 rounded-xl flex flex-col align-center justify-center">
+    <div className="relative bg-white w-[80vw] xl:w-[40vw]  p-6 flex flex-col align-center justify-center m-auto shadow-[0_0_8px_2px_rgba(0,0,0,0.03)] border border-dashed">
       {isModal && (
         <AiOutlineCloseSquare
           className="absolute right-5 top-5 cursor-pointer text-3xl bg-black text-white hover:scale-110 transition duration-150"
@@ -81,7 +94,7 @@ const NoDataFound = ({
           </div>
         ) : (
           <div>
-            <h1 className=" font-bold text-xl text-center">{heading}</h1>
+            <h1 className="font-bold text-xl text-center">{heading}</h1>
             <div className="flex flex-col items-center gap-5 mt-12">
               <button
                 className="font-bold text-center xl:text-xl text-lg underline hover:scale-110 transition duration-150"
@@ -94,9 +107,9 @@ const NoDataFound = ({
               </span>
 
               <CustomButton
-                text={buttonText}
+                text={buttonText || "Create Account"}
                 className="xl:w-1/2 mx-auto text-xs"
-                onClick={() => handleButtonClick()}
+                onClick={() => handleButtonClick?.()}
               />
             </div>
           </div>
@@ -105,10 +118,10 @@ const NoDataFound = ({
     </div>
   );
 
-  // If used as a modal, wrap content in a container that only centers it without forcing full viewport width/height.
+  // If used as a modal, wrap content in a proper modal overlay with backdrop
   return isModal ? (
-    <div className="z-50 flex items-center justify-center shadow-lg">
-      {content}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto ">
+      <div className="relative z-50 animate-fade-in-up">{content}</div>
     </div>
   ) : (
     content

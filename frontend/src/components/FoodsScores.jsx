@@ -63,9 +63,7 @@ const FoodsScores = ({
         <NoDataFound
           isOpen={true}
           isModal={false}
-          buttonText={"Create An Account"}
-          heading={"User Data Not Found"}
-          handleButtonClick={() => router.push("/about")}
+          route={"food"}
         />
       ) : !processedFoodsScore ? (
         <ErrorComponent

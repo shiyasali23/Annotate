@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 objects_handler = ObjectsHandler()
 response_handler = ResponseHandler()
 user_handler = UserHandler()
-foods_score_handler = FoodScoreHandler()
+
 
 class BiometricsHandler:
     _instance = None
@@ -34,6 +34,7 @@ class BiometricsHandler:
         self.female_biochemicals_data = []
         self.biochemicals_validity_data = []
         self.healthy = False
+        self._foods_score_handler = FoodScoreHandler()
         self._load_biochemicals()
 
     def _load_biochemicals(self):
@@ -68,7 +69,7 @@ class BiometricsHandler:
                     except ValueError:
                         invalid_ids.append(item['id'])
 
-            return np.array(valid_values, dtype=np.float16), valid_ids, invalid_ids, 
+            return np.array(valid_values, dtype=np.float64), valid_ids, invalid_ids, 
         except Exception as e:
             logger.error(f"Error validating biochemicals: {e}")
             return np.array([]), [], []
@@ -226,7 +227,7 @@ class BiometricsHandler:
                     filtered_unexpired_biochemicals = [b for b in unexpired_biochemicals if b["id"] not in updated_ids]  
                     latest_biochemicals_scaled_values = biochemicals_scaled_values + filtered_unexpired_biochemicals  
 
-                foods_score, error = foods_score_handler.create_foods_score(
+                foods_score, error = self._foods_score_handler.create_foods_score(
                     biochemicals_scaled_values = latest_biochemicals_scaled_values,
                     user = user.id
                 )

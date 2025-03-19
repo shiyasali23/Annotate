@@ -100,7 +100,9 @@ class Command(BaseCommand):
                         'Authorization': f'Token {token}',
                     }
                     json_input_list = json.dumps({
-                        'data': input_list
+                        'data': {
+                            'updatedBiochemicalsData': input_list
+                        }
                     })
 
                     response = client.post(reverse('webapp:biometrics'), data=json_input_list, content_type='application/json', headers=headers)

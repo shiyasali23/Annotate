@@ -65,7 +65,6 @@ export const updateBiometrics = async (
       }),
     });
 
-    console.log(response);
     
 
     if (!response.ok) {

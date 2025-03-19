@@ -1,27 +1,41 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import ServicesModal from "./NoDataFound";
 import DiseaseDetectionModal from "./DiseaseDetectionModal";
 import DiagnosisModal from "./DiagnosisModal";
 
 import { useData } from "@/contexts/dataContext";
 import CustomButton from "./CustomButton";
 import { useUser } from "@/contexts/userContext";
+import NoDataFound from "./NoDataFound";
+import CommingSoon from "./CommingSoon";
 
 const ServicesComponent = () => {
   const { servicesArray } = useData();
-  const {isLogined} = useUser();
+  const { isLogined } = useUser();
 
   const router = useRouter();
-  const [servicesModalOpen, setServicesModalOpen] = useState(false);
   const [diseaseDetectionModalOpen, setDiseaseDetectionModalOpen] =
     useState(false);
   const [diagnosisModalOpen, setDiagnosisModalOpen] = useState(false);
+  const [noDataFoundModalOpen, setNoDataFoundModalOpen] = useState(false);
+  const [commingSoonModalOpen, setCommingSoonModalOpen] = useState(false);
 
   const handleServiceClick = (index) => {
-    index === 2 && isLogined ? router.push("/analytics") : setServicesModalOpen(true);
-    index === 1 && setDiseaseDetectionModalOpen(true);
-    index === 3 && setDiagnosisModalOpen(true);
+    if (index === 0) {
+      setDiseaseDetectionModalOpen(true);
+    } else if (index === 1) {
+      setDiagnosisModalOpen(true);
+    } else if (index === 2) {
+      router.push("/food");
+    } else if (index === 3) {
+      if (isLogined) {
+        router.push("/analytics");
+      } else {
+        setNoDataFoundModalOpen(true);
+      }
+    } else if (index === 4 || index === 5) {
+      setCommingSoonModalOpen(true);
+    }
   };
 
   return (
@@ -40,27 +54,43 @@ const ServicesComponent = () => {
               {service[0]}
             </h1>
             <div className="px-1 xl:px-8">
-            <CustomButton text={service[1]} className="mx-auto w-full  text-xs rounded" />
+              <CustomButton
+                text={service[1]}
+                className="mx-auto w-full  text-xs rounded"
+              />
             </div>
           </div>
         ))}
       </div>
-      {servicesModalOpen && (
-        <ServicesModal
-          isOpen={servicesModalOpen}
-          onClose={() => setServicesModalOpen(false)}
-        />
-      )}
+
       {diseaseDetectionModalOpen && (
         <DiseaseDetectionModal
           isOpen={diseaseDetectionModalOpen}
           onClose={() => setDiseaseDetectionModalOpen(false)}
         />
       )}
+
       {diagnosisModalOpen && (
         <DiagnosisModal
           isOpen={diagnosisModalOpen}
           onClose={() => setDiagnosisModalOpen(false)}
+        />
+      )}
+
+      {noDataFoundModalOpen && (
+        <NoDataFound
+          isOpen={noDataFoundModalOpen}
+          onClose={() => setNoDataFoundModalOpen(false)}
+          isModal={true}
+          handleButtonClick={() => router.push("/about")}
+          route={"analytics"}
+        />
+      )}
+
+      {commingSoonModalOpen && (
+        <CommingSoon
+          isOpen={commingSoonModalOpen}
+          onClose={() => setCommingSoonModalOpen(false)}
         />
       )}
     </div>

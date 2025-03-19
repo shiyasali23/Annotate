@@ -111,7 +111,7 @@ const Food = () => {
     <div className="flex w-screen min-h-screen flex-col">
       <Header />
       {foodNutrientsDataLoading ? (
-        <LoadingComponent text="Loading Data." />
+        <LoadingComponent text="Loading Nutrients Details." />
       ) : (
         <div className="flex flex-col w-full gap-10">
           <section className="w-full h-[75vh] flex flex-col gap-5 mt-5  overflow-hidden">
@@ -165,7 +165,7 @@ const Food = () => {
             </div>
           </section>
 
-          <section id={domIds[0]} className="w-full h-[70vh] flex">
+          <section id={domIds[0]} className="w-full h-[50vh] flex">
             {predictedFoodsData && (
               <div className="flex-1 px-2 w-1/2">
                 <FoodPredictionsBarGraph

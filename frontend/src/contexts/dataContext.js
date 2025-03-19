@@ -6,10 +6,10 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const companyName = "Biolabs";
   const servicesArray = [
-    ["Get Suggestions Of Foods For You", "Food Recommendation"],
     ["Detect Diseases With Biochemicals", "Diseases Detections"],
+    ["Feeling Any kind of Symptoms?", "Diagnostics Center"], 
+    ["Get Suggestions Of Foods For You", "Food Recommendation"],
     ["Monitoring  Health And Biochemicals", "Analytics Platform"],
-    ["Feeling Any kind of Symptoms?", "Diagnostics Center"],
     ["Archive Medical Records For Insight", "Bio Records"],
     ["Chat With Our Artificial Inteligence", "Bio Gpt"],
   ];

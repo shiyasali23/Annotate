@@ -14,6 +14,7 @@ import ServicesModal from "@/components/NoDataFound";
 import { useUser } from "@/contexts/userContext";
 import { getBiometricEntry } from "@/utils/analytics-utils";
 import LatestBiometricsTable from "@/components/LatestBiometricsTable";
+import NoDataFound from "@/components/NoDataFound";
 
 const Analytics = () => {
   const {
@@ -24,7 +25,7 @@ const Analytics = () => {
     biometrics,
     hyperBiochemicals,
     hypoBiochemicals,
-    healthScore
+    healthScore,
   } = useUser();
   const [selectedBiometricEntry, setSelectedBiometricEntry] = useState(null);
   const [biometricsEntryModalOpen, setBiometricsEntryModalOpen] =
@@ -45,18 +46,18 @@ const Analytics = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen flex  flex-col">
       <Header />
       {userDataLoading ? (
         <LoadingComponent text="Processing Data" />
       ) : !isLogined ? (
-        <ErrorComponent
-          heading={"User Data Not Found"}
-          buttonText={"Login"}
-          handleTryAgain={() => router.push("/about")}
+        <NoDataFound
+          isOpen={true}
+          isModal={false}
+          
         />
       ) : !biometricsEntries ? (
-        <ServicesModal isOpen={true} onClose={() => {}} />
+         <ErrorComponent heading={"No Biometrics Found"} buttonText={"Update Biometrics"} handleTryAgain={()=>router.push("/profile")}/>
       ) : (
         <div className="flex mt-5 flex-col">
           <div className="w-[97vw] xl:w-[85vw] m-auto h-[40vh] xl:h-[50vh]">
@@ -77,7 +78,10 @@ const Analytics = () => {
 
           {latestBiometrics && (
             <div className="w-[97vw] xl:w-[95vw] max-h-[100vh] m-auto my-5 p-2 shadow-lg">
-              <LatestBiometricsTable latestBiometrics={latestBiometrics} biometrics={biometrics}/>
+              <LatestBiometricsTable
+                latestBiometrics={latestBiometrics}
+                biometrics={biometrics}
+              />
             </div>
           )}
 
@@ -86,8 +90,6 @@ const Analytics = () => {
               <BiometricsAccordion biometrics={biometrics} />
             </div>
           )}
-
-          
         </div>
       )}
 

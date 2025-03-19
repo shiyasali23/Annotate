@@ -35,6 +35,7 @@ export const getModels = async (type) => {
 };
 
 export const getDiseasePredictions = async (modelId, inputValues) => {
+  console.log(inputValues);
   const token = localStorage.getItem("token");
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -73,6 +74,8 @@ export const getDiseasePredictions = async (modelId, inputValues) => {
 };
 
 export const getDiagnosisPrediction = async (modelId, inputValues) => {
+  console.log(inputValues);
+  
   const token = localStorage.getItem("token");
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);

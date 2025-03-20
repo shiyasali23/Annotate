@@ -9,7 +9,6 @@ import Header from "@/components/Header";
 import HealthScoreGraph from "@/components/HealthScoreGraph";
 import HyperHypoConditions from "@/components/HyperHypoConditions";
 import LoadingComponent from "@/components/LoadingComponent";
-import ServicesModal from "@/components/NoDataFound";
 
 import { useUser } from "@/contexts/userContext";
 import { getBiometricEntry } from "@/utils/analytics-utils";
@@ -46,14 +45,14 @@ const Analytics = () => {
   };
 
   return (
-    <div className="min-h-screen flex  flex-col">
-      <Header />
+    <div className="min-h-screen flex  flex-col ">
       {userDataLoading ? (
         <LoadingComponent text="Processing Data" />
       ) : !isLogined ? (
         <NoDataFound
           isOpen={true}
           isModal={false}
+          route={'analytics'}
           
         />
       ) : !biometricsEntries ? (
@@ -77,7 +76,7 @@ const Analytics = () => {
           </div>
 
           {latestBiometrics && (
-            <div className="w-[97vw] xl:w-[95vw] max-h-[100vh] m-auto my-5 p-2 shadow-lg">
+            <div className="w-[97vw] xl:w-[95vw]  m-auto my-5 p-2 shadow-lg">
               <LatestBiometricsTable
                 latestBiometrics={latestBiometrics}
                 biometrics={biometrics}

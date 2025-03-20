@@ -9,18 +9,13 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'first_name', 'last_name', 
-                 'date_of_birth', 'height_cm', 'weight_kg', 'gender')
+        fields = ('id', 'email', 'password', 'first_name', 'last_name', 'gender')
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True},
             'first_name': {'required': True},
             'last_name': {'required': True},
             'gender': {'required': True},
-            'date_of_birth': {'required': False},
-            'height_cm': {'required': False},
-            'weight_kg': {'required': False}
-            
         }
 
     def create(self, validated_data):
@@ -131,14 +126,11 @@ class BiometricsEntrySerializer(serializers.ModelSerializer):
         write_only=True
     )
     
-    biometrics_entry_id = serializers.IntegerField(
-        source='id', 
-        read_only=True
-    )
+   
     
     class Meta:
         model = BiometricsEntry
-        fields = ('biometrics_entry_id', 'created_at', 'user', 'health_score', 'biometrics')
+        fields = ['created_at', 'user', 'health_score', 'biometrics']
 
 class FoodsScoreSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(

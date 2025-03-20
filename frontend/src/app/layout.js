@@ -3,6 +3,8 @@ import "./globals.css";
 import { DataProvider } from "@/contexts/dataContext";
 import { UserProvider } from "@/contexts/userContext";
 import { FoodProvider } from "@/contexts/foodContext";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "Biolabs",
@@ -26,11 +28,16 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
+
       <body>
         <BiochemicalProvider>
           <FoodProvider>
             <DataProvider>
-              <UserProvider>{children}</UserProvider>
+              <UserProvider>
+                <Header />
+                {children}
+                <Footer />
+              </UserProvider>
             </DataProvider>
           </FoodProvider>
         </BiochemicalProvider>

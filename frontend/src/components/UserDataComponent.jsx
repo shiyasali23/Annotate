@@ -21,9 +21,6 @@ const UserDataComponent = () => {
     ["First Name", "first_name", "text", "string"],
     ["Last Name", "last_name", "text", "string"],
     ["Email", "email", "email", "email"],
-    ["Date of Birth", "date_of_birth", "date", "date"],
-    ["Weight Kg", "weight_kg", "number", "float"],
-    ["Height Cm", "height_cm", "number", "float"],
     ["Gender", "gender", ["male", "female"], "string"],
   ];
   const requiredFields = ["first_name", "last_name", "email", "gender"];

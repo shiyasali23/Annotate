@@ -19,8 +19,10 @@ const ServicesComponent = () => {
   const [diagnosisModalOpen, setDiagnosisModalOpen] = useState(false);
   const [noDataFoundModalOpen, setNoDataFoundModalOpen] = useState(false);
   const [commingSoonModalOpen, setCommingSoonModalOpen] = useState(false);
+  const [commingSoonIndex, setCommingSoonIndex] = useState(null);
 
   const handleServiceClick = (index) => {
+    setCommingSoonIndex(0);
     if (index === 0) {
       setDiseaseDetectionModalOpen(true);
     } else if (index === 1) {
@@ -33,13 +35,23 @@ const ServicesComponent = () => {
       } else {
         setNoDataFoundModalOpen(true);
       }
-    } else if (index === 4 || index === 5) {
+    } else if (index === 4) {
       setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
+    } else if (index === 5) {
+      setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
+    } else if (index === 6) {
+      setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
+    } else if (index === 7) {
+      setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
     }
   };
 
   return (
-    <div className="w-full min-h-[85vh] xl:h-[88vh] flex flex-col items-center justify-evenly p-4 ">
+    <div className="w-full h-screen flex flex-col items-center justify-evenly p-4 gap-5">
       <h1 className="text-3xl xl:text-4xl underline underline-offset-8  font-bold">
         Our Services
       </h1>
@@ -48,7 +60,7 @@ const ServicesComponent = () => {
           <div
             key={index}
             onClick={() => handleServiceClick(index)}
-            className="shadow-[0_0_8px_2px_rgba(0,0,0,0.0.05)] rounded border-dashed border  cursor-pointer py-2 px-2 xl:py-5 hover:shadow-2xl  sm:h-[10rem] xl:h-[10rem] flex flex-col justify-between   gap-4"
+            className="shadow-[0_0_8px_2px_rgba(0,0,0,0.0.05)] rounded   cursor-pointer py-2 px-2 xl:py-5 hover:shadow-2xl  sm:h-[10rem] xl:h-[10rem] flex flex-col justify-between   gap-4"
           >
             <h1 className="tracking-wider word-spacing-wider text-xs xl:text-lg font-semibold text-left leading-tight px-2 xl:px-8">
               {service[0]}
@@ -82,7 +94,6 @@ const ServicesComponent = () => {
           isOpen={noDataFoundModalOpen}
           onClose={() => setNoDataFoundModalOpen(false)}
           isModal={true}
-          handleButtonClick={() => router.push("/about")}
           route={"analytics"}
         />
       )}
@@ -91,6 +102,7 @@ const ServicesComponent = () => {
         <CommingSoon
           isOpen={commingSoonModalOpen}
           onClose={() => setCommingSoonModalOpen(false)}
+          commingSoonIndex={commingSoonIndex}
         />
       )}
     </div>

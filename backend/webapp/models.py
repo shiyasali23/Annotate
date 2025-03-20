@@ -34,9 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(unique=True, db_index=True)
     first_name = models.CharField(max_length=150, blank=True, null=True)
     last_name = models.CharField(max_length=150, blank=True, null=True)
-    date_of_birth = models.DateField(blank=True, null=True)
-    height_cm = models.FloatField(validators=[MinValueValidator(20.0), MaxValueValidator(300.0)], blank=True, null=True)
-    weight_kg = models.FloatField(validators=[MinValueValidator(20.0), MaxValueValidator(300.0)], blank=True, null=True)
+    
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, blank=True, null=True)
 
     is_staff = models.BooleanField(default=False)

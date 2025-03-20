@@ -166,10 +166,16 @@ const HealthScoreGraph = ({ handleBiometricEntry, healthScore }) => {
                     const yPos = scales.y.getPixelForValue(datapoint);
                     const chartMiddle = (scales.y.top + scales.y.bottom) / 2;
                     const isAboveMiddle = yPos < chartMiddle;
-                    const labelYPos = isAboveMiddle ? yPos + 35 : yPos - 35;
+                    
+                    // Only draw date labels, not health scores
                     const label = data.labels[index];
+                    const labelYPos = isAboveMiddle ? yPos + 35 : yPos - 35;
+                    
+                    // Draw only the date label
                     ctx.font = "bold 9px 'Inter', sans-serif";
                     ctx.fillText(label, xPos, labelYPos);
+                    
+                    // Draw lines connecting points to date labels
                     ctx.beginPath();
                     ctx.strokeStyle = "#006A71";
                     ctx.lineWidth = 0.5;

@@ -275,7 +275,7 @@ const DiseaseDetectionModal = ({ isOpen, onClose }) => {
     if (isOpen && !diseaseDetectionModals.length) {
       loadModels();
     }
-  }, [isOpen, loadModels, diseaseDetectionModals.length]);
+  }, []);
 
   // Reset or initialize input values when modal opens with existing data
   useEffect(() => {

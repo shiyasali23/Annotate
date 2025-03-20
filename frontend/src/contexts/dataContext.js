@@ -7,17 +7,19 @@ export const DataProvider = ({ children }) => {
   const companyName = "Biolabs";
   const servicesArray = [
     ["Detect Diseases With Biochemicals", "Diseases Detections"],
-    ["Feeling Any kind of Symptoms?", "Diagnostics Center"], 
+    ["Feeling Any kind of Symptoms?", "Diagnostics Center"],
     ["Get Suggestions Of Foods For You", "Food Recommendation"],
     ["Monitoring  Health And Biochemicals", "Analytics Platform"],
-    ["Archive Medical Records For Insight", "Bio Records"],
-    ["Chat With Our Artificial Inteligence", "Bio Gpt"],
+    ["Create Biology Specific Medicines", "Bio Fold"],
+    ["Analysis And Report Over DNA Sequences", "Bio Genes"],
+    ["Personalized Artificial Intelligence", "Bio Intelligence"],
+    ["Archive Medical Records And Insight", "Bio Vault"],
   ];
 
   const [diseaseDetectionModals, setDiseaseDetectionModals] = useState([]);
   const [diagnosisModel, setDiagnosisModel] = useState([]);
   const dignosisModelsTypes = ["diagnosis_model", "disease_detections"];
-  const authApiOPtions = ['authenticate', 'signup']
+  const authApiOPtions = ["authenticate", "signup"];
 
   return (
     <DataContext.Provider
@@ -29,7 +31,7 @@ export const DataProvider = ({ children }) => {
         diagnosisModel,
         setDiagnosisModel,
         dignosisModelsTypes,
-        authApiOPtions
+        authApiOPtions,
       }}
     >
       {children}

@@ -7,14 +7,14 @@ import Header from "@/components/Header";
 export default function Home() {
   const handleScanClick = (event) => {
     event.preventDefault();
-    document.getElementById("vision-section").scrollIntoView({
+    document.getElementById("services-section").scrollIntoView({
       behavior: "smooth",
+      block: "start",
     });
   };
 
   return (
     <main className="w-full" style={{ scrollBehavior: "smooth" }}>
-      <Header  className="fixed top-0 left-0 w-full bg-white shadow-md z-50"/>
 
       <section className="h-[70vh] xl:h-[88vh] flex flex-col items-center justify-center xl:px-32 border-gray-300 bg-white relative overflow-hidden">
         <div className="w-full max-w-6xl mx-auto flex flex-col justify-center items-center text-right gap-5 lg:gap-10">
@@ -76,7 +76,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section  id="vision-section">
+      <section  id="services-section">
         <ServicesComponent />
       </section>
     </main>

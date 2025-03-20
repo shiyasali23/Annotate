@@ -20,7 +20,7 @@ const Header = () => {
       {/* Logo section */}
       <div className="text-xl font-semibold flex xl:justify-center xl:items-center w-full sm:text-left">
         <Link href="/" className="flex items-center">
-          <Image src="/logo.svg" alt="Logo" width={70} height={70} />
+          <Image src="images/logo.svg" alt="Logo" width={75} height={75} />
           <h1 className="xl:text-6xl text-2xl font-semibold xl:font-bold text-right">
             Biolabs
           </h1>

@@ -109,7 +109,6 @@ const Food = () => {
 
   return (
     <div className="flex w-screen min-h-screen flex-col">
-      <Header />
       {foodNutrientsDataLoading ? (
         <LoadingComponent text="Loading Nutrients Details." />
       ) : (

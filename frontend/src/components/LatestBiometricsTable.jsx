@@ -79,10 +79,10 @@ const LatestBiometricsTable = ({ latestBiometrics, biometrics }) => {
   };
 
   return (
-    <div className="h-full w-full overflow-hidden flex flex-col bg-white  ">
+    <div className="h-[100vh] overflow-y-auto w-full overflow-hidden flex flex-col bg-white  ">
       <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
+          <div className="flex  items-center gap-2">
             <TrendingUp size={16} className="text-red-500" />
             <span className="text-xs text-gray-600">
               Value Above Range

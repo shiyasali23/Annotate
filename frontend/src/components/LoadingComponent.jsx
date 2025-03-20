@@ -5,7 +5,7 @@ const LoadingComponent = ({ text , className }) => {
   return (
     <div className="flex justify-center flex-col items-center w-full h-full gap-5 m-auto">
       <h2
-        className={`xl:text-2xl text-lg  flex items-center justify-center font-semibold text-gray-700 animate-pulse ${className}`}
+        className={`xl:text-2xl text-lg  flex items-center justify-center font-semibold text-gray-700 animate-pulse-opacity ${className}`}
       >
         {text}
       </h2>

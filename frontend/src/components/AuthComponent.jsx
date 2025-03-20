@@ -172,7 +172,7 @@ const AuthComponent = () => {
             ) : isSignUp ? (
               "Sign Up"
             ) : (
-              "Sign In"
+              "Log In"
             )}
           </Button>
         </form>
@@ -189,7 +189,7 @@ const AuthComponent = () => {
             }}
             disabled={loading}
           >
-            {isSignUp ? "Sign In" : "Sign Up"}
+            {isSignUp ? "Log In" : "Sign Up"}
           </Button>
         </p>
       </CardFooter>

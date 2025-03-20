@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { processBiometricData } from "@/utils/biometrics-worker";
 import { cacheManager } from "@/utils/cache-wroker";
+import dummyData from "@/jsons/dummy-data.json";
+import { processDummyData } from "@/utils/dummy-data-worker";
 
 const UserContext = createContext();
 
@@ -17,7 +19,6 @@ export const UserProvider = ({ children }) => {
   const [userDataLoading, setUserDataLoading] = useState(true);
 
   const [foodsScore, setFoodsScore] = useState(null);
-
 
   useEffect(() => {
     setUserDataLoading(true);
@@ -50,10 +51,8 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const handleAuthResponse = async (data) => {
-    console.log(data);
-    
     setUserDataLoading(true);
-    
+
     if (data.token && data.user) {
       cacheManager.multiSet({
         token: data.token,
@@ -62,8 +61,11 @@ export const UserProvider = ({ children }) => {
       setUserData(data.user);
       setIsLogined(true);
     }
-    
-    if (Array.isArray(data.biometrics_entries) && data.biometrics_entries.length) {
+
+    if (
+      Array.isArray(data.biometrics_entries) &&
+      data.biometrics_entries.length
+    ) {
       setBiometricsEntries(data.biometrics_entries);
 
       // The processBiometricData now handles API calls internally and returns processed data
@@ -96,8 +98,8 @@ export const UserProvider = ({ children }) => {
       cacheManager.multiSet({
         foodsScore: data.foods_score.foods_score,
       });
-    } 
-    
+    }
+
     setUserDataLoading(false);
   };
 
@@ -121,6 +123,38 @@ export const UserProvider = ({ children }) => {
     cacheManager.clearAll();
   };
 
+  const loadDummyData = async () => {
+    if (!dummyData) return false;
+
+    if (!dummyData.user) return false;
+
+    if (!dummyData.foods_score?.foods_score) return false;
+
+    if (!dummyData.biometrics_entries) return false;
+
+    const processedDummyData = processDummyData(dummyData.biometrics_entries);
+    if (!processedDummyData) return false;
+
+    const {
+      healthScore,
+      biometrics,
+      latestBiometrics,
+      hyperBiochemicals,
+      hypoBiochemicals,
+    } = await processBiometricData(processedDummyData);
+
+    if (healthScore) setHealthScore(healthScore);
+    if (biometrics) setBiometrics(biometrics);
+    if (latestBiometrics) setLatestBiometrics(latestBiometrics);
+    if (hyperBiochemicals) setHyperBiochemicals(hyperBiochemicals);
+    if (hypoBiochemicals) setHypoBiochemicals(hypoBiochemicals);
+    setBiometricsEntries(dummyData.biometrics_entries);
+    setUserData(dummyData.user);
+    setFoodsScore(dummyData.foods_score.foods_score);
+    setIsLogined(true);
+    return true;
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -128,6 +162,7 @@ export const UserProvider = ({ children }) => {
         logOutUser,
         setUserDataLoading,
         handleUserdata,
+        loadDummyData,
         isLogined,
         healthScore,
         userData,

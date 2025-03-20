@@ -3,7 +3,7 @@ import { getConditions } from "@/lib/biochemicals-api";
 
 export const processBiometricData = async (biometricsEntries) => {
   
-
+  
   // Process health score entries.
   const healthScore = biometricsEntries
     .map((entry) => ({

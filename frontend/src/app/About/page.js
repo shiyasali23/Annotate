@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import AuthComponent from "@/components/AuthComponent";
 import { useUser } from "@/contexts/userContext";
+import AboutUs from "@/components/AboutUs";
 
 const About = () => {
   const { isLogined } = useUser();
@@ -15,12 +16,12 @@ const About = () => {
 
   return (
     <div className="flex flex-col ">
-      <Header />
+     
       <div className="w-screen px-5 flex  align-center justify-center">
         {!isUserLogined && <AuthComponent />}
       </div>
-      <div className="w-screen px-5 mt-10  flex  align-center justify-center">
-        <h1 className="text-5xl w-full text-center font-semibold">About Us</h1>
+      <div className="w-screen flex  align-center justify-center">
+        <AboutUs />
       </div>
     </div>
   );

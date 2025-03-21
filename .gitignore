@@ -2,9 +2,14 @@
 frontend/node_modules/
 frontend/.next/
 frontend/.venv.local
+frontend/.env
+frontend/.env.local
 frontend/.venv.development.local
 frontend/.venv.production.local
 frontend/.venv.test.local
+frontend/.env.development.local
+frontend/.env.production.local
+frontend/.env.test.local
 frontend/package-lock.json
 frontend/yarn.lock
 frontend/.vscode/
@@ -18,6 +23,10 @@ diagnosis/*.pyc
 diagnosis/.venv
 diagnosis/.venv.*.local
 diagnosis/.vscode/
+diagnosis/ENV/
+diagnosis/env/
+diagnosis/.env
+diagnosis/.env.*
 
 # Detection
 detection/venv/
@@ -26,6 +35,10 @@ detection/*.pyc
 detection/.venv
 detection/.venv.*.local
 detection/.vscode/
+detection/ENV/
+detection/env/
+detection/.env
+detection/.env.*
 
 # Django
 # Backend
@@ -35,6 +48,15 @@ backend/*.pyc
 backend/.venv
 backend/.venv.*.local
 backend/.vscode/
+backend/ENV/
+backend/env/
+backend/.env
+backend/.env.*
+
+
+
+
+
 
 
 # System files
@@ -44,9 +66,9 @@ Thumbs.db
 # Logs
 *.log
 
-#Aws-conf-files
-aws/
-
 # IDE-specific files
 .idea/
 .vscode/
+
+#Aws-conf-files
+aws/

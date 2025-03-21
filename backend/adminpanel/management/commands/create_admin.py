@@ -1,5 +1,3 @@
-import os
-from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -7,29 +5,18 @@ from django.core.management import call_command
 
 from django.contrib.auth import get_user_model
 
+import os
+from pathlib import Path
+import sys
+
 class Command(BaseCommand):
     help = "Resets database, runs migrations, and creates a superuser."
 
     apps = ['webapp', 'adminpanel', 'diagnosis', 'mlmodel']
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.NOTICE('Creating admin data'))
-
-        # Deleting SQLite database if exists
-        db_path = Path(settings.BASE_DIR) / "db.sqlite3"
-        if db_path.exists():
-            os.remove(db_path)
-            self.stdout.write(self.style.SUCCESS("Database deleted successfully."))
-        else:
-            self.stdout.write(self.style.NOTICE('Database does not exist. Skipping'))
-
-        # Removing migration files
-        for app in self.apps:
-            migrations_dir = Path(app) / "migrations"
-            if migrations_dir.exists():
-                for file in migrations_dir.glob("00*.py"):
-                    file.unlink()
-                    self.stdout.write(self.style.SUCCESS(f"Removed: {file}"))
+        self.stdout.write(self.style.NOTICE('Resetting database...'))
+        call_command("reset_database")
 
         self.stdout.write(self.style.NOTICE('Creating new migrations...'))
         call_command("makemigrations")
@@ -80,6 +67,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Superuser created successfully!'))
         except Exception as e:
             self.stderr.write(self.style.ERROR(f'Failed to create superuser: {str(e)}'))
-            raise
+            sys.exit(1)
 
         self.stdout.write(self.style.SUCCESS('Setup complete. Biolabs is ready!'))

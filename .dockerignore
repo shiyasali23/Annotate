@@ -1,0 +1,68 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.env
+.env.*
+*.egg-info/
+.installed.cfg
+*.egg
+
+# JavaScript/Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.next/
+out/
+.nuxt/
+dist/
+build/
+coverage/
+.nyc_output/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite3
+*.db
+
+# Logs and temporary files
+logs/
+*.log
+tmp/
+temp/
+
+# Media and static files (exclude during build, mount as volumes in production)
+/media/
+/static_root/
+/staticfiles/
+
+# Docker related
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Testing and documentation
+htmlcov/
+.coverage
+.pytest_cache/
+.tox/
+docs/

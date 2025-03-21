@@ -1,4 +1,4 @@
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://127.0.0.1:8000/backend';
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || '/backend';
 
 export const getFoodNutrients = async () => {
   const controller = new AbortController();
@@ -65,7 +65,7 @@ export const createFoodsscore = async (unExpiredBiometricsData) => {
 
 //----------------------Detection--------------------------------------------------
 
-const DETECTION_API_URL = process.env.DETECTION_API_URL || 'http://127.0.0.1:8002/detection';
+const DETECTION_API_URL = process.env.NEXT_PUBLIC_DETECTION_API_URL || '/detection';
 export const detectFood = async (file) => {      
   const token = localStorage.getItem("token");
   const controller = new AbortController();
@@ -89,10 +89,7 @@ export const detectFood = async (file) => {
     }
 
     const result = await response.json();
-    console.log("response",result);
-    if (result.response == null) {
-      console.log("response",result);
-      
+    if (result.response == null) {      
       
       return { detectedFoods: null, message: "No Food Detected. Try New" };
     }

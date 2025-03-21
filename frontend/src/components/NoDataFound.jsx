@@ -70,7 +70,7 @@ const NoDataFound = ({
   if (isModal && !isOpen) return null;
 
   const content = (
-    <div className="relative bg-white w-[80vw] xl:w-[40vw] p-6 flex flex-col align-center justify-center m-auto shadow-[0_0_8px_2px_rgba(0,0,0,0.03)] border border-dashed">
+    <div className="relative bg-white w-[80vw] xl:w-[40vw] p-6 flex flex-col align-center justify-center m-auto shadow-[0_0_8px_2px_rgba(0,0,0,0.03)]">
       {isModal && (
         <AiOutlineCloseSquare
           className="absolute right-5 top-5 cursor-pointer text-3xl bg-black text-white hover:scale-110 transition duration-150"

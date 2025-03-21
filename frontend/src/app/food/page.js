@@ -16,6 +16,7 @@ import FoodsScores from "@/components/FoodsScores";
 import FoodPredictionsBarGraph from "@/components/FoodPredictionsBarGraph";
 import { processFoodsScore } from "@/utils/food-woker";
 import { useUser } from "@/contexts/userContext";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const Food = () => {
   const {
@@ -26,7 +27,6 @@ const Food = () => {
     foodNutrientsDataLoading,
     fetchFoodNutrients,
     foodNutriscoreData,
-   
   } = useFood();
 
   const { foodsScore } = useUser();
@@ -48,7 +48,7 @@ const Food = () => {
 
   useEffect(() => {
     if (!foodNutriscoreData && !foodNutrientsDataLoading) fetchFoodNutrients();
-  }, [foodNutriscoreData, foodNutrientsDataLoading]);
+  }, [foodNutriscoreData, foodNutrientsDataLoading, fetchFoodNutrients]);
 
   useEffect(() => {
     let processedFoodsScore = null;
@@ -139,25 +139,31 @@ const Food = () => {
               </div>
 
               <div className="w-[60%] xl:w-1/2 h-full flex gap-1 overflow-hidden">
-                {memoizedFoodsData && (
-                  <div className="w-1/2 h-full overflow-auto">
-                    <FoodNutrientList
-                      itemsArray={memoizedFoodsData}
-                      selectedItem={selectedItem}
-                      handleSelectedItem={handleSelectedItem}
-                      isFood={true}
-                    />
-                  </div>
-                )}
+                {!memoizedFoodsData || !memoizedNutrientsData ? (
+                  <ErrorComponent handleTryAgain={() => fetchFoodNutrients()} />
+                ) : (
+                  <div>
+                    {memoizedFoodsData && (
+                      <div className="w-1/2 h-full overflow-auto">
+                        <FoodNutrientList
+                          itemsArray={memoizedFoodsData}
+                          selectedItem={selectedItem}
+                          handleSelectedItem={handleSelectedItem}
+                          isFood={true}
+                        />
+                      </div>
+                    )}
 
-                {memoizedNutrientsData && (
-                  <div className="w-1/2 h-full overflow-auto">
-                    <FoodNutrientList
-                      itemsArray={memoizedNutrientsData}
-                      selectedItem={selectedItem}
-                      handleSelectedItem={handleSelectedItem}
-                      isFood={false}
-                    />
+                    {memoizedNutrientsData && (
+                      <div className="w-1/2 h-full overflow-auto">
+                        <FoodNutrientList
+                          itemsArray={memoizedNutrientsData}
+                          selectedItem={selectedItem}
+                          handleSelectedItem={handleSelectedItem}
+                          isFood={false}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

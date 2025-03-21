@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # Backend service for Django
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: backend.settings.production
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: biolabs
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      DB_HOST: localhost
+      DB_PORT: "5432"
+    networks:
+      - app-network
+
+  # diagnosis service for Fast API
+  diagnosis:
+    build:
+      context: ./diagnosis
+      dockerfile: Dockerfile
+    container_name: diagnosis
+    ports:
+      - "8001:8001"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+  
+  # detection service for Fast API
+  detection:
+    build:
+      context: ./detection
+      dockerfile: Dockerfile
+    container_name: detection
+    ports:
+      - "8002:8002"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+  
+
+  # Frontend service for Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - detection
+      - diagnosis
+    networks:
+      - app-network
+
+  # Nginx service
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    volumes:
+      - ./frontend/public:/usr/share/nginx/html/public
+      - ./frontend/static:/usr/share/nginx/html/static
+      - ./backend/static:/usr/share/nginx/html/static
+      - ./backend/static/media:/usr/share/nginx/html/static/media
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - frontend
+      - backend
+      - detection
+      - diagnosis
+
+networks:
+  app-network:
+    driver: bridge
+
+

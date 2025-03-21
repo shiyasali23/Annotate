@@ -1,6 +1,6 @@
 // utils/DiagnosisDetectionUtils.js
 const DIAGNOSIS_API_URL =
-  process.env.DIAGNOSIS_API_URL || "http://127.0.0.1:8001/diagnosis";
+  process.env.NEXT_PUBLIC_DIAGNOSIS_API_URL || "/diagnosis";
 
 export const getModels = async (type) => {
   const controller = new AbortController();
@@ -127,7 +127,7 @@ export const getDiagnosisPrediction = async (modelId, inputValues) => {
 //--------------------Diagnosis Report-----------------------
 
 const BACKEND_API_URL =
-  process.env.BACKEND_API_URL || "http://127.0.0.1:8000/backend";
+  process.env.NEXT_PUBLIC_BACKEND_API_URL || "/backend";
 
 export const getDiagnosisReport = async (disease) => {
   const controller = new AbortController();

@@ -1,5 +1,6 @@
 import joblib 
 import os
+from dotenv import load_dotenv
 import numpy as np 
 import sys
 import logging
@@ -12,6 +13,7 @@ import json
 
 from responses import ResponseHandler
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 response_handler = ResponseHandler()
 
@@ -20,7 +22,7 @@ class AppManagement:
         self.models_dir = "models"
         self.loaded_models = {}
         self.model_metadata = {}
-        self.BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000/backend')
+        self.BACKEND_URL = os.getenv('BACKEND_API_URL', '/backend')
         try:
             self._load_models()
         except Exception as e:
@@ -181,7 +183,9 @@ class AppManagement:
             )
         
     async def _register_prediction(self, model_id: str, prediction: str, probabilities: dict, token: str,):
+        print(self.BACKEND_URL)
         try:
+            
             payload = {"token": token, "prediction": prediction, "probabilities": probabilities, 'model_id': model_id}
             async with httpx.AsyncClient() as client:
                 response = await client.post(f"{self.BACKEND_URL}/register_prediction", json={"data": payload})

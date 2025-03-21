@@ -1,6 +1,7 @@
 import os
+from dotenv import load_dotenv
+
 import logging
-import json
 import numpy as np 
 import cv2 
 import httpx 
@@ -11,6 +12,7 @@ from fastapi import UploadFile
 
 from responses import ResponseHandler
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 response_handler = ResponseHandler()
 
@@ -18,7 +20,7 @@ class AppManagement:
     def __init__(self):
         self.models_dir = "model"
         self.loaded_model = None
-        self.BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000/backend')
+        self.BACKEND_URL = os.getenv('BACKEND_API_URL', '/backend')
         try:
             self._load_model()
         except Exception as e:

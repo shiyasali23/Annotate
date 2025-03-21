@@ -21,7 +21,7 @@ const Footer = () => {
                 Biolabs<span className="text-xs  text-gray-600 ml-1">ltd.com</span>
               </h2>
             </div>
-            <p className="text-gray-700 mb-6">
+            <p className="text-gray-700 text-sm mb-6">
               Pioneering technology with cutting-edge research and innovative solutions for a healthier tomorrow.
             </p>
             <div className="flex space-x-4">
@@ -45,17 +45,17 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center">
                 <FaGlobe className="mr-2 text-gray-500" size={16} />
-                <span className="text-gray-600">123 Innovation Drive, Science Park</span>
+                <span className="text-gray-600 text-sm">123 Innovation Drive, Science Park</span>
               </li>
               <li className="flex items-center">
                 <FaEnvelope className="mr-2 text-gray-500" size={16} />
-                <a href="mailto:info@biolabs.com" className="text-gray-600 hover:text-black transition-colors">
+                <a href="mailto:info@biolabs.com" className="text-gray-600 text-sm hover:text-black transition-colors">
                   info@biolabs.com
                 </a>
               </li>
               <li className="flex items-center">
                 <FaPhone className="mr-2 text-gray-500" size={16} />
-                <a href="tel:+1234567890" className="text-gray-600 hover:text-black transition-colors">
+                <a href="tel:+1234567890" className="text-gray-600 text-sm hover:text-black transition-colors">
                   +1 (234) 567-890
                 </a>
               </li>
@@ -65,7 +65,7 @@ const Footer = () => {
           {/* Newsletter */}
           <div className="md:w-1/4">
             <h3 className="text-lg font-semibold mb-4 text-gray-800">Stay Updated</h3>
-            <p className="text-gray-600 mb-4">Subscribe to our newsletter for the latest updates.</p>
+            <p className="text-gray-600 mb-4 text-sm">Subscribe to our newsletter for the latest updates.</p>
             <form className="flex">
               <input 
                 type="email" 
@@ -88,9 +88,9 @@ const Footer = () => {
             © {new Date().getFullYear()} Biolabs Ltd. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-gray-500 hover:text-black text-sm transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-500 hover:text-black text-sm transition-colors">Terms of Service</a>
-            <a href="#" className="text-gray-500 hover:text-black text-sm transition-colors">Sitemap</a>
+            <a href="#" className="text-gray-500 hover:text-black text-sm transition-colors text-sm">Privacy Policy</a>
+            <a href="#" className="text-gray-500 hover:text-black text-sm transition-colors text-sm">Terms of Service</a>
+            <a href="#" className="text-gray-500 hover:text-black text-sm transition-colors text-sm">Sitemap</a>
           </div>
         </div>
       </div>

@@ -5,9 +5,7 @@ import React from "react";
 const AboutUs = () => {
   return (
     <div className="w-full h-full my-20">
-      <h1 className="text-5xl w-full h-full text-center font-semibold">
-        About Us
-      </h1>
+      
       <div className="w-full px-10 xl:px-32 py-5 gap-20 flex flex-col">
         <h1 className="text-base leading-[2rem] font-semibold ">
           <span className="font-bold text-3xl mr-2">Biolabs</span>an
@@ -144,7 +142,7 @@ const AboutUs = () => {
 
         <div className="flex flex-col gap-5">
           <h1 className="text-3xl w-full text-center font-bold underline underline-offset-4">
-            Capabilities
+            Capable Of
           </h1>
 
           <h1 className="text-sm leading-[2rem] font-semibold">

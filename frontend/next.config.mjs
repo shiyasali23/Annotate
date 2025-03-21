@@ -1,14 +1,27 @@
 /** @type {import('next').NextConfig} */
-import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get equivalent of __dirname in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default {
+    
+  // Remove turbo experimental flag for production
   experimental: {
     turbo: {
       loaders: {}, // Enables Turbopack
     },
   },
 
-  headers: async () => {
+  // Production optimizations
+  poweredByHeader: false,
+  reactStrictMode: true,
+  compress: true,
+  
+  // CORS headers
+  async headers() {
     return [
       {
         source: '/:path*',
@@ -22,8 +35,11 @@ export default {
     ];
   },
 
+  // Rewrites (keep only what's necessary for production)
   async rewrites() {
     return [
+      // Typically webpack-hmr is only needed in development
+      // but keeping it if your setup requires it in production
       {
         source: '/_next/webpack-hmr',
         destination: '/_next/webpack-hmr',
@@ -31,8 +47,9 @@ export default {
     ];
   },
 
+  // Path aliases
   webpack(config) {
-    config.resolve.alias['@'] = path.join(__dirname, 'src');
+    config.resolve.alias['@'] = join(__dirname, 'src');
     return config;
   },
 };

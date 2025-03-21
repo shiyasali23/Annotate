@@ -11,7 +11,7 @@ const CustomButton = ({ text, onClick, className = "", type = "button" }) => {
                   font-medium flex items-center justify-center rounded-none ${className}`}
     >
       <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-300 ease-in-out"></span>
-      <span className="relative z-10 group-hover:text-black transition-colors duration-300 ease-in-out ">
+      <span className="relative z-10 group-hover:text-black transition-colors duration-300 ease-in-out">
         {text}
       </span>
     </Button>

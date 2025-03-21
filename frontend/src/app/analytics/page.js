@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import BiometricsAccordion from "@/components/BiometricsAccordion";
 import BiometricsEntryModal from "@/components/BiometricsEntryModal";
 import ErrorComponent from "@/components/ErrorComponent";
-import Header from "@/components/Header";
 import HealthScoreGraph from "@/components/HealthScoreGraph";
 import HyperHypoConditions from "@/components/HyperHypoConditions";
 import LoadingComponent from "@/components/LoadingComponent";

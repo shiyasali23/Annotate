@@ -44,7 +44,7 @@ export default function Home() {
               {Array.from("Know More").map((char, i) => (
                 <span
                   key={i}
-                  className="animate-char-reveal lg:text-3xl underline  text-white"
+                  className="animate-char-reveal  lg:text-3xl underline  text-white"
                   style={{ animationDelay: `${i * 20 + 10}ms` }}
                 >
                   {char}

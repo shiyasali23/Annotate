@@ -19,8 +19,10 @@ const ServicesDropDown = ({isLogined}) => {
   const [diagnosisModalOpen, setDiagnosisModalOpen] = useState(false);
   const [noDataFoundModalOpen, setNoDataFoundModalOpen] = useState(false);
   const [commingSoonModalOpen, setCommingSoonModalOpen] = useState(false);
+const [commingSoonIndex, setCommingSoonIndex] = useState(null);
 
   const handleServiceClick = (index) => {
+    setCommingSoonIndex(0);
     if (index === 0) {
       setDiseaseDetectionModalOpen(true);
     } else if (index === 1) {
@@ -33,8 +35,18 @@ const ServicesDropDown = ({isLogined}) => {
       } else {
         setNoDataFoundModalOpen(true);
       }
-    } else if (index === 4 || index === 5) {
+    } else if (index === 4) {
       setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
+    } else if (index === 5) {
+      setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
+    } else if (index === 6) {
+      setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
+    } else if (index === 7) {
+      setCommingSoonModalOpen(true);
+      setCommingSoonIndex(index - 4);
     }
   };
 
@@ -137,6 +149,7 @@ const ServicesDropDown = ({isLogined}) => {
         <CommingSoon
           isOpen={commingSoonModalOpen}
           onClose={() => setCommingSoonModalOpen(false)}
+          commingSoonIndex={commingSoonIndex}
         />
       )}
     </div>

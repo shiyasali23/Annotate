@@ -30,6 +30,8 @@ dist/
 build/
 coverage/
 .nyc_output/
+.env.local
+
 
 # IDE and editors
 .idea/
@@ -66,3 +68,6 @@ htmlcov/
 .pytest_cache/
 .tox/
 docs/
+
+#Aws-conf-files
+aws/

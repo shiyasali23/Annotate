@@ -44,6 +44,9 @@ Thumbs.db
 # Logs
 *.log
 
+#Aws-conf-files
+aws/
+
 # IDE-specific files
 .idea/
 .vscode/

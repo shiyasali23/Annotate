@@ -1,10 +1,10 @@
 # Node.js / Next.js (Frontend)
 frontend/node_modules/
 frontend/.next/
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.production.local
-frontend/.env.test.local
+frontend/.venv.local
+frontend/.venv.development.local
+frontend/.venv.production.local
+frontend/.venv.test.local
 frontend/package-lock.json
 frontend/yarn.lock
 frontend/.vscode/
@@ -12,28 +12,28 @@ frontend/.vscode/
 # Python
 # Fast-Api
 # Dignosis
-diagnosis/env/
+diagnosis/venv/
 diagnosis/__pycache__/
 diagnosis/*.pyc
-diagnosis/.env
-diagnosis/.env.*.local
+diagnosis/.venv
+diagnosis/.venv.*.local
 diagnosis/.vscode/
 
 # Detection
-detection/env/
+detection/venv/
 detection/__pycache__/
 detection/*.pyc
-detection/.env
-detection/.env.*.local
+detection/.venv
+detection/.venv.*.local
 detection/.vscode/
 
 # Django
 # Backend
-backend/env/
+backend/venv/
 backend/__pycache__/
 backend/*.pyc
-backend/.env
-backend/.env.*.local
+backend/.venv
+backend/.venv.*.local
 backend/.vscode/
 
 
